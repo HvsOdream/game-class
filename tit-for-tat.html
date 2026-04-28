@@ -147,6 +147,22 @@
 
   .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 
+  /* CURRENT MATCH BOXES (3 simultaneous) */
+  .match-box{background:var(--panel);border-radius:12px;padding:16px;border:2px solid var(--line);transition:all 0.3s}
+  .match-box.revealed{border-color:var(--accent)}
+  .match-box-label{font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:1px}
+  .match-box-content{display:grid;grid-template-columns:1fr 50px 1fr;gap:8px;align-items:center}
+  .match-team-cell{text-align:center;padding:12px 8px;border-radius:8px;background:var(--bg);border:2px solid var(--line);transition:all 0.3s}
+  .match-team-cell.selected{border-color:var(--accent)}
+  .match-team-cell.coop{border-color:var(--coop);background:linear-gradient(135deg,var(--bg) 0%,rgba(34,197,94,0.15) 100%)}
+  .match-team-cell.defect{border-color:var(--defect);background:linear-gradient(135deg,var(--bg) 0%,rgba(239,68,68,0.15) 100%)}
+  .match-team-name-s{font-size:18px;font-weight:700;margin-bottom:6px}
+  .match-team-status-s{font-size:14px;color:var(--muted)}
+  .match-team-result-icon{font-size:32px;margin:6px 0}
+  .match-team-result-label{font-size:14px;font-weight:700}
+  .match-team-points{font-size:18px;font-weight:800;color:var(--accent);margin-top:4px}
+  .match-vs-s{font-size:18px;color:var(--muted);font-weight:700;text-align:center}
+
   /* MATCH PROGRESS GRID */
   .match-card{padding:10px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);text-align:center;transition:all 0.2s}
   .match-card.done{opacity:0.45;border-color:var(--coop)}
@@ -197,15 +213,15 @@
   <div class="panel">
     <h2>팀 정보</h2>
     <div id="team-inputs"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+    <div style="margin-top:16px">
       <label>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">팀 수 (2~8)</div>
-        <input type="number" id="team-count" value="6" min="2" max="8" onchange="renderTeamInputs()">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">팀 수 (짝수, 4~8)</div>
+        <input type="number" id="team-count" value="6" min="4" max="8" step="2" onchange="renderTeamInputs()">
       </label>
-      <label>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">페어링당 라운드 수</div>
-        <input type="number" id="rounds-per-pair" value="5" min="3" max="15">
-      </label>
+      <div class="hint-box" style="margin-top:12px;font-size:12px;background:rgba(56,189,248,0.08);border:1px dashed var(--accent);border-radius:6px;padding:10px;color:#bae6fd">
+        💡 <b>구조</b>: N팀 → 한 라운드에 N/2개 매치 동시 진행 → (N-1) 라운드 = 라운드 로빈 1사이클.
+        예) 6팀 = 한 라운드 3매치 × 5라운드 = 각 팀이 다른 5팀과 한 번씩 대결.
+      </div>
     </div>
     <button class="btn-primary" style="margin-top:16px;width:100%;padding:14px" onclick="hostStartSession()">
       ▶ 세션 생성하고 학생 모집
@@ -256,36 +272,14 @@
   </div>
 
   <div class="match-banner">
-    <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
-      매치 <span id="match-num">1</span> / <span id="total-matches">15</span>
-    </div>
-    <div class="vs-grid">
-      <div class="vs-team">
-        <div class="vs-team-name" id="vs-name-A">팀A</div>
-      </div>
-      <div class="vs-symbol">VS</div>
-      <div class="vs-team">
-        <div class="vs-team-name" id="vs-name-B">팀B</div>
-      </div>
-    </div>
     <div class="round-display">
       <div class="round-num" id="big-round">R1</div>
-      <div class="round-label">라운드 <span id="pair-round">1</span> / <span id="pair-total">5</span></div>
+      <div class="round-label">라운드 <span id="cur-round">1</span> / <span id="total-rounds">5</span></div>
     </div>
+    <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:8px">이번 라운드의 동시 매치들 ↓</div>
   </div>
 
-  <div class="reveal-grid">
-    <div class="reveal-card waiting" id="reveal-A">
-      <div class="reveal-team" id="reveal-name-A">팀A</div>
-      <div class="waiting-text">⏳ 선택 대기 중...</div>
-    </div>
-    <div class="reveal-card waiting" id="reveal-B">
-      <div class="reveal-team" id="reveal-name-B">팀B</div>
-      <div class="waiting-text">⏳ 선택 대기 중...</div>
-    </div>
-  </div>
-
-  <div class="score-banner hidden" id="score-banner"></div>
+  <div id="current-matches" style="display:grid;gap:12px;margin-top:16px"></div>
 
   <div style="text-align:center;margin-top:16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
     <button class="btn-primary" id="confirm-btn" style="padding:14px 32px;font-size:16px" onclick="confirmReveal()" disabled>✓ 확인 (라운드 종료)</button>
@@ -430,19 +424,33 @@ let hostConn = null;   // (client side) connection to host
 let state = {
   sessionCode: null,
   teams: [],            // [{name, id, connected}]
-  roundsPerPair: 5,
-  pairings: [],
-  currentMatch: 0,
-  currentRound: 1,
-  scores: [],
-  choices: {A: null, B: null},
-  history: [],
-  pairHistory: {},
+  schedule: [],         // [round1, round2, ...] each round = [[a,b], [c,d], [e,f]]
+  totalRounds: 0,       // = teams.length - 1
+  currentRoundIdx: 0,   // 0-based current round
+  scores: [],           // scores[teamId] = total
+  choices: {},          // {teamId: 'C'|'D'|null}
+  history: [],          // [{round, matchInRound, teamA, teamB, choiceA, choiceB, scoreA, scoreB}]
+  pairHistory: {},      // "i_j": [{round, ci, cj}] (single entry since each pair meets once)
   trendChart: null,
-  // Client-only
   myTeamId: null,
   myTeamName: ''
 };
+
+function generateRoundRobin(n){
+  // Circle method: produces n-1 rounds, each with n/2 pairings
+  const arr = Array.from({length: n}, (_, i) => i);
+  const rounds = [];
+  for(let r = 0; r < n - 1; r++){
+    const round = [];
+    for(let i = 0; i < n / 2; i++){
+      round.push([arr[i], arr[n - 1 - i]]);
+    }
+    rounds.push(round);
+    // Rotate keeping arr[0] fixed
+    arr.splice(1, 0, arr.pop());
+  }
+  return rounds;
+}
 
 // ============ ROLE PICKER ============
 function selectRole(role){
@@ -493,7 +501,6 @@ function hostStartSession(){
     const name = document.getElementById(`team-${i}`).value.trim() || `팀${i+1}`;
     state.teams.push({name, id:i, connected:false});
   }
-  state.roundsPerPair = parseInt(document.getElementById('rounds-per-pair').value) || 5;
   state.scores = new Array(n).fill(0);
 
   // Generate session code
@@ -598,130 +605,130 @@ function hostStartTournamentForce(){
 }
 
 function hostStartTournament(force=false){
-  // Generate round-robin pairings (all teams, even unconnected)
-  state.pairings = [];
-  state.pairHistory = {};
   const n = state.teams.length;
-  for(let i=0;i<n;i++){
-    for(let j=i+1;j<n;j++){
-      state.pairings.push([i,j]);
-      state.pairHistory[`${i}_${j}`] = [];
-    }
-  }
-  // Shuffle
-  for(let i=state.pairings.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [state.pairings[i],state.pairings[j]]=[state.pairings[j],state.pairings[i]];
-  }
-  state.currentMatch = 0;
-  state.currentRound = 1;
+  state.schedule = generateRoundRobin(n);
+  state.totalRounds = state.schedule.length;
+  state.pairHistory = {};
+  state.schedule.forEach(round => round.forEach(([a,b]) => {
+    const key = a<b ? `${a}_${b}` : `${b}_${a}`;
+    state.pairHistory[key] = [];
+  }));
+  state.currentRoundIdx = 0;
   state.history = [];
 
   document.getElementById('host-lobby').classList.add('hidden');
   document.getElementById('host-arena').classList.remove('hidden');
-  document.getElementById('total-matches').textContent = state.pairings.length;
-  document.getElementById('pair-total').textContent = state.roundsPerPair;
+  document.getElementById('total-rounds').textContent = state.totalRounds;
 
   initTrendChart();
   hostBeginRound();
 }
 
 function hostBeginRound(){
-  if(state.currentMatch >= state.pairings.length){
+  if(state.currentRoundIdx >= state.schedule.length){
     hostShowResults();
     return;
   }
-  const [a,b] = state.pairings[state.currentMatch];
-  state.choices = {A:null, B:null};
+  const matches = state.schedule[state.currentRoundIdx];
+  state.choices = {};
+  state.teams.forEach(t => state.choices[t.id] = null);
 
-  // Update UI
-  document.getElementById('match-num').textContent = state.currentMatch+1;
-  document.getElementById('vs-name-A').textContent = state.teams[a].name;
-  document.getElementById('vs-name-B').textContent = state.teams[b].name;
-  document.getElementById('reveal-name-A').textContent = state.teams[a].name;
-  document.getElementById('reveal-name-B').textContent = state.teams[b].name;
-  document.getElementById('big-round').textContent = `R${state.currentRound}`;
-  document.getElementById('pair-round').textContent = state.currentRound;
+  // Header
+  document.getElementById('big-round').textContent = `R${state.currentRoundIdx+1}`;
+  document.getElementById('cur-round').textContent = state.currentRoundIdx+1;
 
-  // Reset reveal cards
-  ['A','B'].forEach(k => {
-    const card = document.getElementById('reveal-'+k);
-    card.className = 'reveal-card waiting';
-    card.innerHTML = `<div class="reveal-team" id="reveal-name-${k}">${state.teams[k==='A'?a:b].name}</div><div class="waiting-text">⏳ 선택 대기 중...</div>`;
-  });
-  document.getElementById('score-banner').classList.add('hidden');
+  // Render 3 (or n/2) match boxes
+  renderCurrentMatches(matches, false);
+
+  // Reset buttons
   const cBtn = document.getElementById('confirm-btn');
   cBtn.disabled = true;
   cBtn.textContent = '✓ 확인 (라운드 종료)';
   cBtn.style.animation = '';
   document.getElementById('next-round-btn').disabled = true;
+
   renderMatchProgress();
 
-  // Notify the two participating clients
-  ['A','B','C','D','E','F','G','H'].slice(0,state.teams.length).forEach((_, tid) => {
-    const conn = connections[tid];
-    if(conn){
-      if(tid === a || tid === b){
-        const opponentId = (tid===a) ? b : a;
-        conn.send({
-          type: 'your-turn',
-          opponent: state.teams[opponentId].name,
-          opponentId: opponentId,
-          round: state.currentRound,
-          totalRounds: state.roundsPerPair,
-          matchNum: state.currentMatch+1,
-          totalMatches: state.pairings.length
-        });
-      } else {
-        conn.send({
-          type: 'spectate',
-          matchA: state.teams[a].name,
-          matchB: state.teams[b].name,
-          round: state.currentRound,
-          totalRounds: state.roundsPerPair
-        });
-      }
-    }
+  // Send "your-turn" to all participating teams (everyone in this round)
+  matches.forEach(([a,b]) => {
+    if(connections[a]) connections[a].send({
+      type:'your-turn',
+      opponent: state.teams[b].name,
+      opponentId: b,
+      round: state.currentRoundIdx+1,
+      totalRounds: state.totalRounds
+    });
+    if(connections[b]) connections[b].send({
+      type:'your-turn',
+      opponent: state.teams[a].name,
+      opponentId: a,
+      round: state.currentRoundIdx+1,
+      totalRounds: state.totalRounds
+    });
   });
 
-  // Auto-handle disconnected teams (they always cooperate as fallback)
+  // Auto-fill disconnected teams as fallback (cooperate)
   setTimeout(() => {
-    if(!connections[a] && state.choices.A === null){
-      receiveChoice(a, 'C');  // disconnected team auto-cooperates
-    }
-    if(!connections[b] && state.choices.B === null){
-      receiveChoice(b, 'C');
-    }
+    state.teams.forEach(t => {
+      if(!connections[t.id] && state.choices[t.id] === null){
+        receiveChoice(t.id, 'C');
+      }
+    });
   }, 500);
 }
 
+function renderCurrentMatches(matches, revealed){
+  const container = document.getElementById('current-matches');
+  let html = '';
+  matches.forEach((pair, i) => {
+    const [a,b] = pair;
+    html += `<div class="match-box" id="match-box-${i}">
+      <div class="match-box-label">매치 ${i+1}</div>
+      <div class="match-box-content">
+        <div class="match-team-cell" id="match-team-${a}">
+          <div class="match-team-name-s">${state.teams[a].name}</div>
+          <div class="match-team-status-s">⏳ 선택 대기</div>
+        </div>
+        <div class="match-vs-s">VS</div>
+        <div class="match-team-cell" id="match-team-${b}">
+          <div class="match-team-name-s">${state.teams[b].name}</div>
+          <div class="match-team-status-s">⏳ 선택 대기</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
 function receiveChoice(teamId, choice){
-  const [a,b] = state.pairings[state.currentMatch];
-  let key = null;
-  if(teamId === a) key = 'A';
-  else if(teamId === b) key = 'B';
-  else return;  // ignore choices from non-participating teams
+  if(state.choices[teamId] === undefined || state.choices[teamId] !== null) return;
+  // Verify team is in current round
+  const matches = state.schedule[state.currentRoundIdx];
+  const inMatch = matches.some(([a,b]) => a===teamId || b===teamId);
+  if(!inMatch) return;
+  state.choices[teamId] = choice;
 
-  if(state.choices[key] !== null) return;  // ignore double-submit
-  state.choices[key] = choice;
+  // UI: mark this team as selected
+  const cell = document.getElementById(`match-team-${teamId}`);
+  if(cell){
+    cell.classList.add('selected');
+    cell.querySelector('.match-team-status-s').innerHTML = '<span style="font-size:24px">✅</span><br>선택 완료';
+  }
 
-  // Show "선택 완료" but DON'T reveal the actual choice yet
-  const card = document.getElementById('reveal-'+key);
-  card.className = 'reveal-card';
-  card.innerHTML = `<div class="reveal-team">${state.teams[teamId].name}</div>
-    <div style="font-size:64px;margin:24px 0">✅</div>
-    <div style="font-size:20px;color:var(--accent);font-weight:700">선택 완료</div>`;
-
-  if(state.choices.A !== null && state.choices.B !== null){
+  // Check if everyone in current round has chosen
+  const allDone = matches.every(([a,b]) => state.choices[a] !== null && state.choices[b] !== null);
+  if(allDone){
     const btn = document.getElementById('confirm-btn');
     btn.disabled = false;
-    btn.textContent = '✓ 양 팀 선택 완료 — 결과 공개!';
+    btn.textContent = '✓ 모두 선택 완료 — 결과 공개!';
     btn.style.animation = 'pulse 1.5s infinite';
   }
 }
 
 function confirmReveal(){
-  if(state.choices.A === null || state.choices.B === null) return;
+  const matches = state.schedule[state.currentRoundIdx];
+  const allDone = matches.every(([a,b]) => state.choices[a] !== null && state.choices[b] !== null);
+  if(!allDone) return;
   const btn = document.getElementById('confirm-btn');
   btn.disabled = true;
   btn.style.animation = '';
@@ -730,52 +737,54 @@ function confirmReveal(){
 }
 
 function revealResult(){
-  const [a,b] = state.pairings[state.currentMatch];
-  const cA = state.choices.A, cB = state.choices.B;
-  const [pA, pB] = payoff(cA, cB);
-  state.scores[a] += pA;
-  state.scores[b] += pB;
+  const matches = state.schedule[state.currentRoundIdx];
+  matches.forEach((pair, i) => {
+    const [a, b] = pair;
+    const cA = state.choices[a], cB = state.choices[b];
+    const [pA, pB] = payoff(cA, cB);
+    state.scores[a] += pA;
+    state.scores[b] += pB;
+    state.history.push({
+      round: state.currentRoundIdx+1, matchInRound: i,
+      teamA: a, teamB: b, choiceA: cA, choiceB: cB, scoreA: pA, scoreB: pB
+    });
+    const key = a<b ? `${a}_${b}` : `${b}_${a}`;
+    state.pairHistory[key].push({round: state.currentRoundIdx+1, ci: a<b?cA:cB, cj: a<b?cB:cA});
 
-  // Record
-  state.history.push({matchIdx:state.currentMatch, round:state.currentRound, teamA:a, teamB:b, choiceA:cA, choiceB:cB, scoreA:pA, scoreB:pB});
-  state.pairHistory[`${a}_${b}`].push({round:state.currentRound, ci:cA, cj:cB});
+    // Reveal in match box
+    const box = document.getElementById(`match-box-${i}`);
+    if(box){
+      box.classList.add('revealed');
+      const cellA = document.getElementById(`match-team-${a}`);
+      const cellB = document.getElementById(`match-team-${b}`);
+      cellA.className = `match-team-cell ${cA==='C'?'coop':'defect'}`;
+      cellA.innerHTML = `
+        <div class="match-team-name-s">${state.teams[a].name}</div>
+        <div class="match-team-result-icon">${cA==='C'?'🤝':'💢'}</div>
+        <div class="match-team-result-label" style="color:${cA==='C'?'var(--coop)':'var(--defect)'}">${cA==='C'?'협력':'배신'}</div>
+        <div class="match-team-points">+${pA}점</div>
+      `;
+      cellB.className = `match-team-cell ${cB==='C'?'coop':'defect'}`;
+      cellB.innerHTML = `
+        <div class="match-team-name-s">${state.teams[b].name}</div>
+        <div class="match-team-result-icon">${cB==='C'?'🤝':'💢'}</div>
+        <div class="match-team-result-label" style="color:${cB==='C'?'var(--coop)':'var(--defect)'}">${cB==='C'?'협력':'배신'}</div>
+        <div class="match-team-points">+${pB}점</div>
+      `;
+    }
 
-  // Reveal cards on host screen
-  ['A','B'].forEach(k => {
-    const card = document.getElementById('reveal-'+k);
-    const c = state.choices[k];
-    const tid = (k==='A')?a:b;
-    const points = (k==='A')?pA:pB;
-    card.className = `reveal-card ${c==='C'?'coop':'defect'}`;
-    card.innerHTML = `
-      <div class="reveal-team">${state.teams[tid].name}</div>
-      <div class="reveal-icon ${c==='C'?'coop':'defect'}">${c==='C'?'🤝':'💢'}</div>
-      <div class="reveal-label" style="color:${c==='C'?'var(--coop)':'var(--defect)'}">${c==='C'?'협력':'배신'}</div>
-      <div class="reveal-points">+${points}점</div>
-    `;
+    // Send results to clients
+    if(connections[a]) connections[a].send({type:'result', myChoice:cA, oppChoice:cB, myPoints:pA, oppPoints:pB, totalScore:state.scores[a]});
+    if(connections[b]) connections[b].send({type:'result', myChoice:cB, oppChoice:cA, myPoints:pB, oppPoints:pA, totalScore:state.scores[b]});
   });
 
-  // Score banner
-  const banner = document.getElementById('score-banner');
-  banner.innerHTML = `${state.teams[a].name} <span style="color:${cA==='C'?'var(--coop)':'var(--defect)'}">${cA==='C'?'협력':'배신'}</span> <span style="color:var(--accent)">${pA}</span> : <span style="color:var(--accent)">${pB}</span> <span style="color:${cB==='C'?'var(--coop)':'var(--defect)'}">${cB==='C'?'협력':'배신'}</span> ${state.teams[b].name}`;
-  banner.classList.remove('hidden');
-
   document.getElementById('next-round-btn').disabled = false;
-
-  // Send results to clients
-  if(connections[a]) connections[a].send({type:'result', myChoice:cA, oppChoice:cB, myPoints:pA, oppPoints:pB, totalScore:state.scores[a]});
-  if(connections[b]) connections[b].send({type:'result', myChoice:cB, oppChoice:cA, myPoints:pB, oppPoints:pA, totalScore:state.scores[b]});
-
   broadcastScores();
   updateDashboard();
 }
 
 function hostNextRound(){
-  state.currentRound++;
-  if(state.currentRound > state.roundsPerPair){
-    state.currentRound = 1;
-    state.currentMatch++;
-  }
+  state.currentRoundIdx++;
   hostBeginRound();
 }
 
@@ -870,32 +879,20 @@ function updateTrendChart(){
 
 // ============ HOST: RESULTS / 학습목표 ============
 function classifyStrategy(teamId){
-  const allChoices = [], tftMatches = [], firstChoices = [];
-  for(const key in state.pairHistory){
-    const [i,j] = key.split('_').map(Number);
-    if(i!==teamId && j!==teamId) continue;
-    const isI = (i===teamId);
-    const records = state.pairHistory[key];
-    if(records.length===0) continue;
-    records.forEach((r,idx)=>{
-      const my = isI?r.ci:r.cj;
-      allChoices.push(my);
-      if(idx===0) firstChoices.push(my);
-      else {
-        const prevOpp = isI?records[idx-1].cj:records[idx-1].ci;
-        tftMatches.push(my===prevOpp);
-      }
-    });
-  }
-  if(allChoices.length===0) return {label:'데이터 없음', class:'strat-random', stats:''};
-  const cr = allChoices.filter(c=>c==='C').length/allChoices.length;
-  const fcr = firstChoices.length>0 ? firstChoices.filter(c=>c==='C').length/firstChoices.length : 0;
-  const tr = tftMatches.length>0 ? tftMatches.filter(b=>b).length/tftMatches.length : 0;
-  const stats = `협력률 ${Math.round(cr*100)}% · 첫수C ${Math.round(fcr*100)}% · 미러링 ${Math.round(tr*100)}%`;
-  if(cr>=0.9) return {label:'항상 협력 (All-C)', class:'strat-allc', stats};
-  if(cr<=0.1) return {label:'항상 배신 (All-D)', class:'strat-alld', stats};
-  if(fcr>=0.7 && tr>=0.65) return {label:'TIT FOR TAT (맞대응)', class:'strat-tft', stats};
-  return {label:'혼합 (Mixed)', class:'strat-random', stats};
+  const myChoices = [];
+  state.history.forEach(h => {
+    if(h.teamA === teamId) myChoices.push(h.choiceA);
+    else if(h.teamB === teamId) myChoices.push(h.choiceB);
+  });
+  if(myChoices.length === 0) return {label:'데이터 없음', class:'strat-random', stats:''};
+  const cCount = myChoices.filter(c=>c==='C').length;
+  const dCount = myChoices.length - cCount;
+  const cr = cCount / myChoices.length;
+  const stats = `협력 ${cCount}회 · 배신 ${dCount}회 (협력률 ${Math.round(cr*100)}%)`;
+  if(cr >= 0.8) return {label:'협력자 우세', class:'strat-allc', stats};
+  if(cr <= 0.2) return {label:'배신자 우세', class:'strat-alld', stats};
+  if(cr >= 0.4 && cr <= 0.6) return {label:'중도 (균형)', class:'strat-random', stats};
+  return {label:'혼합 전략', class:'strat-random', stats};
 }
 
 function hostShowResults(){
@@ -926,7 +923,7 @@ function hostShowResults(){
 }
 
 function evaluateLearningObjectives(){
-  // 학습목표 1: 협력의 진화 — 라운드별 협력률 추이
+  // 학습목표 1: 라운드별 협력률 추이 (1~N 라운드)
   const byRound = {};
   state.history.forEach(h=>{
     if(!byRound[h.round]) byRound[h.round]={c:0,t:0};
@@ -942,11 +939,11 @@ function evaluateLearningObjectives(){
     const midAvg = midRounds.length>0 ? midRounds.reduce((s,r)=>s+byRound[r].c/byRound[r].t,0)/midRounds.length : (firstR+lastR)/2;
     let finding;
     if(midAvg > firstR + 0.05){
-      finding = `✅ <b>협력이 진화했습니다.</b> 첫 라운드 협력률 ${Math.round(firstR*100)}%에서 중반 평균 ${Math.round(midAvg*100)}%로 상승. 학생들이 반복 게임 속에서 상호 협력의 가치를 학습한 것으로 해석할 수 있습니다.`;
+      finding = `✅ <b>라운드가 진행될수록 협력이 늘었습니다.</b> 첫 라운드 협력률 ${Math.round(firstR*100)}%에서 중반 평균 ${Math.round(midAvg*100)}%로 상승. 라운드 로빈 단일샷 구조에서도 학생들이 "협력하는 분위기"를 형성한 것으로 보입니다.`;
     } else if(midAvg < firstR - 0.05){
-      finding = `⚠️ <b>협력이 붕괴했습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% → 중반 ${Math.round(midAvg*100)}%로 하락. 한 번의 배신이 연쇄 보복을 낳아 신뢰가 무너진 패턴입니다. 토론 거리로 활용하세요.`;
+      finding = `⚠️ <b>협력이 약화됐습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% → 중반 ${Math.round(midAvg*100)}%로 하락. 라운드 진행에 따라 배신 전략으로 전환한 팀이 늘어난 패턴입니다. 토론 거리: "왜 협력을 포기했을까?"`;
     } else {
-      finding = `➡️ <b>협력률이 비교적 안정적이었습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% / 중반 ${Math.round(midAvg*100)}%. 학생들이 일관된 전략(예: TIT FOR TAT, 항상 협력)을 빠르게 채택했을 가능성이 높습니다.`;
+      finding = `➡️ <b>협력률이 비교적 안정적이었습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% / 중반 ${Math.round(midAvg*100)}%. 학생들이 일관된 개인 전략을 끝까지 유지한 것으로 보입니다.`;
     }
     document.getElementById('obj1-finding').innerHTML = finding;
     document.getElementById('obj1-evidence').textContent =
@@ -954,37 +951,46 @@ function evaluateLearningObjectives(){
   }
 
   // 학습목표 2: 4대 원칙 검증 — 1등 팀 분석
-  const winner = state.teams.map((t,i)=>({...t,score:state.scores[i],strategy:classifyStrategy(i)})).sort((a,b)=>b.score-a.score)[0];
+  const ranked = state.teams.map((t,i)=>({...t,score:state.scores[i],strategy:classifyStrategy(i)})).sort((a,b)=>b.score-a.score);
+  const winner = ranked[0];
   const winnerStrat = winner.strategy;
+  // For round-robin single-shot: compare 협력자 vs 배신자 average scores
+  const coopTeams = ranked.filter(t => t.strategy.class === 'strat-allc');
+  const defTeams = ranked.filter(t => t.strategy.class === 'strat-alld');
+  const avgCoop = coopTeams.length ? coopTeams.reduce((s,t)=>s+t.score,0)/coopTeams.length : null;
+  const avgDef = defTeams.length ? defTeams.reduce((s,t)=>s+t.score,0)/defTeams.length : null;
   let obj2;
-  if(winnerStrat.class==='strat-tft'){
-    obj2 = `✅ <b>엑셀로드의 예측이 그대로 실현됐습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점)이 TIT FOR TAT 전략을 구사. 신사적(첫 협력)·보복적(배신엔 즉응)·관대(협력 복귀시 즉시 용서)·명료(예측 가능) 4원칙을 모두 충족했습니다.`;
-  } else if(winnerStrat.class==='strat-allc'){
-    obj2 = `🤔 <b>'항상 협력' 전략이 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점). 이는 우리 반에 배신 전략이 적었기 때문일 가능성이 높습니다. 만약 '항상 배신' 팀이 한두 개만 더 있었다면 이 팀은 큰 손실을 봤을 것입니다 — '신사함'은 강하되 '보복'이 빠진 전략의 취약점이 토론 포인트입니다.`;
-  } else if(winnerStrat.class==='strat-alld'){
-    obj2 = `⚠️ <b>'항상 배신'이 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점). 엑셀로드의 결과와 다르게 나왔는데, 이는 우리 반의 협력 의지가 충분히 강하지 않았거나 보복이 약했음을 시사합니다. "왜 다른 팀들은 이 팀을 응징하지 못했는가?"가 핵심 토론 거리입니다.`;
+  if(winnerStrat.class === 'strat-alld'){
+    obj2 = `⚠️ <b>배신자가 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점, ${winnerStrat.label}). 단일샷 라운드 로빈에서는 보복할 기회가 없어 배신 전략이 유리할 수 있습니다 — "다음에 다시 만나지 않을 상대"라는 사실이 협력을 무너뜨리는 핵심 변수임을 시사합니다.`;
+  } else if(winnerStrat.class === 'strat-allc'){
+    obj2 = `✅ <b>협력자가 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점). 우리 반에 배신 전략이 적어 상호 협력의 보상(R=3)이 누적된 결과로 보입니다. 만약 배신 팀이 더 많았다면 협력자는 큰 손실을 봤을 것입니다.`;
   } else {
-    obj2 = `📊 <b>1등 팀 <b>${winner.name}</b>(${winner.score}점)은 혼합 전략</b>을 사용했습니다. 엑셀로드의 4원칙 중 일부만 충족했을 가능성. 1~3등 팀의 '첫수 협력률'과 '미러링 비율'을 함께 비교해보세요.`;
+    obj2 = `📊 <b>혼합 전략 팀(<b>${winner.name}</b>, ${winner.score}점)이 우승</b>했습니다. 라운드마다 상황을 보고 적응한 결과로 추정됩니다.`;
+  }
+  if(avgCoop !== null && avgDef !== null){
+    obj2 += `<br><br><b>📊 전략별 평균 점수:</b> 협력자 ${avgCoop.toFixed(1)}점 vs 배신자 ${avgDef.toFixed(1)}점`;
+    if(avgDef > avgCoop) obj2 += ` — 배신이 우세했습니다 (단일샷의 한계).`;
+    else obj2 += ` — 협력이 우세했습니다 (한 바퀴 안에서 협력자들이 서로 보상받음).`;
   }
   document.getElementById('obj2-finding').innerHTML = obj2;
   document.getElementById('obj2-evidence').textContent = `1등 팀 지표 — ${winnerStrat.stats}`;
 
-  // 학습목표 3: 마지막 라운드 효과
+  // 학습목표 3: 마지막 라운드 효과 (라운드 로빈에서도 관찰됨)
   if(rounds.length>=3){
     const lastR = rounds[rounds.length-1];
-    const prevR = rounds[rounds.length-2];
+    const firstR = rounds[0];
     const lastRate = byRound[lastR].c/byRound[lastR].t;
-    const prevRate = byRound[prevR].c/byRound[prevR].t;
+    const firstRate = byRound[firstR].c/byRound[firstR].t;
     let obj3;
-    if(lastRate < prevRate - 0.1){
-      obj3 = `✅ <b>'미래의 그림자' 효과가 관찰됐습니다.</b> 직전 라운드 ${Math.round(prevRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%로 협력률이 ${Math.round((prevRate-lastRate)*100)}%p 급락. "다음 만남이 없다면 배신해도 보복받지 않는다"는 합리적 계산이 작동한 증거입니다.`;
-    } else if(lastRate > prevRate + 0.05){
-      obj3 = `🤔 <b>마지막 라운드에 오히려 협력이 늘었습니다.</b> ${Math.round(prevRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 게임이론적 합리성보다 도덕적/사회적 동기를 우선했을 수 있습니다 — 실제 인간은 순수 합리적 에이전트가 아님을 보여주는 흥미로운 결과입니다.`;
+    if(lastRate < firstRate - 0.1){
+      obj3 = `✅ <b>'미래의 그림자' 효과가 관찰됐습니다.</b> 첫 라운드 ${Math.round(firstRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%로 협력률이 ${Math.round((firstRate-lastRate)*100)}%p 하락. 라운드가 진행될수록 "남은 만남이 적다"는 인식이 협력을 약화시킨 증거입니다.`;
+    } else if(lastRate > firstRate + 0.05){
+      obj3 = `🤔 <b>오히려 라운드가 진행될수록 협력이 늘었습니다.</b> ${Math.round(firstRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 한 바퀴 동안 다른 팀의 협력 패턴을 학습하며 신뢰가 쌓였을 가능성 — 명시적 평판 시스템 없이도 협력이 진화하는 사례입니다.`;
     } else {
-      obj3 = `➡️ <b>마지막 라운드 효과가 뚜렷하지 않았습니다.</b> ${Math.round(prevRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 페어링별 라운드 수를 충분히 의식하지 않았거나, 일관된 전략을 끝까지 유지했을 가능성.`;
+      obj3 = `➡️ <b>라운드별 협력률이 비교적 안정적이었습니다.</b> ${Math.round(firstRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 일관된 전략을 끝까지 유지했거나, 라운드 로빈 구조의 대칭성이 안정화 요인으로 작용했을 수 있습니다.`;
     }
     document.getElementById('obj3-finding').innerHTML = obj3;
-    document.getElementById('obj3-evidence').textContent = `직전 라운드 협력률 ${Math.round(prevRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%`;
+    document.getElementById('obj3-evidence').textContent = `첫 라운드 협력률 ${Math.round(firstRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%`;
   }
 
   // 학습목표 4: 개인 vs 집단 합리성
@@ -1120,25 +1126,20 @@ function toggleStandings(){
 function renderMatchProgress(){
   const grid = document.getElementById('match-progress-grid');
   if(!grid) return;
-  const n = state.pairings.length;
-  const cols = n >= 12 ? 5 : (n >= 6 ? 3 : 2);
+  const cols = state.totalRounds;
   grid.style.cssText = `display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px`;
   let html = '';
-  state.pairings.forEach((pair, idx) => {
-    const [a,b] = pair;
-    const ta = state.teams[a].name, tb = state.teams[b].name;
-    const records = state.pairHistory[`${a}_${b}`] || [];
-    const completed = records.length;
-    const total = state.roundsPerPair;
+  state.schedule.forEach((roundPairings, idx) => {
     let cls, status, icon;
-    if(idx < state.currentMatch){
-      cls = 'done'; status = `완료 (${completed}/${total})`; icon = '✅';
-    } else if(idx === state.currentMatch){
-      cls = 'active'; status = `진행 중 R${state.currentRound}/${total}`; icon = '🔵';
-    } else {
-      cls = 'pending'; status = `대기`; icon = '⚪';
-    }
-    html += `<div class="match-card ${cls}"><div style="font-size:10px;color:var(--muted)">매치 ${idx+1}</div><div style="font-weight:700;margin:4px 0;font-size:13px">${ta} vs ${tb}</div><div style="font-size:11px">${icon} ${status}</div></div>`;
+    if(idx < state.currentRoundIdx){ cls='done'; status='완료'; icon='✅'; }
+    else if(idx === state.currentRoundIdx){ cls='active'; status='진행 중'; icon='🔵'; }
+    else { cls='pending'; status='대기'; icon='⚪'; }
+    const pairs = roundPairings.map(([a,b]) => `<div style="font-size:11px">${state.teams[a].name}–${state.teams[b].name}</div>`).join('');
+    html += `<div class="match-card ${cls}">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px">라운드 ${idx+1}</div>
+      ${pairs}
+      <div style="font-size:11px;margin-top:6px">${icon} ${status}</div>
+    </div>`;
   });
   grid.innerHTML = html;
 }
@@ -1148,7 +1149,7 @@ function showClientChoice(data){
   status.innerHTML = `
     <div class="client-vs">상대 팀</div>
     <div class="client-opponent">${data.opponent}</div>
-    <div class="client-round-info">매치 ${data.matchNum}/${data.totalMatches} · 라운드 ${data.round}/${data.totalRounds}</div>
+    <div class="client-round-info">라운드 ${data.round} / ${data.totalRounds}</div>
     <div class="client-choice-grid">
       <button class="big-choice-btn coop" onclick="clientChoose('C')">
         <span class="icon">🤝</span>협력 (C)
