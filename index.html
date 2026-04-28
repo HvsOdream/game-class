@@ -655,6 +655,7 @@ function hostBeginRound(){
   cBtn.textContent = '✓ 확인 (라운드 종료)';
   cBtn.style.animation = '';
   document.getElementById('next-round-btn').disabled = true;
+  renderMatchProgress();
 
   // Notify the two participating clients
   ['A','B','C','D','E','F','G','H'].slice(0,state.teams.length).forEach((_, tid) => {
