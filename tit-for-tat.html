@@ -147,6 +147,13 @@
 
   .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 
+  /* MATCH PROGRESS GRID */
+  .match-card{padding:10px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);text-align:center;transition:all 0.2s}
+  .match-card.done{opacity:0.45;border-color:var(--coop)}
+  .match-card.active{border-color:var(--accent);background:linear-gradient(135deg,rgba(56,189,248,0.15) 0%,var(--bg) 100%);box-shadow:0 0 12px rgba(56,189,248,0.3);transform:scale(1.03)}
+  .match-card.pending{opacity:0.7}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0.4)}50%{box-shadow:0 0 0 12px rgba(56,189,248,0)}}
+
   @media (max-width:600px){
     .lobby-grid,.dashboard-grid{grid-template-columns:1fr}
     .vs-grid{grid-template-columns:1fr}
@@ -255,12 +262,10 @@
     <div class="vs-grid">
       <div class="vs-team">
         <div class="vs-team-name" id="vs-name-A">팀A</div>
-        <div class="vs-team-score">누적 <span id="vs-score-A">0</span>점</div>
       </div>
       <div class="vs-symbol">VS</div>
       <div class="vs-team">
         <div class="vs-team-name" id="vs-name-B">팀B</div>
-        <div class="vs-team-score">누적 <span id="vs-score-B">0</span>점</div>
       </div>
     </div>
     <div class="round-display">
@@ -282,27 +287,44 @@
 
   <div class="score-banner hidden" id="score-banner"></div>
 
-  <div style="text-align:center;margin-top:16px">
+  <div style="text-align:center;margin-top:16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+    <button class="btn-primary" id="confirm-btn" style="padding:14px 32px;font-size:16px" onclick="confirmReveal()" disabled>✓ 확인 (라운드 종료)</button>
     <button class="btn-primary" id="next-round-btn" style="padding:14px 32px;font-size:16px" onclick="hostNextRound()" disabled>다음 라운드 ▶</button>
   </div>
 
-  <div class="dashboard-grid">
-    <div class="panel">
-      <h2>🏆 종합 순위</h2>
-      <table id="leaderboard"></table>
+  <div class="panel" style="margin-top:16px">
+    <h2>📊 전체 매치 진행 현황</h2>
+    <div id="match-progress-grid"></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center">
+      ⚪ 대기 &nbsp; 🔵 진행 중 &nbsp; ✅ 완료
+    </p>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin-bottom:0">🔒 중간 집계 (교수자 전용)</h2>
+      <button class="btn-ghost" id="toggle-standings-btn" onclick="toggleStandings()">▼ 펼치기</button>
     </div>
-    <div class="panel">
-      <h2>📈 라운드별 협력률 추이</h2>
-      <canvas id="trendChart" style="max-height:200px"></canvas>
-    </div>
-    <div class="panel">
-      <h2>🔥 협력률 히트맵</h2>
-      <div id="heatmap" class="heatmap"></div>
-      <p style="font-size:11px;color:var(--muted);margin-top:8px">행: 행위자 / 열: 상대 — 🟢협력↑ 🔴배신↑</p>
-    </div>
-    <div class="panel">
-      <h2>📜 매치 로그</h2>
-      <div id="log" style="max-height:200px;overflow-y:auto;font-size:12px;font-family:monospace;background:var(--bg);padding:8px;border-radius:6px"></div>
+    <div id="standings-content" style="display:none;margin-top:16px">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">⚠️ 학생들에게는 보여주지 않는 것이 학습 효과에 좋습니다 (메타게임 방지). 교수님 확인용.</p>
+      <div class="dashboard-grid">
+        <div style="background:var(--bg);padding:12px;border-radius:8px">
+          <h2 style="font-size:13px">🏆 현재 순위</h2>
+          <table id="leaderboard"></table>
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px">
+          <h2 style="font-size:13px">📈 라운드별 협력률 추이</h2>
+          <canvas id="trendChart" style="max-height:200px"></canvas>
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px">
+          <h2 style="font-size:13px">🔥 협력률 히트맵</h2>
+          <div id="heatmap" class="heatmap"></div>
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px">
+          <h2 style="font-size:13px">📜 매치 로그</h2>
+          <div id="log" style="max-height:160px;overflow-y:auto;font-size:11px;font-family:monospace;background:var(--panel);padding:8px;border-radius:6px"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -388,7 +410,7 @@
 <div id="client-game" class="hidden">
   <div class="client-header">
     <div class="client-team-name" id="client-team-name">팀</div>
-    <div class="client-team-score">누적 <span id="client-team-score">0</span>점 · <span id="client-rank">-위</span></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">결과는 토너먼트 종료 후 공개됩니다</div>
   </div>
 
   <div class="client-status-card" id="client-status">
@@ -616,8 +638,6 @@ function hostBeginRound(){
   document.getElementById('match-num').textContent = state.currentMatch+1;
   document.getElementById('vs-name-A').textContent = state.teams[a].name;
   document.getElementById('vs-name-B').textContent = state.teams[b].name;
-  document.getElementById('vs-score-A').textContent = state.scores[a];
-  document.getElementById('vs-score-B').textContent = state.scores[b];
   document.getElementById('reveal-name-A').textContent = state.teams[a].name;
   document.getElementById('reveal-name-B').textContent = state.teams[b].name;
   document.getElementById('big-round').textContent = `R${state.currentRound}`;
@@ -630,6 +650,10 @@ function hostBeginRound(){
     card.innerHTML = `<div class="reveal-team" id="reveal-name-${k}">${state.teams[k==='A'?a:b].name}</div><div class="waiting-text">⏳ 선택 대기 중...</div>`;
   });
   document.getElementById('score-banner').classList.add('hidden');
+  const cBtn = document.getElementById('confirm-btn');
+  cBtn.disabled = true;
+  cBtn.textContent = '✓ 확인 (라운드 종료)';
+  cBtn.style.animation = '';
   document.getElementById('next-round-btn').disabled = true;
 
   // Notify the two participating clients
@@ -688,8 +712,20 @@ function receiveChoice(teamId, choice){
     <div style="font-size:20px;color:var(--accent);font-weight:700">선택 완료</div>`;
 
   if(state.choices.A !== null && state.choices.B !== null){
-    setTimeout(revealResult, 800);
+    const btn = document.getElementById('confirm-btn');
+    btn.disabled = false;
+    btn.textContent = '✓ 양 팀 선택 완료 — 결과 공개!';
+    btn.style.animation = 'pulse 1.5s infinite';
   }
+}
+
+function confirmReveal(){
+  if(state.choices.A === null || state.choices.B === null) return;
+  const btn = document.getElementById('confirm-btn');
+  btn.disabled = true;
+  btn.style.animation = '';
+  btn.textContent = '✓ 확인 (라운드 종료)';
+  revealResult();
 }
 
 function revealResult(){
@@ -723,8 +759,6 @@ function revealResult(){
   banner.innerHTML = `${state.teams[a].name} <span style="color:${cA==='C'?'var(--coop)':'var(--defect)'}">${cA==='C'?'협력':'배신'}</span> <span style="color:var(--accent)">${pA}</span> : <span style="color:var(--accent)">${pB}</span> <span style="color:${cB==='C'?'var(--coop)':'var(--defect)'}">${cB==='C'?'협력':'배신'}</span> ${state.teams[b].name}`;
   banner.classList.remove('hidden');
 
-  document.getElementById('vs-score-A').textContent = state.scores[a];
-  document.getElementById('vs-score-B').textContent = state.scores[b];
   document.getElementById('next-round-btn').disabled = false;
 
   // Send results to clients
@@ -765,6 +799,10 @@ function payoff(cA, cB){
 
 // ============ HOST: DASHBOARD ============
 function updateDashboard(){
+  // Always render match progress (visible during tournament)
+  renderMatchProgress();
+
+  // The rest is rendered into the hidden 중간집계 panel (only visible if 교수님 toggles)
   const ranked = state.teams.map((t,i)=>({...t, score:state.scores[i]})).sort((a,b)=>b.score-a.score);
   let html = '<tr><th>순위</th><th>팀</th><th>점수</th></tr>';
   ranked.forEach((t,i)=>{
@@ -1061,78 +1099,32 @@ function handleClientMessage(data){
   } else if(data.type === 'result'){
     showClientResult(data);
   } else if(data.type === 'score-update'){
-    document.getElementById('client-team-score').textContent = data.score;
-    document.getElementById('client-rank').textContent = `${data.rank}위/${data.totalTeams}`;
+    // Score/rank display intentionally hidden during tournament (메타게임 방지)
+    // Internal tracking only
   }
 }
 
-function showClientChoice(data){
-  const status = document.getElementById('client-status');
-  status.innerHTML = `
-    <div class="client-vs">상대 팀</div>
-    <div class="client-opponent">${data.opponent}</div>
-    <div class="client-round-info">매치 ${data.matchNum}/${data.totalMatches} · 라운드 ${data.round}/${data.totalRounds}</div>
-    <div class="client-choice-grid">
-      <button class="big-choice-btn coop" onclick="clientChoose('C')">
-        <span class="icon">🤝</span>협력 (C)
-      </button>
-      <button class="big-choice-btn defect" onclick="clientChoose('D')">
-        <span class="icon">💢</span>배신 (D)
-      </button>
-    </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:12px">
-      💡 협력×협력 = 3:3 / 협력×배신 = 0:5 / 배신×배신 = 1:1
-    </div>
-  `;
+function toggleStandings(){
+  const c = document.getElementById('standings-content');
+  const b = document.getElementById('toggle-standings-btn');
+  if(c.style.display === 'none'){
+    c.style.display = 'block';
+    b.textContent = '▲ 접기';
+  } else {
+    c.style.display = 'none';
+    b.textContent = '▼ 펼치기';
+  }
 }
 
-function clientChoose(c){
-  hostConn.send({type:'choice', teamId:state.myTeamId, choice:c});
-  const status = document.getElementById('client-status');
-  status.innerHTML = `
-    <div style="font-size:64px">${c==='C'?'🤝':'💢'}</div>
-    <div style="font-size:24px;font-weight:700;color:${c==='C'?'var(--coop)':'var(--defect)'};margin-top:12px">
-      ${c==='C'?'협력':'배신'} 선택!
-    </div>
-    <div style="font-size:14px;color:var(--muted);margin-top:8px">상대 팀의 선택 대기 중...</div>
-  `;
-}
-
-function showClientSpectate(data){
-  const status = document.getElementById('client-status');
-  status.innerHTML = `
-    <div style="font-size:48px">👀</div>
-    <div style="font-size:18px;margin:12px 0">관전 중</div>
-    <div style="font-size:22px;font-weight:700;color:var(--accent)">${data.matchA} vs ${data.matchB}</div>
-    <div style="font-size:13px;color:var(--muted);margin-top:8px">라운드 ${data.round}/${data.totalRounds}</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:12px">교수님 화면을 함께 보세요</div>
-  `;
-}
-
-function showClientResult(data){
-  const status = document.getElementById('client-status');
-  const myC = data.myChoice, oppC = data.oppChoice;
-  status.innerHTML = `
-    <div style="font-size:13px;color:var(--muted)">결과</div>
-    <div class="client-result-symbols">
-      ${myC==='C'?'🤝':'💢'} <span style="color:var(--muted);margin:0 8px">vs</span> ${oppC==='C'?'🤝':'💢'}
-    </div>
-    <div class="client-result-text">
-      나: <b style="color:${myC==='C'?'var(--coop)':'var(--defect)'}">${myC==='C'?'협력':'배신'}</b>
-      / 상대: <b style="color:${oppC==='C'?'var(--coop)':'var(--defect)'}">${oppC==='C'?'협력':'배신'}</b>
-    </div>
-    <div class="client-result-points">+${data.myPoints}점</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:8px">상대 +${data.oppPoints}점</div>
-  `;
-}
-
-// ============ UTILITY ============
-function showConnIndicator(state, text){
-  const ind = document.getElementById('conn-indicator');
-  ind.classList.remove('hidden');
-  ind.className = 'connection-indicator '+state;
-  ind.textContent = text;
-}
-</script>
-</body>
-</html>
+function renderMatchProgress(){
+  const grid = document.getElementById('match-progress-grid');
+  if(!grid) return;
+  const n = state.pairings.length;
+  const cols = n >= 12 ? 5 : (n >= 6 ? 3 : 2);
+  grid.style.cssText = `display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px`;
+  let html = '';
+  state.pairings.forEach((pair, idx) => {
+    const [a,b] = pair;
+    const ta = state.teams[a].name, tb = state.teams[b].name;
+    const records = state.pairHistory[`${a}_${b}`] || [];
+    const complete
