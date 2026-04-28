@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TIT FOR TAT 토너먼트 (멀티플레이어) — 게임의 이해</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#334155; --line:#475569;
+    --text:#f1f5f9; --muted:#94a3b8; --accent:#38bdf8;
+    --coop:#22c55e; --defect:#ef4444; --gold:#fbbf24;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px;overflow-x:hidden}
+  h1{font-size:24px;margin-bottom:4px}
+  h2{font-size:16px;color:var(--accent);margin-bottom:12px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .panel{background:var(--panel);border-radius:12px;padding:16px;border:1px solid var(--line);margin-bottom:12px}
+  button{cursor:pointer;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;transition:all 0.15s;font-family:inherit}
+  button:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  button:disabled{opacity:0.4;cursor:not-allowed;transform:none;filter:none}
+  .btn-primary{background:var(--accent);color:#0c1929}
+  .btn-coop{background:var(--coop);color:#fff}
+  .btn-defect{background:var(--defect);color:#fff}
+  .btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  input[type=text],input[type=number]{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:6px;font-size:16px;width:100%;font-family:inherit}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:0.5px}
+  .hidden{display:none !important}
+
+  /* ============ ROLE PICKER ============ */
+  #role-picker{max-width:600px;margin:40px auto;text-align:center}
+  .role-buttons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+  .role-card{padding:32px 16px;border-radius:12px;border:2px solid var(--line);background:var(--panel);cursor:pointer;transition:all 0.2s}
+  .role-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .role-icon{font-size:48px;margin-bottom:12px}
+  .role-title{font-size:18px;font-weight:700;margin-bottom:6px}
+  .role-desc{font-size:12px;color:var(--muted)}
+
+  /* ============ HOST SETUP ============ */
+  #host-setup{max-width:600px;margin:24px auto}
+  .team-row{display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;margin-bottom:8px}
+  .team-num{color:var(--muted);text-align:right;font-size:13px}
+
+  /* ============ HOST LOBBY ============ */
+  #host-lobby{max-width:1100px;margin:0 auto}
+  .lobby-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  #qr-container{background:white;padding:16px;border-radius:8px;display:inline-block}
+  .session-code{font-size:48px;font-weight:900;color:var(--accent);letter-spacing:8px;text-align:center;font-family:monospace;margin:12px 0}
+  .team-status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .team-status-card{padding:12px;border-radius:8px;background:var(--bg);border:2px solid var(--line);transition:border-color 0.3s}
+  .team-status-card.connected{border-color:var(--coop);background:rgba(34,197,94,0.1)}
+  .team-status-card.disconnected{border-color:var(--defect);opacity:0.7}
+  .conn-status{font-size:11px;font-weight:700;text-transform:uppercase}
+  .conn-status.on{color:var(--coop)}
+  .conn-status.off{color:var(--muted)}
+
+  /* ============ HOST ARENA ============ */
+  #host-arena{max-width:1400px;margin:0 auto}
+  .match-banner{text-align:center;padding:24px;background:linear-gradient(135deg,var(--panel) 0%,#1e3a5f 100%);border-radius:12px;margin-bottom:16px}
+  .vs-grid{display:grid;grid-template-columns:1fr 80px 1fr;gap:24px;align-items:center}
+  .vs-team{text-align:center}
+  .vs-team-name{font-size:36px;font-weight:800;margin-bottom:8px}
+  .vs-team-score{font-size:18px;color:var(--muted)}
+  .vs-symbol{font-size:48px;color:var(--muted);font-weight:900}
+  .round-display{text-align:center;margin-top:16px}
+  .round-num{font-size:64px;font-weight:900;color:var(--accent);line-height:1}
+  .round-label{font-size:14px;color:var(--muted);text-transform:uppercase}
+
+  .reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+  .reveal-card{background:var(--panel);border-radius:12px;padding:32px;text-align:center;border:3px solid var(--line);transition:all 0.4s}
+  .reveal-card.coop{border-color:var(--coop);background:linear-gradient(135deg,var(--panel) 0%,rgba(34,197,94,0.15) 100%)}
+  .reveal-card.defect{border-color:var(--defect);background:linear-gradient(135deg,var(--panel) 0%,rgba(239,68,68,0.15) 100%)}
+  .reveal-card.waiting{border-color:var(--accent);animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0.4)}50%{box-shadow:0 0 0 12px rgba(56,189,248,0)}}
+  .reveal-team{font-size:24px;font-weight:700;margin-bottom:16px}
+  .reveal-icon{font-size:96px;margin:16px 0;font-weight:900}
+  .reveal-icon.coop{color:var(--coop)}
+  .reveal-icon.defect{color:var(--defect)}
+  .reveal-label{font-size:32px;font-weight:800;letter-spacing:2px}
+  .reveal-points{font-size:28px;color:var(--accent);font-weight:800;margin-top:12px}
+  .waiting-text{font-size:18px;color:var(--accent);margin:24px 0;font-weight:600}
+
+  .score-banner{text-align:center;font-size:36px;font-weight:900;letter-spacing:4px;padding:16px;background:var(--bg);border-radius:8px;margin-top:16px;border:2px solid var(--accent)}
+
+  .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+
+  .heatmap{display:grid;gap:2px;font-size:11px}
+  .heatmap-cell{padding:8px 4px;text-align:center;border-radius:4px;color:#fff;font-weight:600}
+  .heatmap-header{background:transparent;color:var(--muted);font-weight:600}
+  .heatmap-self{background:var(--panel2);color:var(--muted)}
+
+  .rank-1{color:var(--gold);font-weight:700}
+  .rank-2{color:#cbd5e1}
+  .rank-3{color:#cd7f32}
+
+  /* ============ CLIENT (PHONE) ============ */
+  body.client{padding:12px}
+  #client-join{max-width:500px;margin:20px auto;text-align:center}
+  #client-game{max-width:500px;margin:0 auto}
+
+  .client-header{text-align:center;padding:16px;background:var(--panel);border-radius:12px;margin-bottom:12px}
+  .client-team-name{font-size:32px;font-weight:800;color:var(--accent)}
+  .client-team-score{font-size:14px;color:var(--muted);margin-top:4px}
+
+  .client-status-card{background:var(--panel);border-radius:12px;padding:24px;text-align:center;margin-bottom:12px;min-height:200px;display:flex;flex-direction:column;justify-content:center}
+
+  .client-choice-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+  .big-choice-btn{padding:32px 16px;font-size:24px;font-weight:800;border-radius:16px;border:none;cursor:pointer;transition:all 0.2s}
+  .big-choice-btn:active{transform:scale(0.97)}
+  .big-choice-btn.coop{background:var(--coop);color:#fff}
+  .big-choice-btn.defect{background:var(--defect);color:#fff}
+  .big-choice-btn .icon{font-size:48px;display:block;margin-bottom:8px}
+
+  .client-vs{font-size:14px;color:var(--muted);margin:8px 0}
+  .client-opponent{font-size:24px;font-weight:700;color:var(--accent)}
+  .client-round-info{font-size:13px;color:var(--muted);margin-top:8px}
+
+  .client-result{padding:24px;text-align:center}
+  .client-result-symbols{font-size:48px;margin:16px 0;font-weight:900}
+  .client-result-text{font-size:16px;color:var(--muted);margin:8px 0}
+  .client-result-points{font-size:36px;font-weight:800;color:var(--accent);margin-top:12px}
+
+  .connection-indicator{position:fixed;top:8px;right:8px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;z-index:100}
+  .connection-indicator.connected{background:var(--coop);color:#fff}
+  .connection-indicator.connecting{background:var(--accent);color:#0c1929}
+  .connection-indicator.disconnected{background:var(--defect);color:#fff}
+
+  /* ============ RESULTS / 학습목표 ============ */
+  #results{max-width:1200px;margin:0 auto;display:none}
+  .objective-card{background:linear-gradient(135deg,var(--panel) 0%,#1e3a5f 100%);border-radius:16px;padding:24px;margin-bottom:16px;border-left:4px solid var(--accent)}
+  .objective-num{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:2px}
+  .objective-title{font-size:22px;font-weight:800;margin:6px 0 12px}
+  .objective-finding{font-size:15px;line-height:1.7;color:var(--text)}
+  .objective-evidence{background:var(--bg);padding:12px;border-radius:8px;margin-top:12px;font-size:13px;color:var(--muted);font-family:monospace}
+
+  .strategy-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;margin:2px}
+  .strat-tft{background:#0ea5e9;color:#fff}
+  .strat-allc{background:var(--coop);color:#fff}
+  .strat-alld{background:var(--defect);color:#fff}
+  .strat-grim{background:#1e293b;color:#fff;border:1px solid var(--line)}
+  .strat-random{background:var(--muted);color:#000}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+
+  @media (max-width:600px){
+    .lobby-grid,.dashboard-grid{grid-template-columns:1fr}
+    .vs-grid{grid-template-columns:1fr}
+    .vs-symbol{font-size:24px}
+    .reveal-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="connection-indicator hidden" id="conn-indicator"></div>
+
+<!-- ============ ROLE PICKER ============ -->
+<div id="role-picker">
+  <h1>🎮 TIT FOR TAT 토너먼트</h1>
+  <p class="sub">엑셀로드 『협력의 진화』 실험 — 게임의 이해 / 김민철</p>
+
+  <div class="role-buttons">
+    <div class="role-card" onclick="selectRole('host')">
+      <div class="role-icon">🎓</div>
+      <div class="role-title">교수님 화면</div>
+      <div class="role-desc">메인 스크린/빔프로젝터<br>토너먼트 진행</div>
+    </div>
+    <div class="role-card" onclick="selectRole('client')">
+      <div class="role-icon">📱</div>
+      <div class="role-title">학생 핸드폰</div>
+      <div class="role-desc">팀 입력 단말<br>협력/배신 선택</div>
+    </div>
+  </div>
+
+  <p style="margin-top:32px;color:var(--muted);font-size:12px">
+    📡 PeerJS WebRTC로 노트북-핸드폰 직접 통신 (별도 서버 불필요)
+  </p>
+</div>
+
+<!-- ============ HOST: SETUP ============ -->
+<div id="host-setup" class="hidden">
+  <h1>🎓 토너먼트 설정</h1>
+  <p class="sub">팀 이름을 입력하고 세션을 시작하세요</p>
+
+  <div class="panel">
+    <h2>팀 정보</h2>
+    <div id="team-inputs"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <label>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">팀 수 (2~8)</div>
+        <input type="number" id="team-count" value="6" min="2" max="8" onchange="renderTeamInputs()">
+      </label>
+      <label>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">페어링당 라운드 수</div>
+        <input type="number" id="rounds-per-pair" value="5" min="3" max="15">
+      </label>
+    </div>
+    <button class="btn-primary" style="margin-top:16px;width:100%;padding:14px" onclick="hostStartSession()">
+      ▶ 세션 생성하고 학생 모집
+    </button>
+  </div>
+</div>
+
+<!-- ============ HOST: LOBBY ============ -->
+<div id="host-lobby" class="hidden">
+  <h1>📡 학생 입장 대기 중</h1>
+  <p class="sub">학생들이 핸드폰으로 QR을 스캔하면 자동 입장합니다</p>
+
+  <div class="lobby-grid">
+    <div class="panel" style="text-align:center">
+      <h2>📱 QR 코드</h2>
+      <div id="qr-container"></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+        또는 직접 입력: <br><span id="join-url" style="color:var(--accent);font-size:11px;word-break:break-all"></span>
+      </div>
+      <div style="margin-top:16px;font-size:13px;color:var(--muted)">세션 코드</div>
+      <div class="session-code" id="session-code">----</div>
+    </div>
+
+    <div class="panel">
+      <h2>👥 참가 현황</h2>
+      <div class="team-status" id="team-status"></div>
+      <div style="margin-top:16px;text-align:center;color:var(--muted);font-size:13px">
+        <span id="connected-count">0</span> / <span id="total-team-count">6</span> 팀 접속됨
+      </div>
+      <button class="btn-primary" id="start-tournament-btn" style="width:100%;margin-top:16px;padding:14px" onclick="hostStartTournament()" disabled>
+        ▶ 토너먼트 시작 (모든 팀 접속 후)
+      </button>
+      <button class="btn-ghost" style="width:100%;margin-top:8px" onclick="hostStartTournamentForce()">
+        강제 시작 (현재 팀만으로)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HOST: ARENA ============ -->
+<div id="host-arena" class="hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h1>🏟️ 토너먼트 진행 중</h1>
+    <div>
+      <button class="btn-ghost" onclick="exportData()">📥 CSV 내보내기</button>
+      <button class="btn-ghost" onclick="hostShowResults()">🏁 종료 & 학습목표 보기</button>
+    </div>
+  </div>
+
+  <div class="match-banner">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
+      매치 <span id="match-num">1</span> / <span id="total-matches">15</span>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-team">
+        <div class="vs-team-name" id="vs-name-A">팀A</div>
+        <div class="vs-team-score">누적 <span id="vs-score-A">0</span>점</div>
+      </div>
+      <div class="vs-symbol">VS</div>
+      <div class="vs-team">
+        <div class="vs-team-name" id="vs-name-B">팀B</div>
+        <div class="vs-team-score">누적 <span id="vs-score-B">0</span>점</div>
+      </div>
+    </div>
+    <div class="round-display">
+      <div class="round-num" id="big-round">R1</div>
+      <div class="round-label">라운드 <span id="pair-round">1</span> / <span id="pair-total">5</span></div>
+    </div>
+  </div>
+
+  <div class="reveal-grid">
+    <div class="reveal-card waiting" id="reveal-A">
+      <div class="reveal-team" id="reveal-name-A">팀A</div>
+      <div class="waiting-text">⏳ 선택 대기 중...</div>
+    </div>
+    <div class="reveal-card waiting" id="reveal-B">
+      <div class="reveal-team" id="reveal-name-B">팀B</div>
+      <div class="waiting-text">⏳ 선택 대기 중...</div>
+    </div>
+  </div>
+
+  <div class="score-banner hidden" id="score-banner"></div>
+
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn-primary" id="next-round-btn" style="padding:14px 32px;font-size:16px" onclick="hostNextRound()" disabled>다음 라운드 ▶</button>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="panel">
+      <h2>🏆 종합 순위</h2>
+      <table id="leaderboard"></table>
+    </div>
+    <div class="panel">
+      <h2>📈 라운드별 협력률 추이</h2>
+      <canvas id="trendChart" style="max-height:200px"></canvas>
+    </div>
+    <div class="panel">
+      <h2>🔥 협력률 히트맵</h2>
+      <div id="heatmap" class="heatmap"></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px">행: 행위자 / 열: 상대 — 🟢협력↑ 🔴배신↑</p>
+    </div>
+    <div class="panel">
+      <h2>📜 매치 로그</h2>
+      <div id="log" style="max-height:200px;overflow-y:auto;font-size:12px;font-family:monospace;background:var(--bg);padding:8px;border-radius:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HOST: RESULTS (학습목표) ============ -->
+<div id="results">
+  <h1>🏁 토너먼트 결과 & 학습목표 달성도</h1>
+  <p class="sub">엑셀로드의 4대 성공 원칙으로 본 우리 반의 협력 패턴</p>
+
+  <div class="panel">
+    <h2>🏆 최종 순위</h2>
+    <table id="final-leaderboard"></table>
+  </div>
+
+  <h1 style="margin-top:32px;font-size:20px">📚 학습목표 점검</h1>
+
+  <div class="objective-card">
+    <div class="objective-num">학습목표 1</div>
+    <div class="objective-title">반복 죄수의 딜레마에서 협력이 진화함을 관찰한다</div>
+    <div class="objective-finding" id="obj1-finding"></div>
+    <div class="objective-evidence" id="obj1-evidence"></div>
+  </div>
+
+  <div class="objective-card">
+    <div class="objective-num">학습목표 2</div>
+    <div class="objective-title">엑셀로드의 4대 성공 원칙(신사적·보복·관대·명료)을 실증한다</div>
+    <div class="objective-finding" id="obj2-finding"></div>
+    <div class="objective-evidence" id="obj2-evidence"></div>
+  </div>
+
+  <div class="objective-card">
+    <div class="objective-num">학습목표 3</div>
+    <div class="objective-title">'미래의 그림자' 효과 — 마지막 라운드의 배신 증가를 확인한다</div>
+    <div class="objective-finding" id="obj3-finding"></div>
+    <div class="objective-evidence" id="obj3-evidence"></div>
+  </div>
+
+  <div class="objective-card">
+    <div class="objective-num">학습목표 4</div>
+    <div class="objective-title">개인 합리성과 집단 합리성의 괴리를 수치로 체감한다</div>
+    <div class="objective-finding" id="obj4-finding"></div>
+    <div class="objective-evidence" id="obj4-evidence"></div>
+  </div>
+
+  <div class="panel" style="margin-top:24px">
+    <h2>🧠 팀별 전략 분류</h2>
+    <div id="strategy-analysis"></div>
+  </div>
+
+  <div class="panel">
+    <h2>💬 토론 거리</h2>
+    <ul style="padding-left:24px;line-height:2;font-size:14px">
+      <li>1등 팀의 첫 라운드 선택은 무엇이었나? '신사적' 원칙과 일치하는가?</li>
+      <li>한번 배신당한 팀은 즉시 보복했는가, 한 번 더 협력을 시도했는가?</li>
+      <li>마지막 라운드의 협력률은 첫 라운드보다 낮아졌는가? 왜 그랬을까?</li>
+      <li>현실의 어떤 상황이 이 게임과 닮았는가? (기업 경쟁, SNS 댓글, 국제관계 등)</li>
+      <li>만약 라운드 수를 학생들에게 알리지 않았다면 결과가 달라졌을까?</li>
+    </ul>
+  </div>
+
+  <div class="controls">
+    <button class="btn-ghost" onclick="document.getElementById('results').style.display='none';document.getElementById('host-arena').classList.remove('hidden')">← 아레나로 돌아가기</button>
+    <button class="btn-primary" onclick="exportData()">📥 전체 데이터 CSV 내보내기</button>
+    <button class="btn-ghost" onclick="resetAll()">⟲ 새 토너먼트</button>
+  </div>
+</div>
+
+<!-- ============ CLIENT: JOIN ============ -->
+<div id="client-join" class="hidden">
+  <h1>📱 학생 입장</h1>
+  <div class="panel">
+    <h2>세션 코드 입력</h2>
+    <input type="text" id="client-session-input" placeholder="예: TFT123" style="text-transform:uppercase;text-align:center;font-size:24px;letter-spacing:4px" maxlength="6">
+    <button class="btn-primary" style="width:100%;margin-top:12px;padding:14px" onclick="clientJoinSession()">접속하기</button>
+  </div>
+  <div class="panel hidden" id="client-team-picker">
+    <h2>팀 선택</h2>
+    <div id="team-pick-buttons" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+  </div>
+</div>
+
+<!-- ============ CLIENT: GAME ============ -->
+<div id="client-game" class="hidden">
+  <div class="client-header">
+    <div class="client-team-name" id="client-team-name">팀</div>
+    <div class="client-team-score">누적 <span id="client-team-score">0</span>점 · <span id="client-rank">-위</span></div>
+  </div>
+
+  <div class="client-status-card" id="client-status">
+    <div style="font-size:48px;margin-bottom:12px">⏳</div>
+    <div style="font-size:18px">다른 팀 매치 진행 중</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px">교수님 화면을 함께 보세요</div>
+  </div>
+</div>
+
+<script>
+// ============ GLOBAL STATE ============
+let mode = null;  // 'host' or 'client'
+let peer = null;
+let connections = {};  // teamId -> DataConnection (host side)
+let hostConn = null;   // (client side) connection to host
+
+let state = {
+  sessionCode: null,
+  teams: [],            // [{name, id, connected}]
+  roundsPerPair: 5,
+  pairings: [],
+  currentMatch: 0,
+  currentRound: 1,
+  scores: [],
+  choices: {A: null, B: null},
+  history: [],
+  pairHistory: {},
+  trendChart: null,
+  // Client-only
+  myTeamId: null,
+  myTeamName: ''
+};
+
+// ============ ROLE PICKER ============
+function selectRole(role){
+  mode = role;
+  document.getElementById('role-picker').classList.add('hidden');
+  if(role==='host'){
+    document.getElementById('host-setup').classList.remove('hidden');
+    renderTeamInputs();
+  } else {
+    document.getElementById('client-join').classList.remove('hidden');
+    document.body.classList.add('client');
+    // Auto-fill from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('join');
+    if(code){
+      document.getElementById('client-session-input').value = code.toUpperCase();
+      clientJoinSession();
+    }
+  }
+}
+
+// Auto-detect mode from URL
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get('join')){
+    selectRole('client');
+  }
+});
+
+// ============ HOST: SETUP ============
+function renderTeamInputs(){
+  const n = parseInt(document.getElementById('team-count').value) || 6;
+  const container = document.getElementById('team-inputs');
+  container.innerHTML = '';
+  const defaults = ['알파','브라보','찰리','델타','에코','폭스트롯','골프','호텔'];
+  for(let i=0;i<n;i++){
+    const row = document.createElement('div');
+    row.className = 'team-row';
+    row.innerHTML = `<div class="team-num">팀 ${i+1}</div><input type="text" id="team-${i}" value="${defaults[i]||'팀'+(i+1)}" placeholder="팀 이름">`;
+    container.appendChild(row);
+  }
+}
+
+function hostStartSession(){
+  const n = parseInt(document.getElementById('team-count').value);
+  state.teams = [];
+  for(let i=0;i<n;i++){
+    const name = document.getElementById(`team-${i}`).value.trim() || `팀${i+1}`;
+    state.teams.push({name, id:i, connected:false});
+  }
+  state.roundsPerPair = parseInt(document.getElementById('rounds-per-pair').value) || 5;
+  state.scores = new Array(n).fill(0);
+
+  // Generate session code
+  state.sessionCode = 'TFT' + Math.floor(100 + Math.random()*900);
+
+  document.getElementById('host-setup').classList.add('hidden');
+  document.getElementById('host-lobby').classList.remove('hidden');
+  document.getElementById('session-code').textContent = state.sessionCode;
+  document.getElementById('total-team-count').textContent = n;
+
+  // Generate join URL
+  const baseUrl = window.location.origin + window.location.pathname;
+  const joinUrl = `${baseUrl}?join=${state.sessionCode}`;
+  document.getElementById('join-url').textContent = joinUrl;
+
+  // QR code
+  document.getElementById('qr-container').innerHTML = '';
+  new QRCode(document.getElementById('qr-container'), {
+    text: joinUrl, width: 200, height: 200, colorDark:'#000', colorLight:'#fff'
+  });
+
+  // Render team status cards
+  renderTeamStatus();
+
+  // Initialize PeerJS host
+  initHostPeer();
+}
+
+function initHostPeer(){
+  showConnIndicator('connecting', '연결 중...');
+  peer = new Peer(`tft-host-${state.sessionCode}`, {debug: 1});
+
+  peer.on('open', id => {
+    showConnIndicator('connected', '대기 중');
+    console.log('Host peer ready:', id);
+  });
+
+  peer.on('connection', conn => {
+    conn.on('open', () => {
+      console.log('Client connected:', conn.peer);
+    });
+    conn.on('data', data => handleHostMessage(conn, data));
+    conn.on('close', () => {
+      // Find which team this was
+      for(const tid in connections){
+        if(connections[tid] === conn){
+          state.teams[tid].connected = false;
+          delete connections[tid];
+          renderTeamStatus();
+          break;
+        }
+      }
+    });
+  });
+
+  peer.on('error', err => {
+    console.error('Peer error:', err);
+    showConnIndicator('disconnected', '오류: ' + err.type);
+  });
+}
+
+function handleHostMessage(conn, data){
+  if(data.type === 'join'){
+    // Assign team
+    const teamId = data.teamId;
+    if(state.teams[teamId] && !state.teams[teamId].connected){
+      state.teams[teamId].connected = true;
+      connections[teamId] = conn;
+      conn.send({type: 'join-ok', teamId, teamName: state.teams[teamId].name, roundsPerPair: state.roundsPerPair});
+      renderTeamStatus();
+      broadcastScores();
+    } else {
+      conn.send({type: 'join-error', message: '이미 사용 중인 팀번호이거나 잘못된 번호입니다'});
+    }
+  } else if(data.type === 'choice'){
+    receiveChoice(data.teamId, data.choice);
+  }
+}
+
+function renderTeamStatus(){
+  const container = document.getElementById('team-status');
+  container.innerHTML = '';
+  let connectedCount = 0;
+  state.teams.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'team-status-card ' + (t.connected ? 'connected' : 'disconnected');
+    card.innerHTML = `
+      <div style="font-weight:700">${i+1}. ${t.name}</div>
+      <div class="conn-status ${t.connected?'on':'off'}">${t.connected?'● 접속됨':'○ 대기'}</div>
+    `;
+    container.appendChild(card);
+    if(t.connected) connectedCount++;
+  });
+  document.getElementById('connected-count').textContent = connectedCount;
+  document.getElementById('start-tournament-btn').disabled = connectedCount < state.teams.length;
+}
+
+// ============ HOST: TOURNAMENT FLOW ============
+function hostStartTournamentForce(){
+  if(!confirm('현재 접속한 팀들로만 토너먼트를 시작합니다. 미접속 팀은 자동 협력으로 처리됩니다. 계속할까요?')) return;
+  hostStartTournament(true);
+}
+
+function hostStartTournament(force=false){
+  // Generate round-robin pairings (all teams, even unconnected)
+  state.pairings = [];
+  state.pairHistory = {};
+  const n = state.teams.length;
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      state.pairings.push([i,j]);
+      state.pairHistory[`${i}_${j}`] = [];
+    }
+  }
+  // Shuffle
+  for(let i=state.pairings.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [state.pairings[i],state.pairings[j]]=[state.pairings[j],state.pairings[i]];
+  }
+  state.currentMatch = 0;
+  state.currentRound = 1;
+  state.history = [];
+
+  document.getElementById('host-lobby').classList.add('hidden');
+  document.getElementById('host-arena').classList.remove('hidden');
+  document.getElementById('total-matches').textContent = state.pairings.length;
+  document.getElementById('pair-total').textContent = state.roundsPerPair;
+
+  initTrendChart();
+  hostBeginRound();
+}
+
+function hostBeginRound(){
+  if(state.currentMatch >= state.pairings.length){
+    hostShowResults();
+    return;
+  }
+  const [a,b] = state.pairings[state.currentMatch];
+  state.choices = {A:null, B:null};
+
+  // Update UI
+  document.getElementById('match-num').textContent = state.currentMatch+1;
+  document.getElementById('vs-name-A').textContent = state.teams[a].name;
+  document.getElementById('vs-name-B').textContent = state.teams[b].name;
+  document.getElementById('vs-score-A').textContent = state.scores[a];
+  document.getElementById('vs-score-B').textContent = state.scores[b];
+  document.getElementById('reveal-name-A').textContent = state.teams[a].name;
+  document.getElementById('reveal-name-B').textContent = state.teams[b].name;
+  document.getElementById('big-round').textContent = `R${state.currentRound}`;
+  document.getElementById('pair-round').textContent = state.currentRound;
+
+  // Reset reveal cards
+  ['A','B'].forEach(k => {
+    const card = document.getElementById('reveal-'+k);
+    card.className = 'reveal-card waiting';
+    card.innerHTML = `<div class="reveal-team" id="reveal-name-${k}">${state.teams[k==='A'?a:b].name}</div><div class="waiting-text">⏳ 선택 대기 중...</div>`;
+  });
+  document.getElementById('score-banner').classList.add('hidden');
+  document.getElementById('next-round-btn').disabled = true;
+
+  // Notify the two participating clients
+  ['A','B','C','D','E','F','G','H'].slice(0,state.teams.length).forEach((_, tid) => {
+    const conn = connections[tid];
+    if(conn){
+      if(tid === a || tid === b){
+        const opponentId = (tid===a) ? b : a;
+        conn.send({
+          type: 'your-turn',
+          opponent: state.teams[opponentId].name,
+          opponentId: opponentId,
+          round: state.currentRound,
+          totalRounds: state.roundsPerPair,
+          matchNum: state.currentMatch+1,
+          totalMatches: state.pairings.length
+        });
+      } else {
+        conn.send({
+          type: 'spectate',
+          matchA: state.teams[a].name,
+          matchB: state.teams[b].name,
+          round: state.currentRound,
+          totalRounds: state.roundsPerPair
+        });
+      }
+    }
+  });
+
+  // Auto-handle disconnected teams (they always cooperate as fallback)
+  setTimeout(() => {
+    if(!connections[a] && state.choices.A === null){
+      receiveChoice(a, 'C');  // disconnected team auto-cooperates
+    }
+    if(!connections[b] && state.choices.B === null){
+      receiveChoice(b, 'C');
+    }
+  }, 500);
+}
+
+function receiveChoice(teamId, choice){
+  const [a,b] = state.pairings[state.currentMatch];
+  let key = null;
+  if(teamId === a) key = 'A';
+  else if(teamId === b) key = 'B';
+  else return;  // ignore choices from non-participating teams
+
+  if(state.choices[key] !== null) return;  // ignore double-submit
+  state.choices[key] = choice;
+
+  // Show "선택 완료" but DON'T reveal the actual choice yet
+  const card = document.getElementById('reveal-'+key);
+  card.className = 'reveal-card';
+  card.innerHTML = `<div class="reveal-team">${state.teams[teamId].name}</div>
+    <div style="font-size:64px;margin:24px 0">✅</div>
+    <div style="font-size:20px;color:var(--accent);font-weight:700">선택 완료</div>`;
+
+  if(state.choices.A !== null && state.choices.B !== null){
+    setTimeout(revealResult, 800);
+  }
+}
+
+function revealResult(){
+  const [a,b] = state.pairings[state.currentMatch];
+  const cA = state.choices.A, cB = state.choices.B;
+  const [pA, pB] = payoff(cA, cB);
+  state.scores[a] += pA;
+  state.scores[b] += pB;
+
+  // Record
+  state.history.push({matchIdx:state.currentMatch, round:state.currentRound, teamA:a, teamB:b, choiceA:cA, choiceB:cB, scoreA:pA, scoreB:pB});
+  state.pairHistory[`${a}_${b}`].push({round:state.currentRound, ci:cA, cj:cB});
+
+  // Reveal cards on host screen
+  ['A','B'].forEach(k => {
+    const card = document.getElementById('reveal-'+k);
+    const c = state.choices[k];
+    const tid = (k==='A')?a:b;
+    const points = (k==='A')?pA:pB;
+    card.className = `reveal-card ${c==='C'?'coop':'defect'}`;
+    card.innerHTML = `
+      <div class="reveal-team">${state.teams[tid].name}</div>
+      <div class="reveal-icon ${c==='C'?'coop':'defect'}">${c==='C'?'🤝':'💢'}</div>
+      <div class="reveal-label" style="color:${c==='C'?'var(--coop)':'var(--defect)'}">${c==='C'?'협력':'배신'}</div>
+      <div class="reveal-points">+${points}점</div>
+    `;
+  });
+
+  // Score banner
+  const banner = document.getElementById('score-banner');
+  banner.innerHTML = `${state.teams[a].name} <span style="color:${cA==='C'?'var(--coop)':'var(--defect)'}">${cA==='C'?'협력':'배신'}</span> <span style="color:var(--accent)">${pA}</span> : <span style="color:var(--accent)">${pB}</span> <span style="color:${cB==='C'?'var(--coop)':'var(--defect)'}">${cB==='C'?'협력':'배신'}</span> ${state.teams[b].name}`;
+  banner.classList.remove('hidden');
+
+  document.getElementById('vs-score-A').textContent = state.scores[a];
+  document.getElementById('vs-score-B').textContent = state.scores[b];
+  document.getElementById('next-round-btn').disabled = false;
+
+  // Send results to clients
+  if(connections[a]) connections[a].send({type:'result', myChoice:cA, oppChoice:cB, myPoints:pA, oppPoints:pB, totalScore:state.scores[a]});
+  if(connections[b]) connections[b].send({type:'result', myChoice:cB, oppChoice:cA, myPoints:pB, oppPoints:pA, totalScore:state.scores[b]});
+
+  broadcastScores();
+  updateDashboard();
+}
+
+function hostNextRound(){
+  state.currentRound++;
+  if(state.currentRound > state.roundsPerPair){
+    state.currentRound = 1;
+    state.currentMatch++;
+  }
+  hostBeginRound();
+}
+
+function broadcastScores(){
+  // Send leaderboard to all connected clients
+  const ranked = state.teams.map((t,i)=>({name:t.name, score:state.scores[i]}))
+    .sort((a,b)=>b.score-a.score);
+  state.teams.forEach((t,i) => {
+    if(connections[i]){
+      const myRank = ranked.findIndex(r => r.name === t.name) + 1;
+      connections[i].send({type:'score-update', score:state.scores[i], rank:myRank, totalTeams:state.teams.length});
+    }
+  });
+}
+
+function payoff(cA, cB){
+  if(cA==='C' && cB==='C') return [3,3];
+  if(cA==='C' && cB==='D') return [0,5];
+  if(cA==='D' && cB==='C') return [5,0];
+  return [1,1];
+}
+
+// ============ HOST: DASHBOARD ============
+function updateDashboard(){
+  const ranked = state.teams.map((t,i)=>({...t, score:state.scores[i]})).sort((a,b)=>b.score-a.score);
+  let html = '<tr><th>순위</th><th>팀</th><th>점수</th></tr>';
+  ranked.forEach((t,i)=>{
+    const rc = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    const m = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    html += `<tr><td class="${rc}">${m} ${i+1}</td><td>${t.name}</td><td><b>${t.score}</b></td></tr>`;
+  });
+  document.getElementById('leaderboard').innerHTML = html;
+  renderHeatmap();
+  updateTrendChart();
+  document.getElementById('log').innerHTML = state.history.slice(-10).reverse().map(h=>{
+    const ta=state.teams[h.teamA].name, tb=state.teams[h.teamB].name;
+    const sym=c=>c==='C'?'🤝':'💢';
+    return `<div style="padding:3px 0;border-bottom:1px dotted var(--line)">[M${h.matchIdx+1} R${h.round}] ${ta} ${sym(h.choiceA)} vs ${sym(h.choiceB)} ${tb} → ${h.scoreA}:${h.scoreB}</div>`;
+  }).join('');
+}
+
+function renderHeatmap(){
+  const n = state.teams.length;
+  const grid = document.getElementById('heatmap');
+  grid.style.gridTemplateColumns = `80px repeat(${n}, 1fr)`;
+  let html = '<div class="heatmap-cell heatmap-header"></div>';
+  state.teams.forEach(t=>html+=`<div class="heatmap-cell heatmap-header">${t.name.slice(0,4)}</div>`);
+  for(let i=0;i<n;i++){
+    html += `<div class="heatmap-cell heatmap-header" style="text-align:right">${state.teams[i].name.slice(0,5)}</div>`;
+    for(let j=0;j<n;j++){
+      if(i===j){html+=`<div class="heatmap-cell heatmap-self">—</div>`;continue;}
+      const key = i<j?`${i}_${j}`:`${j}_${i}`;
+      const records = state.pairHistory[key]||[];
+      const myChoices = records.map(r => i<j?r.ci:r.cj);
+      if(myChoices.length===0){html+=`<div class="heatmap-cell" style="background:#1e293b;color:var(--muted)">—</div>`;continue;}
+      const cr = myChoices.filter(c=>c==='C').length/myChoices.length;
+      const color = cr>=0.5?`rgba(34,197,94,${0.3+cr*0.7})`:`rgba(239,68,68,${0.3+(1-cr)*0.7})`;
+      html += `<div class="heatmap-cell" style="background:${color}">${Math.round(cr*100)}%</div>`;
+    }
+  }
+  grid.innerHTML = html;
+}
+
+function initTrendChart(){
+  const ctx = document.getElementById('trendChart');
+  if(state.trendChart) state.trendChart.destroy();
+  state.trendChart = new Chart(ctx, {
+    type:'line',
+    data:{labels:[], datasets:[{label:'전체 협력률(%)', data:[], borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,0.1)', tension:0.3, fill:true}]},
+    options:{responsive:true, plugins:{legend:{labels:{color:'#f1f5f9'}}}, scales:{y:{min:0,max:100,ticks:{color:'#94a3b8'},grid:{color:'#334155'}}, x:{ticks:{color:'#94a3b8'},grid:{color:'#334155'}}}}
+  });
+}
+
+function updateTrendChart(){
+  const byRound = {};
+  state.history.forEach(h=>{
+    if(!byRound[h.round]) byRound[h.round]={coop:0,total:0};
+    byRound[h.round].total += 2;
+    if(h.choiceA==='C') byRound[h.round].coop++;
+    if(h.choiceB==='C') byRound[h.round].coop++;
+  });
+  const labels = Object.keys(byRound).sort((a,b)=>parseInt(a)-parseInt(b));
+  const data = labels.map(r => Math.round(byRound[r].coop/byRound[r].total*100));
+  state.trendChart.data.labels = labels.map(l=>`R${l}`);
+  state.trendChart.data.datasets[0].data = data;
+  state.trendChart.update('none');
+}
+
+// ============ HOST: RESULTS / 학습목표 ============
+function classifyStrategy(teamId){
+  const allChoices = [], tftMatches = [], firstChoices = [];
+  for(const key in state.pairHistory){
+    const [i,j] = key.split('_').map(Number);
+    if(i!==teamId && j!==teamId) continue;
+    const isI = (i===teamId);
+    const records = state.pairHistory[key];
+    if(records.length===0) continue;
+    records.forEach((r,idx)=>{
+      const my = isI?r.ci:r.cj;
+      allChoices.push(my);
+      if(idx===0) firstChoices.push(my);
+      else {
+        const prevOpp = isI?records[idx-1].cj:records[idx-1].ci;
+        tftMatches.push(my===prevOpp);
+      }
+    });
+  }
+  if(allChoices.length===0) return {label:'데이터 없음', class:'strat-random', stats:''};
+  const cr = allChoices.filter(c=>c==='C').length/allChoices.length;
+  const fcr = firstChoices.length>0 ? firstChoices.filter(c=>c==='C').length/firstChoices.length : 0;
+  const tr = tftMatches.length>0 ? tftMatches.filter(b=>b).length/tftMatches.length : 0;
+  const stats = `협력률 ${Math.round(cr*100)}% · 첫수C ${Math.round(fcr*100)}% · 미러링 ${Math.round(tr*100)}%`;
+  if(cr>=0.9) return {label:'항상 협력 (All-C)', class:'strat-allc', stats};
+  if(cr<=0.1) return {label:'항상 배신 (All-D)', class:'strat-alld', stats};
+  if(fcr>=0.7 && tr>=0.65) return {label:'TIT FOR TAT (맞대응)', class:'strat-tft', stats};
+  return {label:'혼합 (Mixed)', class:'strat-random', stats};
+}
+
+function hostShowResults(){
+  document.getElementById('host-arena').classList.add('hidden');
+  document.getElementById('results').style.display = 'block';
+
+  // Final leaderboard with strategies
+  const ranked = state.teams.map((t,i)=>({...t, score:state.scores[i], strategy:classifyStrategy(i)}))
+    .sort((a,b)=>b.score-a.score);
+  let html = '<tr><th>순위</th><th>팀</th><th>점수</th><th>전략</th><th>지표</th></tr>';
+  ranked.forEach((t,i)=>{
+    const rc = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    const m = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    html += `<tr><td class="${rc}">${m} ${i+1}</td><td><b>${t.name}</b></td><td><b style="font-size:16px">${t.score}</b></td><td><span class="strategy-badge ${t.strategy.class}">${t.strategy.label}</span></td><td style="font-size:11px;color:var(--muted)">${t.strategy.stats}</td></tr>`;
+  });
+  document.getElementById('final-leaderboard').innerHTML = html;
+
+  // Strategy cards
+  let stratHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">';
+  ranked.forEach(t=>{
+    stratHtml += `<div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--line)"><div style="font-weight:700;margin-bottom:6px">${t.name} <span style="color:var(--accent)">(${t.score}점)</span></div><div style="margin-bottom:6px"><span class="strategy-badge ${t.strategy.class}">${t.strategy.label}</span></div><div style="font-size:12px;color:var(--muted)">${t.strategy.stats}</div></div>`;
+  });
+  stratHtml += '</div>';
+  document.getElementById('strategy-analysis').innerHTML = stratHtml;
+
+  // ====== 학습목표 평가 ======
+  evaluateLearningObjectives();
+}
+
+function evaluateLearningObjectives(){
+  // 학습목표 1: 협력의 진화 — 라운드별 협력률 추이
+  const byRound = {};
+  state.history.forEach(h=>{
+    if(!byRound[h.round]) byRound[h.round]={c:0,t:0};
+    byRound[h.round].t += 2;
+    if(h.choiceA==='C') byRound[h.round].c++;
+    if(h.choiceB==='C') byRound[h.round].c++;
+  });
+  const rounds = Object.keys(byRound).map(Number).sort((a,b)=>a-b);
+  if(rounds.length>=2){
+    const firstR = byRound[rounds[0]].c/byRound[rounds[0]].t;
+    const lastR = byRound[rounds[rounds.length-1]].c/byRound[rounds[rounds.length-1]].t;
+    const midRounds = rounds.slice(1,-1);
+    const midAvg = midRounds.length>0 ? midRounds.reduce((s,r)=>s+byRound[r].c/byRound[r].t,0)/midRounds.length : (firstR+lastR)/2;
+    let finding;
+    if(midAvg > firstR + 0.05){
+      finding = `✅ <b>협력이 진화했습니다.</b> 첫 라운드 협력률 ${Math.round(firstR*100)}%에서 중반 평균 ${Math.round(midAvg*100)}%로 상승. 학생들이 반복 게임 속에서 상호 협력의 가치를 학습한 것으로 해석할 수 있습니다.`;
+    } else if(midAvg < firstR - 0.05){
+      finding = `⚠️ <b>협력이 붕괴했습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% → 중반 ${Math.round(midAvg*100)}%로 하락. 한 번의 배신이 연쇄 보복을 낳아 신뢰가 무너진 패턴입니다. 토론 거리로 활용하세요.`;
+    } else {
+      finding = `➡️ <b>협력률이 비교적 안정적이었습니다.</b> 첫 라운드 ${Math.round(firstR*100)}% / 중반 ${Math.round(midAvg*100)}%. 학생들이 일관된 전략(예: TIT FOR TAT, 항상 협력)을 빠르게 채택했을 가능성이 높습니다.`;
+    }
+    document.getElementById('obj1-finding').innerHTML = finding;
+    document.getElementById('obj1-evidence').textContent =
+      `라운드별 협력률: ${rounds.map(r=>`R${r}=${Math.round(byRound[r].c/byRound[r].t*100)}%`).join(' → ')}`;
+  }
+
+  // 학습목표 2: 4대 원칙 검증 — 1등 팀 분석
+  const winner = state.teams.map((t,i)=>({...t,score:state.scores[i],strategy:classifyStrategy(i)})).sort((a,b)=>b.score-a.score)[0];
+  const winnerStrat = winner.strategy;
+  let obj2;
+  if(winnerStrat.class==='strat-tft'){
+    obj2 = `✅ <b>엑셀로드의 예측이 그대로 실현됐습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점)이 TIT FOR TAT 전략을 구사. 신사적(첫 협력)·보복적(배신엔 즉응)·관대(협력 복귀시 즉시 용서)·명료(예측 가능) 4원칙을 모두 충족했습니다.`;
+  } else if(winnerStrat.class==='strat-allc'){
+    obj2 = `🤔 <b>'항상 협력' 전략이 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점). 이는 우리 반에 배신 전략이 적었기 때문일 가능성이 높습니다. 만약 '항상 배신' 팀이 한두 개만 더 있었다면 이 팀은 큰 손실을 봤을 것입니다 — '신사함'은 강하되 '보복'이 빠진 전략의 취약점이 토론 포인트입니다.`;
+  } else if(winnerStrat.class==='strat-alld'){
+    obj2 = `⚠️ <b>'항상 배신'이 우승했습니다.</b> 1등 팀 <b>${winner.name}</b>(${winner.score}점). 엑셀로드의 결과와 다르게 나왔는데, 이는 우리 반의 협력 의지가 충분히 강하지 않았거나 보복이 약했음을 시사합니다. "왜 다른 팀들은 이 팀을 응징하지 못했는가?"가 핵심 토론 거리입니다.`;
+  } else {
+    obj2 = `📊 <b>1등 팀 <b>${winner.name}</b>(${winner.score}점)은 혼합 전략</b>을 사용했습니다. 엑셀로드의 4원칙 중 일부만 충족했을 가능성. 1~3등 팀의 '첫수 협력률'과 '미러링 비율'을 함께 비교해보세요.`;
+  }
+  document.getElementById('obj2-finding').innerHTML = obj2;
+  document.getElementById('obj2-evidence').textContent = `1등 팀 지표 — ${winnerStrat.stats}`;
+
+  // 학습목표 3: 마지막 라운드 효과
+  if(rounds.length>=3){
+    const lastR = rounds[rounds.length-1];
+    const prevR = rounds[rounds.length-2];
+    const lastRate = byRound[lastR].c/byRound[lastR].t;
+    const prevRate = byRound[prevR].c/byRound[prevR].t;
+    let obj3;
+    if(lastRate < prevRate - 0.1){
+      obj3 = `✅ <b>'미래의 그림자' 효과가 관찰됐습니다.</b> 직전 라운드 ${Math.round(prevRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%로 협력률이 ${Math.round((prevRate-lastRate)*100)}%p 급락. "다음 만남이 없다면 배신해도 보복받지 않는다"는 합리적 계산이 작동한 증거입니다.`;
+    } else if(lastRate > prevRate + 0.05){
+      obj3 = `🤔 <b>마지막 라운드에 오히려 협력이 늘었습니다.</b> ${Math.round(prevRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 게임이론적 합리성보다 도덕적/사회적 동기를 우선했을 수 있습니다 — 실제 인간은 순수 합리적 에이전트가 아님을 보여주는 흥미로운 결과입니다.`;
+    } else {
+      obj3 = `➡️ <b>마지막 라운드 효과가 뚜렷하지 않았습니다.</b> ${Math.round(prevRate*100)}% → ${Math.round(lastRate*100)}%. 학생들이 페어링별 라운드 수를 충분히 의식하지 않았거나, 일관된 전략을 끝까지 유지했을 가능성.`;
+    }
+    document.getElementById('obj3-finding').innerHTML = obj3;
+    document.getElementById('obj3-evidence').textContent = `직전 라운드 협력률 ${Math.round(prevRate*100)}% → 마지막 라운드 ${Math.round(lastRate*100)}%`;
+  }
+
+  // 학습목표 4: 개인 vs 집단 합리성
+  const totalScore = state.scores.reduce((a,b)=>a+b,0);
+  const totalRounds = state.history.length;
+  const maxPossibleCoop = totalRounds * 6;  // 모두 협력시 6점/라운드
+  const maxPossibleDefect = totalRounds * 2;  // 모두 배신시 2점/라운드
+  const efficiency = totalScore / maxPossibleCoop;
+  const lostValue = maxPossibleCoop - totalScore;
+  let obj4;
+  if(efficiency >= 0.85){
+    obj4 = `✅ <b>집단 합리성이 우세했습니다.</b> 가능한 최대 협력 점수의 ${Math.round(efficiency*100)}% 달성. 이론적 최대치(${maxPossibleCoop}점) 대비 ${lostValue}점 손실에 그쳤습니다. 우리 반은 '죄수의 딜레마'를 잘 극복한 사례입니다.`;
+  } else if(efficiency >= 0.6){
+    obj4 = `📊 <b>개인 합리성과 집단 합리성이 부분적으로 충돌했습니다.</b> 가능한 최대 협력 점수의 ${Math.round(efficiency*100)}% 달성, ${lostValue}점이 '딜레마의 비용'으로 사라졌습니다. 만약 모두가 협력했다면 ${lostValue}점만큼 더 가져갈 수 있었습니다.`;
+  } else {
+    obj4 = `⚠️ <b>딜레마가 강하게 작동했습니다.</b> 가능한 최대 협력 점수의 ${Math.round(efficiency*100)}%만 달성. 무려 ${lostValue}점이 상호 배신으로 증발했습니다. 개인의 단기 합리성이 집단의 장기 손실로 이어진 전형적 패턴입니다.`;
+  }
+  document.getElementById('obj4-finding').innerHTML = obj4;
+  document.getElementById('obj4-evidence').textContent = `총점 ${totalScore}점 / 이론적 최대 ${maxPossibleCoop}점 (효율 ${Math.round(efficiency*100)}%) / 손실 ${lostValue}점`;
+}
+
+// ============ EXPORT ============
+function exportData(){
+  let csv = 'match_idx,round,team_A,team_B,choice_A,choice_B,score_A,score_B\n';
+  state.history.forEach(h=>{
+    csv += `${h.matchIdx+1},${h.round},"${state.teams[h.teamA].name}","${state.teams[h.teamB].name}",${h.choiceA},${h.choiceB},${h.scoreA},${h.scoreB}\n`;
+  });
+  csv += '\n=== 최종 점수 ===\n';
+  state.teams.forEach((t,i)=>csv+=`"${t.name}",${state.scores[i]}\n`);
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tit-for-tat_${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}.csv`;
+  a.click();
+}
+
+function resetAll(){
+  if(!confirm('모든 데이터가 삭제됩니다. 새 토너먼트를 시작할까요?')) return;
+  location.reload();
+}
+
+// ============ CLIENT ============
+function clientJoinSession(){
+  const code = document.getElementById('client-session-input').value.trim().toUpperCase();
+  if(!code || !code.startsWith('TFT')){
+    alert('TFT로 시작하는 세션 코드를 입력하세요 (예: TFT123)');
+    return;
+  }
+  state.sessionCode = code;
+  showConnIndicator('connecting', '연결 중...');
+
+  // Connect to host peer
+  peer = new Peer({debug: 1});
+  peer.on('open', myId => {
+    hostConn = peer.connect(`tft-host-${code}`, {reliable: true});
+    hostConn.on('open', () => {
+      showConnIndicator('connected', '접속됨');
+      // Show team picker
+      showTeamPicker();
+    });
+    hostConn.on('data', data => handleClientMessage(data));
+    hostConn.on('close', () => {
+      showConnIndicator('disconnected', '연결 끊김');
+    });
+    hostConn.on('error', err => {
+      showConnIndicator('disconnected', '연결 오류');
+      alert('호스트에 연결할 수 없습니다. 세션 코드를 확인하세요.');
+    });
+  });
+  peer.on('error', err => {
+    console.error(err);
+    showConnIndicator('disconnected', err.type);
+    alert('네트워크 오류: '+err.type+'\n호스트 화면이 켜져 있는지, 세션 코드가 맞는지 확인하세요.');
+  });
+}
+
+function showTeamPicker(){
+  // Show 8 numbered buttons; will get pruned by host on join attempt
+  const container = document.getElementById('team-pick-buttons');
+  container.innerHTML = '';
+  for(let i=1; i<=8; i++){
+    const btn = document.createElement('button');
+    btn.className = 'btn-ghost';
+    btn.style.padding = '20px';
+    btn.style.fontSize = '20px';
+    btn.textContent = `팀 ${i}`;
+    btn.onclick = () => {
+      hostConn.send({type:'join', teamId:i-1});
+      btn.disabled = true;
+      btn.textContent = `팀 ${i} (확인 중...)`;
+    };
+    container.appendChild(btn);
+  }
+  document.getElementById('client-team-picker').classList.remove('hidden');
+}
+
+function handleClientMessage(data){
+  if(data.type === 'join-ok'){
+    state.myTeamId = data.teamId;
+    state.myTeamName = data.teamName;
+    state.roundsPerPair = data.roundsPerPair;
+    document.getElementById('client-join').classList.add('hidden');
+    document.getElementById('client-game').classList.remove('hidden');
+    document.getElementById('client-team-name').textContent = data.teamName;
+  } else if(data.type === 'join-error'){
+    alert(data.message);
+    document.querySelectorAll('#team-pick-buttons button').forEach(b => {b.disabled=false; b.textContent = b.textContent.split(' (')[0];});
+  } else if(data.type === 'your-turn'){
+    showClientChoice(data);
+  } else if(data.type === 'spectate'){
+    showClientSpectate(data);
+  } else if(data.type === 'result'){
+    showClientResult(data);
+  } else if(data.type === 'score-update'){
+    document.getElementById('client-team-score').textContent = data.score;
+    document.getElementById('client-rank').textContent = `${data.rank}위/${data.totalTeams}`;
+  }
+}
+
+function showClientChoice(data){
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div class="client-vs">상대 팀</div>
+    <div class="client-opponent">${data.opponent}</div>
+    <div class="client-round-info">매치 ${data.matchNum}/${data.totalMatches} · 라운드 ${data.round}/${data.totalRounds}</div>
+    <div class="client-choice-grid">
+      <button class="big-choice-btn coop" onclick="clientChoose('C')">
+        <span class="icon">🤝</span>협력 (C)
+      </button>
+      <button class="big-choice-btn defect" onclick="clientChoose('D')">
+        <span class="icon">💢</span>배신 (D)
+      </button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:12px">
+      💡 협력×협력 = 3:3 / 협력×배신 = 0:5 / 배신×배신 = 1:1
+    </div>
+  `;
+}
+
+function clientChoose(c){
+  hostConn.send({type:'choice', teamId:state.myTeamId, choice:c});
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div style="font-size:64px">${c==='C'?'🤝':'💢'}</div>
+    <div style="font-size:24px;font-weight:700;color:${c==='C'?'var(--coop)':'var(--defect)'};margin-top:12px">
+      ${c==='C'?'협력':'배신'} 선택!
+    </div>
+    <div style="font-size:14px;color:var(--muted);margin-top:8px">상대 팀의 선택 대기 중...</div>
+  `;
+}
+
+function showClientSpectate(data){
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div style="font-size:48px">👀</div>
+    <div style="font-size:18px;margin:12px 0">관전 중</div>
+    <div style="font-size:22px;font-weight:700;color:var(--accent)">${data.matchA} vs ${data.matchB}</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px">라운드 ${data.round}/${data.totalRounds}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:12px">교수님 화면을 함께 보세요</div>
+  `;
+}
+
+function showClientResult(data){
+  const status = document.getElementById('client-status');
+  const myC = data.myChoice, oppC = data.oppChoice;
+  status.innerHTML = `
+    <div style="font-size:13px;color:var(--muted)">결과</div>
+    <div class="client-result-symbols">
+      ${myC==='C'?'🤝':'💢'} <span style="color:var(--muted);margin:0 8px">vs</span> ${oppC==='C'?'🤝':'💢'}
+    </div>
+    <div class="client-result-text">
+      나: <b style="color:${myC==='C'?'var(--coop)':'var(--defect)'}">${myC==='C'?'협력':'배신'}</b>
+      / 상대: <b style="color:${oppC==='C'?'var(--coop)':'var(--defect)'}">${oppC==='C'?'협력':'배신'}</b>
+    </div>
+    <div class="client-result-points">+${data.myPoints}점</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">상대 +${data.oppPoints}점</div>
+  `;
+}
+
+// ============ UTILITY ============
+function showConnIndicator(state, text){
+  const ind = document.getElementById('conn-indicator');
+  ind.classList.remove('hidden');
+  ind.className = 'connection-indicator '+state;
+  ind.textContent = text;
+}
+</script>
+</body>
+</html>
