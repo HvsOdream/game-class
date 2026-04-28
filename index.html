@@ -1127,4 +1127,88 @@ function renderMatchProgress(){
     const [a,b] = pair;
     const ta = state.teams[a].name, tb = state.teams[b].name;
     const records = state.pairHistory[`${a}_${b}`] || [];
-    const complete
+    const completed = records.length;
+    const total = state.roundsPerPair;
+    let cls, status, icon;
+    if(idx < state.currentMatch){
+      cls = 'done'; status = `완료 (${completed}/${total})`; icon = '✅';
+    } else if(idx === state.currentMatch){
+      cls = 'active'; status = `진행 중 R${state.currentRound}/${total}`; icon = '🔵';
+    } else {
+      cls = 'pending'; status = `대기`; icon = '⚪';
+    }
+    html += `<div class="match-card ${cls}"><div style="font-size:10px;color:var(--muted)">매치 ${idx+1}</div><div style="font-weight:700;margin:4px 0;font-size:13px">${ta} vs ${tb}</div><div style="font-size:11px">${icon} ${status}</div></div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function showClientChoice(data){
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div class="client-vs">상대 팀</div>
+    <div class="client-opponent">${data.opponent}</div>
+    <div class="client-round-info">매치 ${data.matchNum}/${data.totalMatches} · 라운드 ${data.round}/${data.totalRounds}</div>
+    <div class="client-choice-grid">
+      <button class="big-choice-btn coop" onclick="clientChoose('C')">
+        <span class="icon">🤝</span>협력 (C)
+      </button>
+      <button class="big-choice-btn defect" onclick="clientChoose('D')">
+        <span class="icon">💢</span>배신 (D)
+      </button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:12px">
+      💡 협력×협력 = 3:3 / 협력×배신 = 0:5 / 배신×배신 = 1:1
+    </div>
+  `;
+}
+
+function clientChoose(c){
+  hostConn.send({type:'choice', teamId:state.myTeamId, choice:c});
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div style="font-size:64px">${c==='C'?'🤝':'💢'}</div>
+    <div style="font-size:24px;font-weight:700;color:${c==='C'?'var(--coop)':'var(--defect)'};margin-top:12px">
+      ${c==='C'?'협력':'배신'} 선택!
+    </div>
+    <div style="font-size:14px;color:var(--muted);margin-top:8px">상대 팀의 선택 대기 중...</div>
+  `;
+}
+
+function showClientSpectate(data){
+  const status = document.getElementById('client-status');
+  status.innerHTML = `
+    <div style="font-size:48px">👀</div>
+    <div style="font-size:18px;margin:12px 0">관전 중</div>
+    <div style="font-size:22px;font-weight:700;color:var(--accent)">${data.matchA} vs ${data.matchB}</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px">라운드 ${data.round}/${data.totalRounds}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:12px">교수님 화면을 함께 보세요</div>
+  `;
+}
+
+function showClientResult(data){
+  const status = document.getElementById('client-status');
+  const myC = data.myChoice, oppC = data.oppChoice;
+  status.innerHTML = `
+    <div style="font-size:13px;color:var(--muted)">결과</div>
+    <div class="client-result-symbols">
+      ${myC==='C'?'🤝':'💢'} <span style="color:var(--muted);margin:0 8px">vs</span> ${oppC==='C'?'🤝':'💢'}
+    </div>
+    <div class="client-result-text">
+      나: <b style="color:${myC==='C'?'var(--coop)':'var(--defect)'}">${myC==='C'?'협력':'배신'}</b>
+      / 상대: <b style="color:${oppC==='C'?'var(--coop)':'var(--defect)'}">${oppC==='C'?'협력':'배신'}</b>
+    </div>
+    <div class="client-result-points">+${data.myPoints}점</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">상대 +${data.oppPoints}점</div>
+  `;
+}
+
+// ============ UTILITY ============
+function showConnIndicator(s, text){
+  const ind = document.getElementById('conn-indicator');
+  ind.classList.remove('hidden');
+  ind.className = 'connection-indicator '+s;
+  ind.textContent = text;
+}
+</script>
+</body>
+</html>
