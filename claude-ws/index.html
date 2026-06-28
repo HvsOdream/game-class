@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="bright" class="present">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>똘똘한 AI 조교가 왔습니다 — 한 번만 가르치면 되는 클로드 활용법 (서일대 교수 워크숍)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-kopubworld@1.0">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --orange-900:#B8431C;--orange-700:#E8642C;--orange-500:#F08755;--orange-300:#F4A582;
+  --orange-100:#FCE5DC;--orange-50:#FDF4EE;
+  --ink-900:#1A1714;--ink-800:#2A2520;--ink-700:#4A423B;--ink-500:#6B6058;--ink-400:#8A7F76;
+  --ink-200:#D9D2CA;--ink-100:#E8E2DA;--ink-50:#F5F1EB;--paper:#FBF8F3;--white:#fff;
+  --font-display:"Malgun Gothic","맑은 고딕","KoPubWorld Batang",sans-serif;
+  --font-body:"KoPubWorld Dotum","Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono","SF Mono",monospace;
+  --bg:var(--paper);--bg-card:var(--white);--bg-soft:var(--ink-50);--fg:var(--ink-800);
+  --fg-strong:var(--ink-900);--fg-muted:var(--ink-500);--fg-meta:var(--ink-400);
+  --border:var(--ink-100);--border-strong:var(--ink-200);
+  --accent:var(--orange-700);--accent-deep:var(--orange-900);--accent-soft:var(--orange-100);--accent-faint:var(--orange-50);
+  --green:#0a7d56;--green-soft:#e3f3ec;--red:#b23a2c;--red-soft:#f7e7e3;--purple:#7a4fd0;--purple-soft:#f0e9fb;
+}
+html[data-theme="dark"]{--bg:var(--ink-900);--bg-card:var(--ink-800);--bg-soft:#1F1B17;--fg:#EAE4DC;
+  --fg-strong:#FBF8F3;--fg-muted:#B8AFA6;--fg-meta:#8A7F76;--border:#3A332D;--border-strong:#4A423B;
+  --accent:var(--orange-500);--accent-deep:var(--orange-300);--accent-soft:#3A2A20;--accent-faint:#2A1E16;
+  --green-soft:#16302a;--red-soft:#33211e;--purple-soft:#251c33;}
+html[data-theme="sepia"]{--bg:#F4ECDD;--bg-card:#FBF4E4;--bg-soft:#EBE0CB;--fg:#3A2E1F;--fg-strong:#2A1F12;
+  --fg-muted:#6B5A45;--fg-meta:#8B7A65;--border:#D9C9AD;--border-strong:#C4B093;
+  --accent:var(--orange-900);--accent-deep:#8A2F12;--accent-soft:#F2DEC8;--accent-faint:#F8EEDC;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font-body);font-size:16px;line-height:1.7;color:var(--fg);background:var(--bg);letter-spacing:-.01em;-webkit-font-smoothing:antialiased;transition:background .24s,color .24s}
+b,strong{font-weight:700;color:var(--fg-strong)}
+.mono{font-family:var(--font-mono)}
+.progress-rail{position:fixed;top:0;left:0;right:0;height:3px;background:var(--border);z-index:1000}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--orange-700),var(--orange-500));transition:width .18s}
+.topbar{position:sticky;top:3px;z-index:900;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand-mark{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg-strong);text-decoration:none}
+.brand-symbol{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--orange-700),var(--orange-300));position:relative;flex-shrink:0}
+.brand-symbol::before,.brand-symbol::after{content:"";position:absolute;left:5px;right:5px;height:2px;background:#fff;border-radius:1px}
+.brand-symbol::before{top:9px}.brand-symbol::after{bottom:9px}
+.brand-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--fg-meta)}
+.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toggle{display:inline-flex;background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:3px}
+.toggle .lab{font-size:10px;font-family:var(--font-mono);color:var(--fg-meta);align-self:center;padding:0 6px;letter-spacing:.08em}
+.toggle button{background:transparent;border:0;min-width:34px;height:30px;padding:0 11px;border-radius:999px;cursor:pointer;color:var(--fg-muted);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.toggle button:hover{color:var(--fg-strong)}
+.toggle button[aria-pressed="true"]{background:var(--bg-card);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.layout{max-width:1180px;margin:0 auto;padding:32px 28px 120px;display:grid;grid-template-columns:240px 1fr;gap:56px}
+@media(max-width:900px){.layout{grid-template-columns:1fr;padding:22px 18px 90px;gap:22px}}
+.side-nav{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 110px);overflow-y:auto}
+.side-nav-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;color:var(--fg-meta);text-transform:uppercase;margin:0 0 12px;padding-left:4px}
+.side-nav a{display:block;padding:7px 12px;font-size:13.5px;color:var(--fg-muted);text-decoration:none;border-left:2px solid transparent;line-height:1.4}
+.side-nav a:hover{color:var(--fg-strong);background:var(--bg-soft)}
+.side-nav a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.side-nav .nav-time{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--fg-meta);text-transform:uppercase;margin:16px 0 6px;padding-left:12px;display:block}
+@media(max-width:900px){.side-nav{position:static;max-height:none;border-bottom:1px solid var(--border);padding-bottom:12px}}
+.content section{scroll-margin-top:84px;margin-bottom:74px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:inline-block}
+h1.hero-title{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,48px);line-height:1.2;color:var(--fg-strong);margin:0 0 18px;letter-spacing:-.02em}
+h1.hero-title .accent{color:var(--accent)}
+.hero-sub{font-size:18px;color:var(--fg-muted);max-width:680px;margin:0 0 22px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.hero-meta span{font-family:var(--font-mono);font-size:11.5px;background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:5px 12px;color:var(--fg-muted)}
+.section-header{margin-bottom:18px}
+.section-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:var(--accent-faint);border:1px solid var(--accent-soft);border-radius:999px;padding:4px 11px;display:inline-block;margin-bottom:12px}
+h2{font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,32px);line-height:1.3;color:var(--fg-strong);margin:0 0 8px}
+.section-lead{font-size:16.5px;color:var(--fg-muted);margin:0;max-width:700px}
+h3{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--fg-strong);margin:28px 0 8px}
+p{margin:10px 0}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.card.clickable{cursor:pointer;transition:transform .12s,border-color .12s}
+.card.clickable:hover{transform:translateY(-2px);border-color:var(--accent)}
+.card-icon{width:38px;height:38px;border-radius:10px;background:var(--accent-faint);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.card-icon i{width:20px;height:20px}
+.card h4{font-family:var(--font-display);font-size:17px;margin:0 0 6px;color:var(--fg-strong)}
+.card p{font-size:13.8px;margin:0;color:var(--fg-muted)}
+.card-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-meta);margin-bottom:6px}
+.callout{display:flex;gap:12px;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14.5px}
+.callout > i{flex-shrink:0;width:18px;height:18px;color:var(--accent);margin-top:2px}
+.callout strong{color:var(--accent-deep)}
+.callout-info{border-left:3px solid var(--orange-500)}.callout-tip{border-left:3px solid var(--orange-300)}
+.callout-warn{border-left:3px solid var(--orange-900)}.callout-danger{border-left:3px solid var(--red);background:var(--red-soft)}.callout-ok{border-left:3px solid var(--green);background:var(--green-soft)}
+.diagram{width:100%;height:auto;margin:18px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:10px}
+.slot-board{display:grid;gap:12px;margin:16px 0}
+.slot{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;border-top:3px solid var(--orange-700)}
+.slot.ce{border-top-color:var(--orange-300)}.slot.se{border-top-color:var(--ink-700)}
+.slot-num{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-meta)}
+.slot-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--accent-faint);color:var(--accent-deep);border-radius:5px;padding:2px 9px;margin:6px 8px 2px 0}
+.slot h5{font-family:var(--font-display);font-size:16px;margin:6px 0 4px;color:var(--fg-strong)}
+.slot p{margin:6px 0;font-size:14px;color:var(--fg)}
+.acro{font-family:var(--font-mono);font-size:12.3px;background:var(--accent-faint);border-left:3px solid var(--accent);border-radius:5px;padding:9px 13px;margin:10px 0;color:var(--fg-muted);line-height:1.6}
+.acro b{color:var(--accent-deep)}
+.prompt-box{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:12px 0;background:var(--bg-card)}
+.prompt-label{display:flex;align-items:center;gap:8px;background:var(--bg-soft);padding:9px 14px;font-size:12.5px;font-weight:600;color:var(--fg-strong)}
+.prompt-label i{width:14px;height:14px;color:var(--accent)}
+.prompt-persona{margin-left:auto;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-meta);font-weight:500}
+.prompt-text{margin:0;padding:14px 16px;font-family:var(--font-mono);font-size:12.3px;line-height:1.65;white-space:pre-wrap;word-break:break-word;color:var(--fg)}
+.prompt-actions{display:flex;justify-content:flex-end;padding:8px 12px;border-top:1px solid var(--border)}
+.copy-btn,.mini-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:var(--bg-card);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--fg);cursor:pointer;font-family:var(--font-body)}
+.copy-btn:hover,.mini-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{border-color:var(--green);color:var(--green)}
+.copy-btn i{width:13px;height:13px}
+.term{border-bottom:1px dotted var(--accent);cursor:help;font-weight:600;position:relative}
+.term:hover::after,.term.show::after{content:attr(data-term);position:absolute;left:0;bottom:140%;width:260px;background:var(--ink-900);color:#F5F1EB;font-family:var(--font-body);font-weight:400;font-size:12px;line-height:1.55;padding:9px 12px;border-radius:8px;z-index:40;box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.gates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+@media(max-width:640px){.gates{grid-template-columns:1fr}}
+.gate{text-align:left;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;cursor:pointer;font-family:inherit;color:inherit;transition:transform .12s,border-color .12s}
+.gate:hover{transform:translateY(-2px);border-color:var(--accent)}
+.gate .gt{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--fg-strong)}
+.gate .gt i{width:17px;height:17px;color:var(--accent)}
+.gate .gd{color:var(--fg-muted);font-size:13px;margin-top:6px}
+.gate .gb{display:inline-block;margin-top:9px;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;font-weight:600;padding:3px 9px;border-radius:999px;text-transform:uppercase}
+.gb2{background:var(--accent-faint);color:var(--accent-deep)}.gb3{background:var(--purple-soft);color:var(--purple)}
+.quiz{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:18px 0}
+.quiz-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.quiz h4{font-family:var(--font-display);font-size:18px;margin:4px 0 6px;color:var(--fg-strong)}
+.q{margin:14px 0;padding-top:13px;border-top:1px solid var(--border)}.q:first-of-type{border-top:0}
+.quiz>h4{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+.quiz>h4 .qchev{margin-left:auto;transition:transform .2s;font-size:15px;color:var(--fg-muted);font-weight:400}
+.quiz.folded>h4 .qchev{transform:rotate(-90deg)}
+.quiz.folded .q,.quiz.folded .quiz-eyebrow{display:none}
+.quiz.folded{padding-bottom:18px}
+.quiz .qcount{font-family:var(--font-mono);font-size:11px;color:var(--fg-meta);font-weight:500;margin-left:4px}
+.slot[data-depth]{cursor:pointer}
+.slot[data-depth]:hover{transform:translateY(-2px);border-color:var(--accent);transition:transform .12s,border-color .12s}
+.slothint{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:var(--accent);font-weight:600}
+.slothint i{width:12px;height:12px}
+.qq{font-weight:600;font-size:14.5px;margin-bottom:8px;color:var(--fg-strong)}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--bg-card);border-radius:9px;padding:9px 13px;margin:6px 0;font-size:13.8px;cursor:pointer;font-family:inherit;color:inherit}
+.opt:hover{border-color:var(--accent)}
+.opt.correct{border-color:var(--green);background:var(--green-soft);font-weight:600}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.exp{display:none;margin-top:8px;font-size:13px;background:var(--bg-soft);border-radius:9px;padding:10px 13px;color:var(--fg-muted)}
+.exp strong{color:var(--accent-deep)}.q.answered .exp{display:block}
+.instructor-card{display:flex;gap:18px;align-items:flex-start;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.instructor-avatar{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--orange-700),var(--orange-300));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-size:24px;font-weight:700;flex-shrink:0}
+.instructor-card h3{margin:0 0 2px}.instructor-card .role{font-size:13.5px;color:var(--fg-muted)}
+.instructor-card ul{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--fg-muted)}
+.assets{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:14px 0;background:var(--bg-card)}
+.assets .ah{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--bg-soft);flex-wrap:wrap}
+.assets .ah .at{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--fg-strong)}
+.assets .ah .zips{margin-left:auto;display:flex;gap:6px}
+.asset{border-top:1px solid var(--border)}
+.asset .arow{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer}
+.asset .arow:hover{background:var(--bg-soft)}
+.asset .acat{font-family:var(--font-mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--accent-faint);color:var(--accent-deep)}
+.asset .an{font-weight:600;font-size:13.7px;flex:1;color:var(--fg-strong)}
+.asset .asz{font-family:var(--font-mono);font-size:11px;color:var(--fg-meta);width:54px;text-align:right}
+.asset .aview{max-height:0;overflow:hidden;transition:max-height .3s;background:var(--bg-soft)}
+.asset.open .aview{max-height:560px;overflow:auto}
+.asset .aview pre{margin:0;padding:13px 16px;font-family:var(--font-mono);font-size:11.7px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.asset .aacts{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 13px}
+.lens{display:none;border-radius:12px;padding:13px 16px;margin:12px 0;font-size:14.5px;border:1px solid var(--border)}
+html.lv-beginner .lens-b{display:block}html.lv-expert .lens-e{display:block}
+.lens-b{background:var(--green-soft);border-left:3px solid var(--green)}.lens-e{background:var(--accent-faint);border-left:3px solid var(--accent)}
+.lens .lh{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:3px;color:var(--accent-deep)}
+.lens-b .lh{color:var(--green)}
+.bots{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.bots{grid-template-columns:1fr}}
+.bot{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;cursor:pointer;position:relative;transition:transform .12s,border-color .12s}
+.bot:hover{transform:translateY(-2px);border-color:var(--accent)}
+.bot .bn{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--fg-strong)}
+.bot .idx{width:24px;height:24px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.bot .role{color:var(--fg-muted);font-size:13.2px;margin:8px 0 0}
+.bot .detail{max-height:0;overflow:hidden;transition:max-height .28s}.bot.open .detail{max-height:240px}
+.bot .detail-in{padding-top:10px;margin-top:10px;border-top:1px dashed var(--border);font-size:12.6px;color:var(--fg-muted)}
+.bot .pin{position:absolute;top:13px;right:14px;font-family:var(--font-mono);font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:999px;text-transform:uppercase}
+.p-start{background:var(--green-soft);color:var(--green)}.p-spec{background:var(--purple-soft);color:var(--purple)}.p-pro{background:var(--accent-faint);color:var(--accent-deep)}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14.5px;cursor:pointer}.check input{margin-top:5px}
+.overlay{position:fixed;inset:0;background:rgba(26,23,20,.55);z-index:1100;display:none;align-items:flex-start;justify-content:center;padding:42px 16px;overflow-y:auto}
+.overlay.on{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;max-width:780px;width:100%;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+.modal-head{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);border-radius:18px 18px 0 0}
+.crumb{font-family:var(--font-mono);font-size:11.5px;color:var(--fg-meta);flex:1}.crumb b{color:var(--fg-strong)}
+.modal-body{padding:20px 22px}
+.modal-body h4{font-family:var(--font-display);font-size:19px;margin:0 0 8px;color:var(--fg-strong)}
+.modal-body h5{font-size:14px;margin:18px 0 4px;color:var(--accent-deep);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:var(--ink-900);color:#F5F1EB;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:1200;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50
+
+/* ===== 수업(프로젝션) 모드 — 글자 확대(가로 폭 유지) ===== */
+html.present .content{font-size:17px}
+html.present .hero-sub{font-size:25px;line-height:1.85}
+html.present .section-lead{font-size:20px;line-height:1.8}
+html.present .card h4{font-size:20px}
+html.present .card p{font-size:16.5px;line-height:1.7}
+html.present .card-eyebrow{font-size:13px}
+html.present .callout{font-size:17.5px;line-height:1.75}
+html.present .callout i{width:22px;height:22px}
+html.present .slot h5{font-size:17px}
+html.present .quiz h4{font-size:21px}
+html.present .qq{font-size:20px;line-height:1.6}
+html.present .opt{font-size:17.5px;padding:14px 18px}
+html.present .prompt-text{font-size:15px;line-height:1.7}
+html.present .lens{font-size:17.5px;line-height:1.75}
+html.present .modal-body{font-size:18px;line-height:1.7}
+html.present .modal-body h4{font-size:23px}
+html.present table.tbl{font-size:17.5px}
+html.present table.tbl th,html.present table.tbl td{padding:12px 14px}
+html.present .nav-link{font-size:14.5px}
+html.present .eyebrow{font-size:15px}
+html.present .bn{font-size:17px}
+@media print{html.present .content{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+<div class="topbar"><div class="topbar-inner">
+  <a class="brand-mark" href="#top"><span class="brand-symbol"></span>서일대 교수 워크숍 <span class="brand-meta">클로드 활용법 · 입체 교재</span></a>
+  <div class="tools">
+    <div class="toggle" role="group" aria-label="화면"><span class="lab">화면</span>
+      <button data-view="std" aria-pressed="false">보통</button><button data-view="present" aria-pressed="true">수업</button></div>
+    <div class="toggle" role="group" aria-label="테마">
+      <button data-theme="bright" aria-pressed="true" title="브라이트"><i data-lucide="sun"></i></button>
+      <button data-theme="sepia" aria-pressed="false" title="세피아"><i data-lucide="book-open"></i></button>
+      <button data-theme="dark" aria-pressed="false" title="다크"><i data-lucide="moon"></i></button></div>
+  </div>
+</div></div>
+
+<div class="layout" id="top">
+  <nav class="side-nav">
+    <p class="side-nav-title">목차</p>
+    <a class="nav-link" href="#intro">강의를 시작하며</a>
+    <a class="nav-link" href="#instructor">강사 소개</a>
+    <a class="nav-link" href="#syllabus">오늘의 3시간</a>
+    <span class="nav-time">PART 1 · 친해지기</span>
+    <a class="nav-link" href="#what">클로드로 뭘 하나</a>
+    <a class="nav-link" href="#ask">잘 시키는 법</a>
+    <a class="nav-link" href="#tasks">교수 업무별 활용</a>
+    <span class="nav-time">PART 2 · 한 번만 가르치면</span>
+    <a class="nav-link" href="#setup-why">왜 셋업인가</a>
+    <a class="nav-link" href="#claude-md">지침 · 나를 기억</a>
+    <a class="nav-link" href="#skills">스킬 · 반복을 자산으로</a>
+    <a class="nav-link" href="#cowork">코웍 · 파일과 동기화</a>
+    <a class="nav-link" href="#expand">확장 · 크롬·바톤</a>
+    <span class="nav-time">PART 3 · 만들고 평가하기</span>
+    <a class="nav-link" href="#make">대화로 만들기</a>
+    <a class="nav-link" href="#make-demo">만들기 프롬프트</a>
+    <a class="nav-link" href="#evaluate">AI로 평가하기</a>
+    <a class="nav-link" href="#safety">안전하게</a>
+    <a class="nav-link" href="#practice">지금, 내 것으로</a>
+    <span class="nav-time">마무리</span>
+    <a class="nav-link" href="#wrap">강의를 닫으며</a>
+  </nav>
+
+  <div class="content">
+    <!-- intro -->
+    <section id="intro">
+      <span class="eyebrow">서일대학교 교수 워크숍 · 3시간 실습</span>
+      <h1 class="hero-title">똘똘한 <span class="accent">AI 조교</span>가 왔습니다</h1>
+      <p class="hero-sub">한 번만 가르치면 되는 클로드 활용법. 매번 처음부터 설명하는 대신, <span class="term" data-term="지침(CLAUDE.md)에 ‘나는 누구·어떻게 답해줘’를 한 번 적어두면, 이후 모든 대화가 그 위에서 시작됩니다.">한 번 가르쳐 둔</span> 조교처럼 — 강의·평가·행정의 반복을 맡기고, 교수는 판단에 집중합니다.</p>
+      <div class="hero-meta"><span>3시간 · 실습 워크숍</span><span>깊이 3단</span><span>대상 · 서일대 교수</span><span>노트북 + 클로드 계정</span><span>결과물 · 내 조교 셋업</span></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="messages-square"></i></div><h4>친해지기</h4><p>무엇을 시킬 수 있고, 어떻게 시켜야 잘 나오는지 — 활용의 기초.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="graduation-cap"></i></div><h4>한 번만 가르치기</h4><p>지침·스킬·폴더로 ‘나를 기억하는 조교’ 셋업 — 매번 처음부터 그만.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="wand-2"></i></div><h4>만들고 평가하기</h4><p>강의자료·퀴즈 제작과 루브릭 채점·피드백까지, 손으로 직접.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="info"></i><div><strong>읽는 법</strong> — 본문은 누구나, <strong>카드를 누르면</strong> 심화·실습이 팝업으로 열립니다. 상단 <strong>화면</strong>(보통·수업)·<strong>테마</strong>(종이·세피아·다크)를 바꿔 보세요. <strong>이 교재도 클로드로 만들었습니다.</strong></div></div>
+    </section>
+
+    <!-- instructor -->
+    <section id="instructor">
+      <div class="section-header"><span class="section-tag">소개</span><h2>강사 소개</h2></div>
+      <div class="instructor-card">
+        <div class="instructor-avatar">김</div>
+        <div><h3>김민철</h3><p class="role">서일대학교 AI게임융합학과 교수 · 학과장 — “배워서 오늘 쓰는 AI”</p>
+          <ul><li>게임·문화산업 박사 · 게임 개발 스타트업 창업·운영 8년(투자 유치 후 M&amp;A)</li><li>전문대학·대학교육협의회 전문 연수 강사</li><li>생성형 AI를 교육·연구·행정의 실무 도구로 옮기는 강의·교재 제작</li><li>직접 만든 클로드 스킬 30여 개 운용 중</li></ul></div>
+      </div>
+    </section>
+
+    <!-- syllabus -->
+    <section id="syllabus">
+      <div class="section-header"><span class="section-tag">목차</span><h2>오늘의 3시간</h2>
+        <p class="section-lead">총 180분. 보는 시간보다 <b>직접 해보는 시간</b>에 무게를 둡니다. 노트북·클로드 계정·내 자료 1개를 곁에 두세요.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="messages-square"></i></div><h4>PART 1 — 친해지기 (40분)</h4><p>클로드로 뭘 하나 · 잘 시키는 법 · 교수 업무별 활용.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="graduation-cap"></i></div><h4>PART 2 — 한 번만 가르치면 (60분)</h4><p>지침(CLAUDE.md) · 스킬 · 코웍·폴더 · 확장(크롬·바톤).</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="wand-2"></i></div><h4>PART 3 — 만들고 평가하기 (70분)</h4><p>대화로 만들기 · 만들기 실습 · AI 평가 · 안전 · 내 것으로.</p></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="coffee"></i><div>PART 2·3 사이 <strong>휴식 10분</strong>. 오늘 끝나면 손에 <strong>내 조교 셋업(지침 1개·스킬 1개)</strong>과 <strong>내 자료 1장</strong>이 남습니다.</div></div>
+    </section>
+
+    <!-- ===== PART 1 ===== -->
+    <section id="what">
+      <div class="section-header"><span class="section-tag">PART 1 · 친해지기</span><h2>클로드로 무엇을 하나</h2>
+        <p class="section-lead">클로드는 ‘검색’이 아니라 <b>일을 같이 하는 조교</b>입니다. 도구를 배우는 게 아니라, 무엇을 원하는지 말로 설명하면 됩니다. 카드를 눌러 예시를 보세요.</p></div>
+      <div class="card-grid">
+        <div class="card clickable" data-depth="what-1" data-label="쓰기·정리"><div class="card-icon"><i data-lucide="pen-line"></i></div><h4>쓰기 · 정리</h4><p>공문·이메일·보고서 초안과 다듬기, 회의록, 긴 문서 요약.</p></div>
+        <div class="card clickable" data-depth="what-2" data-label="가르치기"><div class="card-icon"><i data-lucide="presentation"></i></div><h4>가르치기</h4><p>강의 슬라이드·핸드아웃·퀴즈, 개념 설명, 사례·비유 만들기.</p></div>
+        <div class="card clickable" data-depth="what-3" data-label="연구·분석"><div class="card-icon"><i data-lucide="microscope"></i></div><h4>연구 · 분석</h4><p>논문 요약·구조화, 데이터·표 정리, 코드·수식 보조, 이미지 해석.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="layout-grid"></i><div><strong>챗봇 vs 코웍</strong> — <strong>챗봇</strong>(claude.ai)은 대화로 바로 받아쓰는 자리, <strong>코웍(Cowork)</strong>은 대화로 만든 결과를 <strong>내 컴퓨터 폴더에 파일로</strong> 만들고 저장하는 데스크톱 도구입니다. 오늘은 둘 다 씁니다.</div></div>
+    </section>
+
+    <section id="ask">
+      <div class="section-header"><span class="section-tag">PART 1 · 친해지기</span><h2>잘 시키는 법</h2>
+        <p class="section-lead">같은 클로드도 ‘어떻게 시키느냐’로 결과가 갈립니다. 셋만 지켜도 수정 횟수가 확 줄어듭니다.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">① 세 가지를 담아</div><h4>대상 · 목적 · 분량</h4><p>“학부 1학년 / 시험 대비 / 한 장”처럼. 막연하면 막연한 결과가 옵니다.</p></div>
+        <div class="card"><div class="card-eyebrow">② 가진 자료를</div><h4>강의안·문서 첨부</h4><p>기존 자료를 함께 주면 ‘추측’이 ‘사실’로 — 내 맥락이 반영됩니다.</p></div>
+        <div class="card"><div class="card-eyebrow">③ 대화로 깎기</div><h4>한 번에 하나씩</h4><p>“더 좋게”가 아니라 “3번 항목을 표로, 더 짧게”. 초안을 빠르게 받고 다듬습니다.</p></div>
+      </div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>바로 써보는 프롬프트</span><span class="prompt-persona">대상·목적·분량 담기</span></div>
+        <div class="prompt-text">나는 [학과] [과목] 담당 교수다. [주차/주제]를 [학년] 학생에게 가르친다. [50분] 분량으로 핵심 개념을 슬라이드당 하나씩 정리한 발표 슬라이드 개요를 만들어 줘. 발표자 노트도 함께. 차분한 학술 톤.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-tip"><i data-lucide="lightbulb"></i><div><strong>사진은?</strong> 클로드는 사진을 ‘만들지’ 못합니다(강점은 도식·차트·구조). 진짜 사진은 무료 스톡 URL을 주거나, 골격만 만들고 파일로 내보낸 뒤 직접 끼워 넣으세요.</div></div>
+    </section>
+
+    <section id="tasks">
+      <div class="section-header"><span class="section-tag">PART 1 · 친해지기</span><h2>교수 업무별 활용 카드</h2>
+        <p class="section-lead">매주 반복되는 일부터. 카드를 누르면 예시 입력과 결과물이 열립니다.</p></div>
+      <div class="bot-grid" id="botGrid"></div>
+    </section>
+
+    <!-- ===== PART 2 ===== -->
+    <section id="setup-why">
+      <div class="section-header"><span class="section-tag">PART 2 · 한 번만 가르치면</span><h2>왜 ‘셋업’인가</h2>
+        <p class="section-lead">셋업 없는 AI는 <b>매번 처음부터</b> 시작합니다. 한 번 정해 두면 매번 절약됩니다 — 똘똘한 조교를 ‘채용’하는 것에 가깝습니다.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">셋업이 없으면</div><h4>매번 다시</h4><p>호칭·역할을 매번 설명, 파일은 여기저기, 어디까지 했는지 잊음, 같은 작업 반복.</p></div>
+        <div class="card"><div class="card-eyebrow">셋업이 있으면</div><h4>한 번의 투자</h4><p>지침이 자동 적용, 한 폴더에 누적, 바톤으로 이어받기, 스킬로 재사용.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="user-check"></i><div><strong>챗봇(임시 알바) vs 셋업한 조교(전담 직원)</strong> — 임시 알바는 매번 처음부터 가르쳐야 하지만, 셋업한 조교는 우리 일하는 방식을 이미 알고 부르면 같은 품질로 일합니다.</div></div>
+    </section>
+
+    <section id="claude-md">
+      <div class="section-header"><span class="section-tag">PART 2 · 셋업</span><h2>지침(CLAUDE.md) — 나를 기억하는 클로드</h2>
+        <p class="section-lead">한 번 적어 두면 <b>모든 대화가 그 위에서 시작</b>합니다. 이게 ‘한 번만 가르치면’의 핵심입니다.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">나에 대해</div><h4>소속·담당·호칭</h4><p>내가 누구인지, 어떤 일을 하는지.</p></div>
+        <div class="card"><div class="card-eyebrow">응답 방식</div><h4>말투·길이·형식</h4><p>한국어·간결·보고체 등 원하는 방식.</p></div>
+        <div class="card"><div class="card-eyebrow">반복 규칙</div><h4>트리거 한 줄</h4><p>“회의록 써줘” → 바로 그 표준 양식으로.</p></div>
+      </div>
+      <h3>만드는 법 — 외우지 말고, 대화로</h3>
+      <p>① 나를 소개하듯 말하고 → ② “지금 내용을 내 지침에 기록해 줘” → ③ 이후 모든 대화가 그 지침 위에서 시작.</p>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>CLAUDE.md 샘플</span><span class="prompt-persona">복사해 채우기</span></div>
+        <div class="prompt-text"># (이름) 교수 — AI 지침
+
+## 나에 대해
+- 서일대학교 [학과] / 담당: [과목]
+- 호칭: 편하게 대화체로
+
+## 응답 방식
+- 한국어, 간결하게 / 공식 문서는 보고체
+
+## 반복 규칙
+- "회의록 써줘" → 표준 양식
+- "강의계획서" → 주차별 틀</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <h3>지침 만드는 가이드 — 메타 (그대로 가져다 쓰기)</h3>
+      <p>아래 가이드를 <b>코웍 채팅에 붙여넣고</b> “이 가이드로 내 지침 만들어줘”라고 하면, 클로드가 몇 가지를 묻고 CLAUDE.md를 만들어 줍니다.</p>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>메타 · 지침 생성 가이드</span><span class="prompt-persona">복사 → 코웍 채팅에 붙여넣기</span></div>
+        <div class="prompt-text"># 지침(CLAUDE.md) 생성 가이드 (메타)
+
+## 목적
+이 가이드를 코웍 채팅에 붙여넣고 &quot;이 가이드로 내 지침 만들어줘&quot;라고 하면,
+클로드가 몇 가지를 물어본 뒤 바로 쓸 수 있는 CLAUDE.md를 만들어 준다.
+
+## 클로드가 할 일
+1) 아래 4가지를 한 번에 묻는다. (모르면 비워두게)
+   - 나에 대해: 소속·학과·담당 과목, 호칭
+   - 응답 방식: 언어·길이·말투, 공식 문서 문체
+   - 반복 규칙: 자주 시키는 일 + 그때 원하는 양식 (트리거 한 줄로)
+   - (선택) 작업 환경: 폴더 위치, 자주 쓰는 도구
+2) 답을 받아 아래 형식의 CLAUDE.md로 정리해 출력한다.
+3) &quot;이 내용을 내 지침에 기록해&quot;라고 하면 적용한다.
+
+## 출력 형식
+# (이름) — AI 지침
+## 나에 대해
+- [소속 / 학과 / 담당 과목]
+- 호칭: [ ]
+## 응답 방식
+- [언어 · 길이 · 말투]
+- 공식 문서: [문체]
+## 반복 규칙 (트리거)
+- &quot;[말 한마디]&quot; -&gt; [정해진 양식/행동]
+
+## 품질 기준 (중요)
+| ❌ 막연 | ✅ 구체 |
+|--------|--------|
+| &quot;친절하게 답해줘&quot; | &quot;한국어 · 3문장 이내 · 대화체&quot; |
+| &quot;문서 잘 써줘&quot; | &quot;공식 문서는 보고체, 표 우선&quot; |
+| &quot;회의록 도와줘&quot; | &quot;‘회의록 써줘’ -&gt; 안건·결정·할일 양식&quot; |
+
+원칙: 트리거는 &#x27;말 한마디 -&gt; 정해진 결과&#x27;로. 추측·군더더기 금지.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="quiz" data-quiz>
+        <span class="quiz-eyebrow">이해 점검</span><h4>지침, 이렇게 이해하면 됩니다</h4>
+        <div class="q" data-a="1" data-explain="지침은 매번이 아니라 ‘한 번’ 적어두는 것입니다.">
+          <div class="qq">1. 지침(CLAUDE.md)의 핵심 효용은?</div>
+          <button class="opt">대화를 더 빠르게 입력하는 단축키</button>
+          <button class="opt">한 번 적어두면 모든 대화에 자동 적용</button>
+          <button class="opt">인터넷 검색을 대신해 주는 기능</button></div>
+        <div class="q" data-a="2" data-explain="외워서 쓰는 게 아니라, 대화한 뒤 ‘지침에 기록해’ 한마디.">
+          <div class="qq">2. 지침은 어떻게 만드나?</div>
+          <button class="opt">코드를 직접 작성한다</button>
+          <button class="opt">관리자에게 신청한다</button>
+          <button class="opt">대화로 소개한 뒤 “지침에 기록해”</button></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="play"></i><div><strong>지금 해보세요</strong> — 클로드에게 나를 한 문장으로 소개한 뒤 “지침에 기록해”라고 해보세요.</div></div>
+    </section>
+
+    <section id="skills">
+      <div class="section-header"><span class="section-tag">PART 2 · 셋업</span><h2>스킬 — 반복을 자산으로</h2>
+        <p class="section-lead">자주 하는 일에 <b>이름을 붙이는 것</b>이 스킬입니다. 잘 만든 프롬프트 하나가 곧 스킬 — 다음부터 한마디로.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="file-text"></i></div><h4>반복 업무</h4><p>회의록·강의계획서·보고서를 정해진 양식으로 한 번에.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="pen-tool"></i></div><h4>문체 스킬</h4><p>내 글 3~5편을 주면 어미·리듬·표현을 뽑아 ‘내 문체로 써줘’.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="layers"></i></div><h4>메타 스킬</h4><p>스킬 만드는 절차 자체를 스킬로 — “이걸 스킬로 만들어 줘”.</p></div>
+      </div>
+      <h3>스킬 만드는 3단계 (공통)</h3>
+      <p>① 내 자료(글·문서·목록)를 준다 → ② “여기서 패턴·규칙을 뽑아 줘” → ③ “이걸 [이름] 스킬로 만들어 줘”. 이후 한마디로 호출.</p>
+      <h3>오늘 실습 — 강사가 먼저 시연, 여러분은 ‘내 파일’로</h3>
+      <p>네 가지를 강사가 시연합니다. 그대로 따라 <b>각자 자기 파일을 올려 같은 분석을 요청</b>하세요. 네 유형을 한 번에 체감합니다.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">① 문체형</div><h4>문체 스킬</h4><p><b>시연</b> 내 글 3편 → 어미·리듬·표현 추출. <b>내 파일</b> 본인 글·메일 3편을 올려 ‘내 문체’ 뽑기.</p></div>
+        <div class="card"><div class="card-eyebrow">② 프레임워크형</div><h4>보고서 문체 스킬</h4><p><b>시연</b> 공문·보고서 샘플 → 보고체 규칙. <b>내 파일</b> 본인 보고서를 올려 규칙 추출.</p></div>
+        <div class="card"><div class="card-eyebrow">③ 정보형</div><h4>내 폴더 구조 스킬</h4><p><b>시연</b> 내 폴더 목록 → ‘어디 저장·어디서 찾기’ 규칙. <b>내 파일</b> 본인 폴더 목록을 올려 만들기.</p></div>
+        <div class="card"><div class="card-eyebrow">④ 참조형</div><h4>전공 자료 인용 스킬</h4><p><b>시연</b> 게임 이론 레퍼런스 → 인용 카드. <b>내 파일</b> 본인 전공 자료를 올려 인용 스킬로.</p></div>
+      </div>
+      <h3>스킬 만드는 스킬 — 메타 스킬 (그대로 가져다 쓰기)</h3>
+      <p>아래 가이드를 <b>코웍 채팅에 붙여넣고</b> “이 가이드로 [회의록] 스킬 만들어줘”라고 하면, 클로드가 형식까지 갖춘 스킬을 만들어 줍니다.</p>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>메타 스킬 · 스킬 생성 가이드</span><span class="prompt-persona">복사 → 코웍 채팅에 붙여넣기</span></div>
+        <div class="prompt-text"># K-META-SKILL: 스킬 생성 가이드
+
+## 품질 기준 (가장 중요)
+
+**핵심: 읽고 바로 실행 가능한가?**
+
+| ❌ 나쁜 스킬 | ✅ 좋은 스킬 |
+|-------------|-------------|
+| &quot;적절한 보상을 설계하라&quot; | &quot;기본 활동 5-10XP, 주간 과제 20-50XP&quot; |
+| &quot;난이도를 조절하라&quot; | &quot;정답률 70% 유지, 3연속 정답→난이도↑&quot; |
+| &quot;피드백을 제공하라&quot; | &quot;행동 후 3초 내 시각+청각 피드백&quot; |
+| &quot;좋은 제목을 써라&quot; | &quot;숫자 + 호기심 + 8자 이내&quot; |
+
+**원칙:** 요소 이름만 나열 = 실패. 수치/공식/비율까지 = 성공.
+
+---
+
+## 3유형 판단
+
+| 유형 | 언제 | 참고 |
+|------|------|------|
+| **프레임워크형** | 방법론/절차 전달 | k-grasp, k-precise |
+| **참조형** | 빠른 조회 | k-fun9, k-retention |
+| **정보형** | 팩트 제공 | k-psn-sadari |
+
+---
+
+## 프레임워크형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 3개+] 요청 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## [NAME] N요소
+| 요소 | 영어 | 한글 | 핵심 기준 |
+|------|------|------|----------|
+| X | ... | ... | [수치/공식] |
+
+## 요소별 상세
+### X - [명칭]
+**기준:** [구체적 수치]
+❌ ...
+✅ ...
+
+## 상황별 배합
+| 상황 | 강조 요소 |
+### [상황] 예시
+&quot;[실제 예문]&quot;
+
+## 관련 스킬
+```
+
+**체크:** □ 약어=단어 □ 5-8요소 □ 각 요소에 수치/기준 □ ❌/✅ 예시 □ 배합+예문
+
+---
+
+## 참조형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 3개+] 조회 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## 핵심 요소
+| # | 요소 | 핵심 | 기준값 |
+
+## 상황별 조합
+| 상황 | 조합 |
+
+## 체크리스트
+□ A? □ B? □ C?
+
+💡 [한 줄 팁]
+```
+
+**체크:** □ 50줄 이하 □ 3섹션 이하 □ 테이블에 기준값 □ 💡 팁
+
+---
+
+## 정보형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 10개+] 언급 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## Overview
+## 핵심 정보
+## [카테고리]
+## When to Apply
+```
+
+**체크:** □ 키워드 10개+ □ 계층 구조 □ When to Apply
+
+---
+
+## 약어 만들기
+
+| 좋은 예 | 의미 | 연결 |
+|---------|------|------|
+| GRASP | 파악하다 | 지식 습득 |
+| PRECISE | 정밀한 | 글쓰기 |
+| REWARD | 보상 | 게이미피케이션 |
+
+요소 정하기 → 첫 글자로 단어 → 안 되면 순서/동의어 → 안 되면 숫자형
+
+---
+*© 사다리스쿨 (www.sadarischool.com)*
+</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-tip"><i data-lucide="play"></i><div><strong>지금 해보세요</strong> — 강사 시연을 본 뒤, <b>자기 파일을 올려</b> 같은 분석을 요청하고, 위 메타 가이드로 “스킬로 만들어줘”라고 해보세요.</div></div>
+    </section>
+
+    <section id="cowork">
+      <div class="section-header"><span class="section-tag">PART 2 · 셋업</span><h2>코웍 — 내 파일과 동기화</h2>
+        <p class="section-lead">코웍(Cowork)은 대화로 만든 자료를 <b>내 폴더에 저장</b>하고, 클라우드 동기화로 <b>집↔연구실에서 이어 쓰게</b> 합니다.</p></div>
+      <div class="callout callout-info"><i data-lucide="folder-sync"></i><div><strong>원리</strong> — 클라우드(Dropbox·구글드라이브)가 폴더를 내 PC에 ‘비추고’, 코웍은 그 폴더를 봅니다. 파일을 옮기는 게 아니라 <strong>같은 폴더가 두 곳에 동시에</strong> 있습니다.</div></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="link"></i></div><h4>폴더 연결</h4><p>클라우드에 작업 폴더를 만들고 코웍에 연결.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="folder-tree"></i></div><h4>출력 규칙</h4><p>outputs 한곳에, 월별(YYYY-MM), ‘주제_버전_날짜’ 이름.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="refresh-cw"></i></div><h4>집↔연구실</h4><p>집에서 만든 자료를 다음 날 연구실에서 그대로.</p></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="play"></i><div><strong>지금 해보세요</strong> — 내 작업 폴더에 ‘2026-06’ 같은 월별 하위 폴더를 만들어 정리해 보세요.</div></div>
+    </section>
+
+    <section id="expand">
+      <div class="section-header"><span class="section-tag">PART 2 · 셋업</span><h2>확장 — 크롬 연계 · 바톤</h2>
+        <p class="section-lead">파일을 넘어 웹까지, 그리고 끊겨도 이어서. 필요할 때 한 단계 더.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="chrome"></i></div><h4>크롬 연계 (베타)</h4><p>보는 화면 그대로 읽고 정리 — “이 페이지 요약해줘”. 단, 로그인·결제 등 민감한 행동은 직접 확인.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="arrow-right-left"></i></div><h4>바톤 — 세션 인계</h4><p>“바톤 넘겨” / “바톤 받아” 한마디로 진행 맥락을 저장·복원. ‘어디까지 했지’를 없앱니다.</p></div>
+      </div>
+    </section>
+
+    <!-- ===== PART 3 ===== -->
+    <section id="make">
+      <div class="section-header"><span class="section-tag">PART 3 · 만들기</span><h2>대화로 만들기</h2>
+        <p class="section-lead">도구의 메뉴를 배우는 게 아니라, <b>만들고 싶은 걸 말로 설명</b>하면 됩니다. 짧은 반복이 제작의 전부.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="message-square"></i></div><h4>① 설명</h4><p>무엇을 만들지 자연어로 요청.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="eye"></i></div><h4>② 확인</h4><p>완성된 결과가 즉시 화면에.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="repeat"></i></div><h4>③ 수정</h4><p>“이 부분만 이렇게” 다시 요청. ②↔③ 반복.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="package"></i><div><strong>한 자리에서 다 만든다</strong> — 발표 슬라이드(PDF·PPTX) · 학생이 눌러보는 퀴즈·연습(웹) · 인쇄용 핸드아웃 · 개념 인포그래픽. 강의 한 주차 자료를 대화 한 번으로.</div></div>
+    </section>
+
+    <section id="make-demo">
+      <div class="section-header"><span class="section-tag">PART 3 · 만들기</span><h2>만들기 프롬프트 — 복사해서</h2>
+        <p class="section-lead">대괄호만 내 과목으로 바꾸세요. 한 번에 완성하지 말고 보면서 다듬기.</p></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>① 강의 슬라이드</span><span class="prompt-persona">시간으로 분량 지정</span></div>
+        <div class="prompt-text">[과목] [주차/주제] 강의 슬라이드를 만들어 줘. 대상은 [학년], [50분] 분량. 핵심 개념은 슬라이드당 하나씩, 발표자 노트도 함께. PDF·PPTX로 내보낼 수 있게.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>② 자가 점검 퀴즈(웹)</span><span class="prompt-persona">링크로 공유</span></div>
+        <div class="prompt-text">[과목 핵심 개념]에 대한 객관식 퀴즈를 만들어 줘. 5문항, 보기 4개, 정답을 고르면 해설이 보이게. 학생이 브라우저에서 직접 푸는 한 페이지 웹으로.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>③ 복습 세트 변환</span><span class="prompt-persona">기존 자료 첨부</span></div>
+        <div class="prompt-text">첨부한 [강의록/슬라이드]를 학생 복습용으로 변환해 줘. ① 한 줄 요약 ② 핵심 용어집 ③ 5문항 퀴즈. 우리 강의 톤에 맞게.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+    </section>
+
+    <section id="evaluate">
+      <div class="section-header"><span class="section-tag">PART 3 · 평가</span><h2>AI로 평가하기 — 판단은 내가</h2>
+        <p class="section-lead">평가의 <b>반복</b>(기준 적용·문장화·합산)은 맡기되, <b>판단</b>(무엇을·경계·최종 점수)은 교수가 쥡니다. AI는 1차 채점자.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">① 루브릭</div><h4>채점기준표 생성</h4><p>문항·모범답안·배점을 주면 항목·단계·배점 표를 한 번에.</p></div>
+        <div class="card"><div class="card-eyebrow">② 채점</div><h4>근거와 함께</h4><p>점수만 내지 말고 ‘답안 어디를 보고’ 그렇게 판정했는지 근거를.</p></div>
+        <div class="card"><div class="card-eyebrow">③ 피드백</div><h4>코치의 목소리로</h4><p>잘한 점 1·개선점 2·다음 조언 1을 격려하는 어조로.</p></div>
+      </div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="copy"></i><span>루브릭 + 채점 프롬프트</span><span class="prompt-persona">근거를 받아 검수</span></div>
+        <div class="prompt-text">너는 대학 서술형 평가의 채점 보조다. 아래 [문항]·[모범답안 요지]·[배점 10점]으로 ① 채점 요소 3개와 충족·부분·미흡 기준표를 만들고, ② 첨부한 [학생 답안]을 그 기준으로 채점해 줘. 점수만 내지 말고 ‘답안 문장을 인용한 근거’를 함께. 경계가 애매하면 ‘교수 확인’으로 표시.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="quiz" data-quiz>
+        <span class="quiz-eyebrow">이해 점검</span><h4>AI 채점, 이렇게 씁니다</h4>
+        <div class="q" data-a="2" data-explain="점수가 아니라 ‘근거’를 받아, 교수가 답안과 대조해 검수합니다.">
+          <div class="qq">AI 채점 결과를 다루는 올바른 자세는?</div>
+          <button class="opt">점수를 그대로 성적에 반영한다</button>
+          <button class="opt">AI가 틀릴 수 있으니 아예 쓰지 않는다</button>
+          <button class="opt">근거를 받아 교수가 검수하고 최종 결정한다</button></div>
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="section-header"><span class="section-tag">PART 3 · 평가</span><h2>안전하게 쓰는 법</h2>
+        <p class="section-lead">외부 AI에 학생 자료를 넣을 때, 세 단계만 지키면 됩니다.</p></div>
+      <div class="callout callout-warn"><i data-lucide="shield"></i><div><strong>가리기</strong> — 이름·학번 등 식별정보를 지우고 투입(일괄 치환 가능).</div></div>
+      <div class="callout callout-warn"><i data-lucide="settings"></i><div><strong>설정 확인</strong> — 입력이 모델 학습에 쓰이는지 도구 설정·약관 점검(교육·기업 플랜은 대체로 미사용).</div></div>
+      <div class="callout callout-warn"><i data-lucide="building-2"></i><div><strong>기관 정책 + 책임</strong> — 학교 AI·개인정보 지침을 우선 확인. AI는 보조, <b>최종 점수와 책임은 교수</b>가 집니다.</div></div>
+    </section>
+
+    <section id="practice">
+      <div class="section-header"><span class="section-tag">PART 3 · 실습</span><h2>지금, 내 것으로</h2>
+        <p class="section-lead">오늘 배운 흐름 그대로, 내 일 하나에 적용해 봅니다. 완성이 아니라 시작.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="square-check-big"></i></div><h4>지침 1줄</h4><p>나를 소개하고 “지침에 기록해”.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="square-check-big"></i></div><h4>스킬 1개</h4><p>내 글 3편으로 ‘내 문체’ 스킬.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="square-check-big"></i></div><h4>자료 1장</h4><p>내 과목 한 주제로 슬라이드/퀴즈 한 장.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="square-check-big"></i></div><h4>폴더 1개</h4><p>outputs 월별 폴더 만들고 저장.</p></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="rocket"></i><div>막히면 옆자리·강사 순회 코칭. 한 줄이라도 ‘오늘’ 만들어 가는 게 목표입니다.</div></div>
+    </section>
+
+    <!-- ===== 마무리 ===== -->
+
+    <section id="wrap">
+      <div class="section-header"><span class="section-tag">맺음</span><h2>강의를 닫으며</h2></div>
+      <p class="hero-sub">클로드는 교수를 대체하는 게 아니라, <span class="accent">반복을 덜어 판단할 시간을 돌려주는</span> 조교입니다. 한 번 가르쳐 두면, 다음부터는 한마디로.</p>
+      <div class="callout callout-info"><i data-lucide="route"></i><div><strong>한 줄부터, 오늘 바로.</strong> 가장 빠른 셋업은 직접 해보는 것 — 오늘 대화 한 번으로 시작하세요. 다음 단계: 학과 단위 공유 · 후속 클리닉.</div></div>
+      <footer>서일대학교 교수 워크숍 — 「똘똘한 AI 조교가 왔습니다 · 한 번만 가르치면 되는 클로드 활용법」<br>서일대학교 AI게임융합학과 김민철 · 입체 교재 형식</footer>
+    </section>
+  </div>
+</div>
+
+<!-- ===== 깊이(드릴다운) ===== -->
+<div id="what-1" hidden><h4>쓰기 · 정리 — 예시</h4><p>“이 공문 초안을 정중하지만 간결하게 다듬어 줘”, “첨부한 회의 녹취를 안건·결정·할 일로 정리해 줘”, “이 20쪽 보고서를 1줄·3줄·300자로 요약해 줘”. 가진 문서를 함께 주면 정확도가 올라갑니다.</p></div>
+<div id="what-2" hidden><h4>가르치기 — 예시</h4><p>“[주제]를 1학년 눈높이로, 비유 한 줄 + 정확한 정의로 설명해 줘”, “이 개념을 한 장 인포그래픽 구조로”, “이 강의록으로 5문항 퀴즈와 해설을 만들어 줘”. 학생 수준·분량을 함께 지정하면 좋습니다.</p></div>
+<div id="what-3" hidden><h4>연구 · 분석 — 예시</h4><p>“이 논문의 연구질문·방법·한계를 표로 정리해 줘”, “이 표를 보기 좋게 정리하고 핵심 추세 3가지를”, “이 그래프 이미지에서 읽히는 내용을 설명해 줘”. 사실·수치는 원문과 대조해 검수하세요.</p></div>
+
+<!-- modal -->
+<div class="overlay" id="overlay"><div class="modal" role="dialog" aria-modal="true">
+  <div class="modal-head"><button class="mini-btn" id="backBtn" hidden>‹ 뒤로</button><span class="crumb" id="crumb"></span><button class="mini-btn" id="closeBtn">닫기 ✕</button></div>
+  <div class="modal-body" id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){'use strict';
+var root=document.documentElement,toast=document.getElementById('toast'),tT;
+function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('show');},1700);}
+function icons(){if(window.lucide&&lucide.createIcons){try{lucide.createIcons();}catch(e){}}}
+document.querySelectorAll('[data-theme]').forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.getAttribute('data-theme'));
+  document.querySelectorAll('[data-theme]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});});
+document.querySelectorAll('[data-lv]').forEach(function(b){b.addEventListener('click',function(){root.classList.remove('lv-beginner','lv-expert');
+  if(b.dataset.lv==='beginner')root.classList.add('lv-beginner');if(b.dataset.lv==='expert')root.classList.add('lv-expert');
+  document.querySelectorAll('[data-lv]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  var n={beginner:'초보 렌즈 — 일상 비유로',std:'중수 — 표준 서술',expert:'고수 해설 — 기술 개념 추가'};showToast(n[b.dataset.lv]);});});
+var pf=document.getElementById('progressFill');function upd(){var s=window.scrollY||0,t=document.documentElement.scrollHeight-window.innerHeight;pf.style.width=(t>0?Math.min(100,s/t*100):0)+'%';}
+window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);upd();
+var navLinks=document.querySelectorAll('.nav-link');
+var ob=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;navLinks.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+id);});}});},{rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('section[id]').forEach(function(s){ob.observe(s);});
+navLinks.forEach(function(l){l.addEventListener('click',function(e){var t=document.querySelector(l.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+var overlay=document.getElementById('overlay'),mBody=document.getElementById('modalBody'),crumb=document.getElementById('crumb'),backBtn=document.getElementById('backBtn'),stack=[];
+function rc(){crumb.innerHTML=stack.map(function(s,i){return i===stack.length-1?'<b>'+s.label+'</b>':s.label;}).join(' › ');backBtn.hidden=stack.length<2;}
+function openDepth(id,label){var src=document.getElementById(id);if(!src)return;stack.push({id:id,label:label});mBody.innerHTML=src.innerHTML;bindCopy(mBody);bindGate(mBody);icons();rc();overlay.classList.add('on');overlay.scrollTop=0;}
+function closeAll(){overlay.classList.remove('on');stack=[];}
+backBtn.addEventListener('click',function(){if(stack.length<2)return;stack.pop();var s=stack[stack.length-1],src=document.getElementById(s.id);mBody.innerHTML=src.innerHTML;bindCopy(mBody);bindGate(mBody);icons();rc();});
+document.getElementById('closeBtn').addEventListener('click',closeAll);
+overlay.addEventListener('click',function(e){if(e.target===overlay)closeAll();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAll();});
+function bindGate(r){r.querySelectorAll('[data-depth]').forEach(function(g){g.onclick=function(e){if(e.target.closest('a'))return;openDepth(g.dataset.depth,g.dataset.label);};});}
+bindGate(document);
+function bindCopy(r){r.querySelectorAll('.copy-btn').forEach(function(btn){btn.onclick=function(){var box=btn.closest('.prompt-box');if(!box)return;var t=box.querySelector('.prompt-text').innerText;
+  navigator.clipboard.writeText(t).then(function(){btn.classList.add('copied');var sp=btn.querySelector('span'),o=sp?sp.textContent:'';if(sp)sp.textContent='복사됨';showToast('프롬프트가 복사되었습니다');setTimeout(function(){btn.classList.remove('copied');if(sp)sp.textContent=o;},1500);});};});}
+bindCopy(document);
+document.querySelectorAll('[data-quiz] .q').forEach(function(q){var a=+q.dataset.a,opts=q.querySelectorAll('.opt');opts.forEach(function(o,i){o.addEventListener('click',function(){if(q.classList.contains('answered'))return;q.classList.add('answered');opts[a].classList.add('correct');if(i!==a)o.classList.add('wrong');});});});
+document.querySelectorAll('.term').forEach(function(t){t.addEventListener('click',function(){t.classList.toggle('show');});});
+
+/* assets */
+var ASSETS=[
+ {name:"01_CLAUDE.md-지침-샘플.md",cat:"지침",content:"# (이름) 교수 — AI 지침 (CLAUDE.md 샘플)\n\n## 나에 대해\n- 서일대학교 [학과] / 담당: [과목]\n- 호칭: 편하게 대화체로\n\n## 응답 방식\n- 한국어, 간결하게\n- 공식 문서는 보고체\n- 표가 필요하면 표로\n\n## 반복 규칙 (트리거)\n- “회의록 써줘” → 표준 양식\n- “강의계획서” → 주차별 틀\n- “내 문체로” → 내 문체 스킬 적용\n\n사용법: 위를 채워 클로드에게 주고 “내 지침에 기록해” 라고 하세요."},
+ {name:"02_교수-업무-프롬프트-카드.md",cat:"프롬프트",content:"# 교수 업무별 프롬프트 카드\n\n## 강의 슬라이드\n[과목] [주차/주제] 강의 슬라이드를 [학년] 대상 [50분] 분량으로. 핵심 개념 슬라이드당 하나, 발표자 노트 포함, PDF/PPTX 내보내기 가능하게.\n\n## 복습 세트 변환\n첨부한 [강의록]을 ① 한 줄 요약 ② 용어집 ③ 5문항 퀴즈로 변환. 우리 강의 톤에 맞게.\n\n## 학생 질문 FAQ\n아래 [강의노트]만 근거로, 학생 단골 질문에 1학년 눈높이로 3문장 이내 답하는 튜터로 행동해. 범위 밖이면 “수업 범위 밖”이라고 먼저 밝혀.\n\n## 문서 다듬기\n이 [공문/이메일] 초안을 정중하지만 간결하게. 군더더기 빼고 핵심만.\n\n## 자료 요약\n이 [PDF]를 1줄/3줄/300자 3층으로 요약하고, 핵심 논점 3가지를 따로."},
+ {name:"03_평가-루브릭-채점-피드백.md",cat:"평가",content:"# AI 평가 프롬프트 (루브릭 → 채점 → 피드백)\n\n## 1) 루브릭\n[문항]·[모범답안 요지]·[배점 10점]으로 채점 요소 3개와 충족·부분·미흡 기준표를 만들어 줘. 자주 나오는 오답 3가지도.\n\n## 2) 채점 (근거와 함께)\n위 루브릭으로 [학생 답안]을 채점. 요소별 판정·점수·총점과 함께, 답안 문장을 인용한 근거를 제시. 경계가 애매하면 ‘교수 확인’ 표시. ※ 점수만 내지 말고 반드시 근거를 — 내가 검수하게.\n\n## 3) 피드백 (코치의 목소리)\n이 채점 결과로 학생 피드백을 써 줘. 잘한 점 1 · 개선점 2(무엇을 어떻게) · 다음 조언 1. 8~10문장, 격려하는 어조로.\n\n원칙: AI는 1차 채점자, 최종 점수·책임은 교수."},
+ {name:"04_안전-개인정보-체크리스트.md",cat:"체크리스트",content:"# 안전·개인정보 체크리스트\n\n- [ ] 이름·학번 등 식별정보 가리고 투입 (일괄 치환 가능)\n- [ ] 입력이 모델 학습에 쓰이는지 설정·약관 확인 (교육·기업 플랜은 대체로 미사용)\n- [ ] 학교 AI·개인정보 지침 우선 확인 (민감 과목은 더 보수적으로)\n- [ ] 최종 점수·판단·책임은 교수가 (AI는 보조)\n\n가리고 · 설정 확인하고 · 기관 정책 따르면 외부 AI도 안전."},
+ {name:"05_오늘-셋업-체크리스트.md",cat:"체크리스트",content:"# 오늘 끝에 남길 것 (셋업 체크리스트)\n\n- [ ] CLAUDE.md 지침 만들고 내 정보 한 줄\n- [ ] 문체 스킬 1개 (내 글 3편으로)\n- [ ] 작업·출력 폴더를 클라우드에 정하고 연결 (outputs/YYYY-MM)\n- [ ] 내 과목 한 주제로 슬라이드/퀴즈 한 장\n- [ ] (선택) 크롬 확장 연결해 한 페이지 요약 / ‘바톤 넘겨’ 한 번\n\n완성이 아니라 시작 — 한 줄부터, 오늘 바로."}
+];
+function tEnc(s){return new TextEncoder().encode(s);}
+function sizeFmt(n){return n<1024?n+' B':(n/1024).toFixed(1)+' KB';}
+var listEl=document.getElementById('assetList');
+if(listEl) ASSETS.forEach(function(a){var el=document.createElement('div');el.className='asset';
+  el.innerHTML='<div class="arow"><span class="acat">'+a.cat+'</span><span class="an">'+a.name+'</span><span class="asz">'+sizeFmt(tEnc(a.content).length)+'</span><span style="color:var(--fg-meta)">▾</span></div>'+
+   '<div class="aview"><pre></pre><div class="aacts"><button class="mini-btn" data-act="copy">복사</button><button class="mini-btn" data-act="pc">저장 · PC(BOM)</button><button class="mini-btn" data-act="mac">저장 · Mac</button></div></div>';
+  el.querySelector('pre').textContent=a.content;
+  el.querySelector('.arow').addEventListener('click',function(){el.classList.toggle('open');});
+  el.querySelectorAll('[data-act]').forEach(function(btn){btn.addEventListener('click',function(e){e.stopPropagation();var act=btn.dataset.act;
+    if(act==='copy')navigator.clipboard.writeText(a.content).then(function(){showToast('복사되었습니다');});
+    if(act==='pc'){dlText(a.name,a.content,true);showToast('PC용(BOM) 저장');}
+    if(act==='mac'){dlText(a.name,a.content,false);showToast('Mac용 저장');}});});
+  listEl.appendChild(el);});
+function dl(name,u8,type){var b=new Blob([u8],{type:type||'application/octet-stream'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},1500);}
+function dlText(name,text,bom){dl(name,tEnc((bom?'﻿':'')+text),'text/markdown;charset=utf-8');}
+var CRCT=(function(){var t=[],c,n,k;for(n=0;n<256;n++){c=n;for(k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(u8){var c=0xFFFFFFFF;for(var i=0;i<u8.length;i++)c=CRCT[(c^u8[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function u16(n){return [n&255,(n>>8)&255];}function u32(n){return [n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255];}
+function makeZip(files){var chunks=[],central=[],off=0;files.forEach(function(f){var name=tEnc(f.name),data=tEnc(f.content),crc=crc32(data),flag=0x0800,
+  loc=[].concat(u32(0x04034b50),u16(20),u16(flag),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0)),
+  la=new Uint8Array(loc.length+name.length+data.length);la.set(loc,0);la.set(name,loc.length);la.set(data,loc.length+name.length);chunks.push(la);
+  var cen=[].concat(u32(0x02014b50),u16(20),u16(20),u16(flag),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off)),
+  ca=new Uint8Array(cen.length+name.length);ca.set(cen,0);ca.set(name,cen.length);central.push(ca);off+=la.length;});
+  var cs=central.reduce(function(a,c){return a+c.length;},0),end=[].concat(u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cs),u32(off),u16(0)),ea=new Uint8Array(end.length);ea.set(end,0);
+  var out=new Uint8Array(off+cs+ea.length),p=0;chunks.forEach(function(c){out.set(c,p);p+=c.length;});central.forEach(function(c){out.set(c,p);p+=c.length;});out.set(ea,p);return out;}
+window.zipAll=function(pc){var files=ASSETS.map(function(a){return {name:a.name,content:(pc?'﻿':'')+a.content};});dl('교육자에이전트_조립키트_'+(pc?'PC':'Mac')+'.zip',makeZip(files),'application/zip');showToast((pc?'PC(BOM)':'Mac')+' ZIP 저장');};
+
+/* bots */
+var BOTS=[
+ {i:1,name:"강의 슬라이드 제작",pin:"제작",cls:"p-pro",role:"주차 주제로 슬라이드 개요와 발표자 노트를 생성",maj:"주차·대상·분량(50분)",mat:"슬라이드 · PDF·PPTX"},
+ {i:2,name:"복습 세트 변환",pin:"변환",cls:"p-start",role:"강의록을 요약·용어집·퀴즈로 한 번에",maj:"강의록·슬라이드",mat:"요약·용어집·퀴즈"},
+ {i:3,name:"학생 질문 FAQ 응대",pin:"에이전트",cls:"p-spec",role:"강의노트를 근거로 단골 질문에 24시간 응대",maj:"강의노트·단골 질문",mat:"튜터 응답·FAQ"},
+ {i:4,name:"평가 루브릭·채점",pin:"평가",cls:"p-spec",role:"문항·배점으로 루브릭 → 근거 채점 → 피드백",maj:"문항·모범답안·배점",mat:"루브릭·근거 채점·피드백"},
+ {i:5,name:"문서 다듬기",pin:"업무",cls:"p-start",role:"공문·이메일·보고서 톤을 정돈",maj:"초안 텍스트",mat:"정돈된 문서"},
+ {i:6,name:"논문·자료 요약",pin:"연구",cls:"p-pro",role:"긴 문서를 1줄·3줄·300자 다층 요약",maj:"논문·보고서 PDF",mat:"다층 요약·구조표"}
+];
+var bg=document.getElementById('botGrid');
+BOTS.forEach(function(b){var el=document.createElement('div');el.className='bot';
+  el.innerHTML='<span class="pin '+b.cls+'">'+b.pin+'</span><div class="bn"><span class="idx">'+b.i+'</span>'+b.name+'</div><p class="role">'+b.role+'</p><div class="detail"><div class="detail-in"><div><b>예시 입력 ·</b> '+b.maj+'</div><div style="margin-top:5px"><b>결과물 ·</b> '+b.mat+'</div></div></div>';
+  el.addEventListener('click',function(){el.classList.toggle('open');});bg.appendChild(el);});
+/* quiz 접기/펴기 (기본 접힘) */
+document.querySelectorAll('.quiz[data-quiz]').forEach(function(qz){
+  qz.classList.add('folded');
+  var h=qz.querySelector('h4'); if(!h)return;
+  var n=qz.querySelectorAll('.q').length;
+  var cnt=document.createElement('span'); cnt.className='qcount'; cnt.textContent='('+n+'문항 · 잠금 없음)';
+  var chev=document.createElement('span'); chev.className='qchev'; chev.textContent='▾';
+  h.appendChild(cnt); h.appendChild(chev);
+  h.addEventListener('click',function(){qz.classList.toggle('folded');});
+});
+icons();
+})();
+</script>
+<script>
+/* 화면(보통/수업) 토글 — 기본 수업 모드 */
+(function(){var root=document.documentElement;
+try{var v=localStorage.getItem('kpresent');if(v==='0')root.classList.remove('present');if(v==='1')root.classList.add('present');}catch(e){}
+function sync(){var on=root.classList.contains('present');document.querySelectorAll('[data-view]').forEach(function(x){x.setAttribute('aria-pressed',(x.dataset.view==='present')===on?'true':'false');});}
+document.querySelectorAll('[data-view]').forEach(function(b){b.addEventListener('click',function(){var on=b.dataset.view==='present';root.classList.toggle('present',on);sync();try{localStorage.setItem('kpresent',on?'1':'0');}catch(e){}});});
+sync();})();
+</script>
+<script>
+/* 퀴즈: 클릭 시 정답·해설 표시 */
+(function(){document.querySelectorAll('.quiz[data-quiz] .q').forEach(function(q){
+  var a=+q.getAttribute('data-a'),opts=q.querySelectorAll('.opt');
+  var ans=document.createElement('div');
+  ans.style.cssText='display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:var(--green-soft,#e3f3ec);color:var(--green,#0a7d56);font-weight:600;font-size:15px;line-height:1.55';
+  q.appendChild(ans);
+  opts.forEach(function(o){o.addEventListener('click',function(){
+    if(ans._d)return;ans._d=1;
+    var c=opts[a]?opts[a].textContent:'',ex=q.getAttribute('data-explain')||'';
+    ans.innerHTML='✓ 정답: <b>'+c+'</b>'+(ex?' &nbsp;—&nbsp; '+ex:'');
+    ans.style.display='block';});});
+});})();
+</script>
+<script>
+/* file:// 복사 폴백 */
+(function(){
+  function copyText(t){ if(navigator.clipboard && navigator.clipboard.writeText){return navigator.clipboard.writeText(t);}
+    return new Promise(function(res){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);res();}); }
+  document.querySelectorAll('.copy-btn').forEach(function(btn){ btn.onclick=function(){ var box=btn.closest('.prompt-box'); if(!box)return; var t=box.querySelector('.prompt-text').innerText;
+    copyText(t).then(function(){ btn.classList.add('copied'); var sp=btn.querySelector('span'),o=sp?sp.textContent:''; if(sp)sp.textContent='복사됨'; setTimeout(function(){btn.classList.remove('copied'); if(sp)sp.textContent=o;},1500); }); }; });
+})();
+</script>
+</body>
+</html>
