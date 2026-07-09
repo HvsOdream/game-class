@@ -440,9 +440,18 @@ footer{color:var(--sub); font-size:.78rem; text-align:center; padding:30px 20px 
   <h3 style="margin-top:22px">✍️ 잠깐 — 당신의 상상은?</h3>
   <p class="lead">거창하지 않아도 됩니다. 지금 떠오르는 "이런 거 있으면 좋겠다"를 한 줄로 적어 보세요. 오늘 <b>이걸 실제로 만들어서</b> 나갑니다.</p>
   <div class="builder" style="grid-template-columns:1fr;">
-    <div class="bform"><label>내가 만들고 싶은 것
-      <input id="imgWish" type="text" placeholder="예: 우리 과목 개념을 눌러보며 익히는 퀴즈 페이지 / 매주 공지 자동 작성 / 실습 안내 핸드아웃">
-    </label></div>
+    <div class="bform">
+      <div class="brow">
+        <label style="flex:2">내가 만들고 싶은 것
+          <input id="imgWish" type="text" placeholder="예: 우리 과목 개념을 눌러보며 익히는 퀴즈 페이지 / 매주 공지 자동 작성">
+        </label>
+        <label style="flex:1">이름 (선택)
+          <input id="imgName" type="text" placeholder="예: 김민철">
+        </label>
+      </div>
+      <button id="imgSubmit" style="margin-top:10px; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:9px 22px; font-size:.9rem; font-weight:700; cursor:pointer; font-family:inherit; float:right">교수님께 제출 ▷</button>
+      <div style="clear:both"></div>
+    </div>
   </div>
   <div id="imgEcho" class="practice" style="display:none; margin-top:10px"></div>
   <p class="lead" style="color:var(--sub); font-size:.88rem; margin-top:8px">아직 딱히 없어도 괜찮아요 — 오늘 실습을 보다 보면 "아, 저건 나도" 하고 떠오릅니다.</p>
@@ -1116,9 +1125,24 @@ function cBuild(){
 [['dSub','dGoal','dWho','dMin'],['sSub','sTopic','sWho','sMin','sName'],['nTopic','nAim','nCnt','nTone'],['cSub','cTtl','cName','cDate']]
 .forEach((ids,gi)=>{const fn=[dBuild,sBuild,nBuild,cBuild][gi];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',fn);el.addEventListener('change',fn);}});});
 [dBuild,sBuild,nBuild,cBuild].forEach(f=>{try{f();}catch(e){}});
-/* 오프닝 · 당신의 상상은? */
-(function(){var iw=document.getElementById('imgWish'),ie=document.getElementById('imgEcho');
-if(iw){iw.addEventListener('input',function(){var v=iw.value.trim();if(v){ie.style.display='block';ie.innerHTML='좋아요 — 오늘의 목표: <b>'+v.replace(/[<>]/g,'')+'</b>. 이걸 실제로 만들어서 나갑니다.';}else{ie.style.display='none';}});}})();
+/* 오프닝 · 당신의 상상은? → 교수 구글시트로 수집 */
+var CLOUD_IMG_URL = 'https://script.google.com/macros/s/AKfycbyLEj_eBPpXKvaPvjrBoQOd78YpcOy_RGF3KtdbWC8X8_7B_l8iwAWCllgke8_awfskZw/exec'; /* 배포된 Apps Script 웹앱 (→ 구글시트 수집) */
+(function(){
+  var iw=document.getElementById('imgWish'), inm=document.getElementById('imgName'),
+      ie=document.getElementById('imgEcho'), sb=document.getElementById('imgSubmit');
+  if(iw){iw.addEventListener('input',function(){var v=iw.value.trim();if(v){ie.style.display='block';ie.innerHTML='좋아요 — 오늘의 목표: <b>'+v.replace(/[<>]/g,'')+'</b>. 이걸 실제로 만들어서 나갑니다.';}else{ie.style.display='none';}});}
+  if(sb){sb.addEventListener('click',function(){
+    var v=(iw.value||'').trim(); if(!v){iw.focus();return;}
+    var nm=(inm&&inm.value||'').trim();
+    if(CLOUD_IMG_URL){
+      try{fetch(CLOUD_IMG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'wish='+encodeURIComponent(v)+'&name='+encodeURIComponent(nm)});}catch(e){}
+    }
+    ie.style.display='block';
+    ie.innerHTML='✅ 제출됨 — 교수님 화면에 떴습니다! <b>'+v.replace(/[<>]/g,'')+'</b>';
+    sb.textContent='제출 완료 ✓'; sb.disabled=true;
+    setTimeout(function(){sb.textContent='다시 제출 ▷'; sb.disabled=false;}, 2500);
+  });}
+})();
 /* ---------- preview quiz ---------- */
 document.querySelectorAll('#pvq .po').forEach(o=>{
   o.addEventListener('click',()=>{
