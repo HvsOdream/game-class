@@ -437,6 +437,15 @@ footer{color:var(--sub); font-size:.78rem; text-align:center; padding:30px 20px 
       <li>"이 부분만 이렇게" 즉시 수정</li>
     </ul></div>
   </div>
+  <h3 style="margin-top:22px">✍️ 잠깐 — 당신의 상상은?</h3>
+  <p class="lead">거창하지 않아도 됩니다. 지금 떠오르는 "이런 거 있으면 좋겠다"를 한 줄로 적어 보세요. 오늘 <b>이걸 실제로 만들어서</b> 나갑니다.</p>
+  <div class="builder" style="grid-template-columns:1fr;">
+    <div class="bform"><label>내가 만들고 싶은 것
+      <input id="imgWish" type="text" placeholder="예: 우리 과목 개념을 눌러보며 익히는 퀴즈 페이지 / 매주 공지 자동 작성 / 실습 안내 핸드아웃">
+    </label></div>
+  </div>
+  <div id="imgEcho" class="practice" style="display:none; margin-top:10px"></div>
+  <p class="lead" style="color:var(--sub); font-size:.88rem; margin-top:8px">아직 딱히 없어도 괜찮아요 — 오늘 실습을 보다 보면 "아, 저건 나도" 하고 떠오릅니다.</p>
   <div class="note"><span class="k">단, 조건 하나</span>상상이 <b>또렷할수록</b> 구현됩니다. 막연하면 막연한 게 나와요. 오늘 배우는 건 결국 <b>또렷하게 설명하는 법</b> — 그러면 상상한 건 웬만하면 만들어집니다.</div>
 </div></section>
 
@@ -1107,6 +1116,9 @@ function cBuild(){
 [['dSub','dGoal','dWho','dMin'],['sSub','sTopic','sWho','sMin','sName'],['nTopic','nAim','nCnt','nTone'],['cSub','cTtl','cName','cDate']]
 .forEach((ids,gi)=>{const fn=[dBuild,sBuild,nBuild,cBuild][gi];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',fn);el.addEventListener('change',fn);}});});
 [dBuild,sBuild,nBuild,cBuild].forEach(f=>{try{f();}catch(e){}});
+/* 오프닝 · 당신의 상상은? */
+(function(){var iw=document.getElementById('imgWish'),ie=document.getElementById('imgEcho');
+if(iw){iw.addEventListener('input',function(){var v=iw.value.trim();if(v){ie.style.display='block';ie.innerHTML='좋아요 — 오늘의 목표: <b>'+v.replace(/[<>]/g,'')+'</b>. 이걸 실제로 만들어서 나갑니다.';}else{ie.style.display='none';}});}})();
 /* ---------- preview quiz ---------- */
 document.querySelectorAll('#pvq .po').forEach(o=>{
   o.addEventListener('click',()=>{
