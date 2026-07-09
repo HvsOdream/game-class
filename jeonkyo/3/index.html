@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude 기본 셋팅 — 전문대학교육협의회 교수 워크숍 · 3차시 입체 실습교재</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#faf7f2; --panel:#ffffff; --ink:#2b2620; --sub:#6b6257; --line:#e8e1d6;
+  --accent:#b3541e; --accent-soft:#f7e8dd; --accent-ink:#8a3e13;
+  --chip:#f1ece3; --good:#2e7d32; --bad:#c62828; --shadow:0 2px 14px rgba(60,45,20,.08);
+  --code-bg:#2d2a26; --code-ink:#f0e9dd;
+  --fs:17.5px;
+}
+[data-theme="sepia"]{
+  --bg:#f3e9d8; --panel:#fbf4e6; --ink:#3a2f22; --sub:#7a6a52; --line:#e2d4bb;
+  --accent:#9c4a1a; --accent-soft:#efdcc6; --accent-ink:#7c3a12; --chip:#ecdfc8;
+}
+[data-theme="dark"]{
+  --bg:#1d1b18; --panel:#282521; --ink:#ece5d8; --sub:#a89c8a; --line:#3b362f;
+  --accent:#e08a4e; --accent-soft:#3a2d21; --accent-ink:#f0b184;
+  --chip:#33302a; --shadow:0 2px 14px rgba(0,0,0,.4);
+  --code-bg:#141311; --code-ink:#e8e0d2;
+}
+[data-mode="class"]{ --fs:21px; }
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; scroll-padding-top:76px; font-size:var(--fs);}
+body{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,"Malgun Gothic",sans-serif;
+  background:var(--bg); color:var(--ink); font-size:1rem; line-height:1.75;
+  transition:background .3s,color .3s;
+}
+/* ---------- top bar ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50; height:56px;
+  display:flex; align-items:center; gap:10px; padding:0 16px;
+  background:color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+}
+.topbar .brand{font-weight:700; font-size:.85rem; color:var(--sub); text-decoration:none; letter-spacing:-.01em;}
+.topbar .brand b{color:var(--accent);}
+.topbar .spacer{flex:1;}
+.tbtn{
+  border:1px solid var(--line); background:var(--panel); color:var(--sub);
+  border-radius:8px; padding:4px 11px; font-size:.78rem; cursor:pointer; font-family:inherit;
+}
+.tbtn.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.tbtn:hover{border-color:var(--accent);}
+/* ---------- layout ---------- */
+.wrap{display:flex; max-width:1240px; margin:0 auto; padding-top:56px;}
+nav.toc{
+  width:230px; flex:none; position:sticky; top:56px; height:calc(100vh - 56px);
+  overflow-y:auto; padding:24px 8px 60px 16px; font-size:.83rem;
+}
+nav.toc .grp{margin:14px 0 4px; font-size:.7rem; font-weight:700; color:var(--accent); letter-spacing:.06em;}
+nav.toc a{
+  display:block; padding:5px 10px; border-radius:8px; color:var(--sub);
+  text-decoration:none; margin:1px 0; line-height:1.4;
+}
+nav.toc a:hover{background:var(--chip); color:var(--ink);}
+nav.toc a.cur{background:var(--accent-soft); color:var(--accent-ink); font-weight:600;}
+main{flex:1; min-width:0; padding:28px 26px 120px;}
+/* ---------- sections ---------- */
+section{margin:0 0 26px;}
+#intro{min-height:calc(100dvh - 110px); display:flex; flex-direction:column; justify-content:center;}
+.sec{
+  background:var(--panel); border:1px solid var(--line); border-radius:18px;
+  padding:34px 38px; box-shadow:var(--shadow);
+}
+.kicker{
+  display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.08em;
+  color:var(--accent-ink); background:var(--accent-soft); border-radius:99px;
+  padding:3px 12px; margin-bottom:12px;
+}
+h2{font-size:1.55rem; letter-spacing:-.02em; line-height:1.3; margin-bottom:12px;}
+h3{font-size:1.05rem; margin:22px 0 8px; letter-spacing:-.01em;}
+.lead{color:var(--sub); margin-bottom:18px;}
+.lead b,.card p b,.note b{color:var(--ink);}
+/* hero */
+.hero{
+  background:linear-gradient(145deg,var(--panel), var(--accent-soft));
+  border:1px solid var(--line); border-radius:22px; padding:52px 44px; box-shadow:var(--shadow);
+  text-align:left;
+}
+.hero .eyebrow{font-size:.8rem; font-weight:700; color:var(--accent-ink); letter-spacing:.12em; margin-bottom:14px;}
+.hero h1{font-size:2.3rem; line-height:1.25; letter-spacing:-.03em; margin-bottom:14px;}
+.hero p.sub{color:var(--sub); max-width:640px; margin-bottom:22px;}
+.chips{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{background:var(--chip); border:1px solid var(--line); border-radius:99px; padding:4px 14px; font-size:.78rem; color:var(--sub);}
+/* cards */
+.grid{display:grid; gap:12px; margin:16px 0;}
+.g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+.card{
+  background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px;
+  position:relative;
+}
+.card .tag{font-size:.7rem; font-weight:700; color:var(--accent-ink); letter-spacing:.05em; margin-bottom:5px;}
+.card h4{font-size:.98rem; margin-bottom:6px; letter-spacing:-.01em;}
+.card p{font-size:.9rem; color:var(--sub); line-height:1.65;}
+.card.pop{cursor:pointer; transition:transform .15s, border-color .15s;}
+.card.pop:hover{transform:translateY(-2px); border-color:var(--accent);}
+.card.pop::after{content:"+ 자세히"; position:absolute; top:14px; right:14px; font-size:.68rem; color:var(--accent);}
+/* key line */
+.note{
+  border-left:4px solid var(--accent); background:var(--accent-soft);
+  border-radius:0 12px 12px 0; padding:13px 18px; font-size:.92rem; margin:18px 0 0; color:var(--ink);
+}
+.note .k{font-weight:800; color:var(--accent-ink); margin-right:8px; font-size:.78rem; letter-spacing:.06em;}
+/* vs blocks */
+.vs{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:stretch; margin:16px 0;}
+.vs .mid{align-self:center; font-weight:800; color:var(--accent); font-size:1.1rem;}
+.vsbox{background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px;}
+.vsbox h4{font-size:.95rem; margin-bottom:8px;}
+.vsbox ul{list-style:none;}
+.vsbox li{font-size:.9rem; color:var(--sub); padding:4px 0 4px 16px; position:relative;}
+.vsbox li::before{content:"—"; position:absolute; left:0; color:var(--accent);}
+.vsbox.warn{border-color:color-mix(in srgb,var(--bad) 40%,var(--line));}
+.vsbox.okay{border-color:color-mix(in srgb,var(--good) 40%,var(--line));}
+/* flow arrows */
+.flow{display:flex; align-items:stretch; gap:10px; margin:16px 0; flex-wrap:wrap;}
+.flow .step{flex:1; min-width:150px; background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:15px 16px;}
+.flow .step .n{font-size:.7rem; font-weight:800; color:var(--accent); letter-spacing:.08em; margin-bottom:4px;}
+.flow .step h4{font-size:.92rem; margin-bottom:4px;}
+.flow .step p{font-size:.8rem; color:var(--sub); line-height:1.55;}
+.flow .arr{align-self:center; color:var(--accent); font-weight:800;}
+/* prompt block */
+.prompt{position:relative; margin:16px 0;}
+.prompt .plabel{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.78rem; font-weight:700; color:var(--accent-ink); margin-bottom:6px;
+}
+.prompt .plabel span.hint{font-weight:500; color:var(--sub);}
+.prompt pre{
+  background:var(--code-bg); color:var(--code-ink); border-radius:14px;
+  padding:20px 22px; font-size:.9rem; line-height:1.7; white-space:pre-wrap;
+  font-family:"Pretendard Variable",Pretendard,sans-serif; word-break:keep-all;
+}
+.copybtn{
+  position:absolute; right:12px; bottom:12px;
+  background:var(--accent); color:#fff; border:none; border-radius:8px;
+  padding:6px 14px; font-size:.78rem; cursor:pointer; font-family:inherit;
+}
+.copybtn:hover{filter:brightness(1.1);}
+/* tables */
+table.tb{width:100%; border-collapse:collapse; margin:16px 0; font-size:.9rem;}
+.tb th{background:var(--chip); text-align:left; padding:10px 12px; border:1px solid var(--line); font-size:.8rem;}
+.tb td{padding:10px 12px; border:1px solid var(--line); color:var(--sub); vertical-align:top;}
+.tb td:first-child{color:var(--ink); font-weight:600;}
+/* quiz */
+.quiz{background:var(--bg); border:1px dashed var(--accent); border-radius:14px; padding:20px 22px; margin:18px 0 0;}
+.quiz .qk{font-size:.72rem; font-weight:800; color:var(--accent-ink); letter-spacing:.08em; margin-bottom:8px;}
+.quiz p.q{font-weight:700; font-size:.95rem; margin-bottom:10px;}
+.quiz .opt{
+  display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line);
+  border-radius:10px; padding:9px 14px; margin:6px 0; font-size:.86rem; cursor:pointer;
+  color:var(--ink); font-family:inherit;
+}
+.quiz .opt:hover{border-color:var(--accent);}
+.quiz .opt.correct{border-color:var(--good); background:color-mix(in srgb,var(--good) 12%,var(--panel)); font-weight:700;}
+.quiz .opt.wrong{border-color:var(--bad); opacity:.6;}
+.quiz .expl{display:none; font-size:.82rem; color:var(--sub); margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+.quiz.done .expl{display:block;}
+/* betting game */
+.bet{margin:20px 0 0;}
+.bet .stage{background:var(--bg); border:1px solid var(--line); border-radius:16px; padding:22px; text-align:center;}
+.bet .pgnum{font-size:.78rem; font-weight:700; color:var(--accent-ink); letter-spacing:.08em; margin-bottom:12px;}
+.bet .imgwrap{max-height:430px; overflow:auto; border:1px solid var(--line); border-radius:12px; background:#fff; cursor:zoom-in;}
+.bet .imgwrap img{width:100%; display:block;}
+.bet .btns{display:flex; gap:12px; justify-content:center; margin-top:16px;}
+.betbtn{
+  border:2px solid var(--line); background:var(--panel); color:var(--ink);
+  border-radius:12px; padding:12px 30px; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit;
+  transition:all .15s;
+}
+.betbtn:hover{border-color:var(--accent); transform:translateY(-2px);}
+.bet .dots{display:flex; gap:6px; justify-content:center; margin-top:14px;}
+.bet .dots i{width:9px; height:9px; border-radius:50%; background:var(--line); display:block;}
+.bet .dots i.did{background:var(--accent);}
+.bet .result{display:none;}
+.bet.finished .stage{display:none;}
+.bet.finished .result{display:block;}
+.bet .score{
+  text-align:center; font-size:1.25rem; font-weight:800; margin:6px 0 16px; letter-spacing:-.01em;
+}
+.bet .rgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px;}
+.bet .rcell{border:2px solid var(--line); border-radius:12px; padding:10px; text-align:center; background:var(--panel);}
+.bet .rcell.hit{border-color:var(--good);}
+.bet .rcell.miss{border-color:var(--bad);}
+.bet .rcell img{width:100%; border-radius:6px; border:1px solid var(--line); cursor:zoom-in;}
+.bet .rcell .ans{font-size:.8rem; font-weight:800; margin-top:6px;}
+.bet .rcell .ans.ai{color:var(--accent-ink);} .bet .rcell .ans.hu{color:var(--good);}
+.bet .rcell .my{font-size:.7rem; color:var(--sub);}
+.replay{margin:14px auto 0; display:block; background:none; border:1px solid var(--line); color:var(--sub); border-radius:8px; padding:6px 16px; font-size:.78rem; cursor:pointer; font-family:inherit;}
+/* practice callout */
+.practice{
+  background:linear-gradient(135deg,var(--accent-soft),var(--panel));
+  border:1px solid var(--accent); border-radius:14px; padding:18px 22px; margin:18px 0 0; font-size:.9rem;
+}
+.practice b{color:var(--accent-ink);}
+/* divider */
+.divider{
+  text-align:center; padding:44px 20px; background:transparent;
+}
+.divider .ch{font-size:.78rem; font-weight:800; letter-spacing:.22em; color:var(--accent);}
+.divider h2{font-size:1.8rem; margin:8px 0 6px;}
+.divider p{color:var(--sub); font-size:.95rem;}
+/* modal */
+.modal-bg{
+  position:fixed; inset:0; background:rgba(20,15,8,.55); z-index:90;
+  display:none; align-items:center; justify-content:center; padding:24px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:var(--panel); border-radius:18px; max-width:640px; width:100%;
+  max-height:82vh; overflow-y:auto; padding:30px 32px; box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.modal h4{font-size:1.1rem; margin-bottom:10px; color:var(--accent-ink);}
+.modal .body{font-size:.9rem; color:var(--ink); line-height:1.8;}
+.modal .body p{margin-bottom:10px; color:var(--sub);}
+.modal .body ul{margin:0 0 10px 18px;}
+.modal .body li{font-size:.87rem; color:var(--sub); margin:4px 0;}
+.modal .close{
+  margin-top:16px; background:var(--accent); color:#fff; border:none; border-radius:10px;
+  padding:8px 22px; font-size:.85rem; cursor:pointer; font-family:inherit; display:block; margin-left:auto;
+}
+/* lightbox */
+.lightbox{position:fixed; inset:0; background:rgba(10,8,5,.85); z-index:99; display:none; align-items:center; justify-content:center; padding:30px; cursor:zoom-out;}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px; background:#fff;}
+/* audit game */
+.audit tr.pk td{cursor:pointer; transition:background .15s;}
+.audit tr.pk:hover td{background:var(--accent-soft);}
+.audit.done tr.pk td{cursor:default;}
+.audit tr.hit td{background:color-mix(in srgb,var(--bad) 12%,var(--panel)); border-color:var(--bad);}
+.audit tr.safe td{background:color-mix(in srgb,var(--good) 8%,var(--panel));}
+/* builder */
+.builder{display:grid; grid-template-columns:1fr 1.1fr; gap:14px; margin:16px 0 0; align-items:start;}
+.bform label{display:block; font-size:.8rem; font-weight:700; color:var(--accent-ink); margin-bottom:10px;}
+.bform textarea,.bform input,.bform select{width:100%; margin-top:4px; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.88rem; background:var(--panel); color:var(--ink); resize:vertical;}
+.bform textarea:focus,.bform input:focus,.bform select:focus{outline:2px solid var(--accent); border-color:var(--accent);}
+.brow{display:flex; gap:10px;}
+.brow label{flex:1;}
+/* sim */
+.sim .scenario{background:var(--bg); border-left:4px solid var(--accent); border-radius:0 12px 12px 0; padding:14px 18px; font-size:.92rem; margin:12px 0; line-height:1.8;}
+.sim td label{margin-right:10px; font-weight:400; cursor:pointer; font-size:.85rem; color:var(--sub); display:inline-flex; align-items:center; gap:4px; white-space:nowrap;}
+.sim td label:hover{color:var(--ink);}
+.simbox{margin-top:14px; border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--bg); font-size:.9rem; line-height:2;}
+.simbox .ok{color:var(--good); font-weight:700;} .simbox .no{color:var(--bad); font-weight:700;}
+/* quest */
+.qbrief{background:linear-gradient(135deg,var(--accent-soft),var(--panel)); border:1px solid var(--accent); border-radius:12px; padding:14px 18px; font-size:.9rem; margin:12px 0 4px;}
+.qbrief .xp{display:inline-block; margin-left:6px; font-size:.78rem; font-weight:800; color:var(--accent-ink);}
+.qcard{cursor:pointer; transition:all .15s;}
+.qcard:hover{transform:translateY(-2px); border-color:var(--accent);}
+.quest.done .qcard{cursor:default;}
+.qcard.free{border-color:var(--bad); box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 35%,transparent);}
+.qcard.contrib{border-color:var(--good);}
+.qcard .verdict{display:none; margin-top:8px; font-size:.8rem; font-weight:800;}
+.qcard .verdict.v-free{color:var(--bad);} .qcard .verdict.v-ok{color:var(--good);}
+.quest.done .qcard .verdict{display:block;}
+.qresult{margin-top:14px;}
+.badge{display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border-radius:99px; padding:8px 20px; font-weight:800; font-size:.9rem; animation:bpop .4s;}
+@keyframes bpop{0%{transform:scale(.6); opacity:0}100%{transform:scale(1); opacity:1}}
+/* footer */
+footer{color:var(--sub); font-size:.78rem; text-align:center; padding:30px 20px 60px; line-height:1.8;}
+/* mobile */
+.menubtn{display:none;}
+@media (max-width:900px){
+  nav.toc{position:fixed; left:0; top:56px; background:var(--panel); z-index:60; transform:translateX(-105%); transition:transform .25s; border-right:1px solid var(--line); width:250px; padding-left:14px;}
+  nav.toc.open{transform:none;}
+  .menubtn{display:inline-block;}
+  main{padding:20px 14px 100px;}
+  #intro{min-height:calc(100dvh - 102px);}
+  .sec{padding:24px 20px;}
+  .hero{padding:36px 24px;}
+  .hero h1{font-size:1.7rem;}
+  .g2,.g3,.g4{grid-template-columns:1fr;}
+  .vs{grid-template-columns:1fr;}
+  .vs .mid{justify-self:center;}
+  .bet .rgrid{grid-template-columns:repeat(2,1fr);}
+  .builder{grid-template-columns:1fr;}
+  .flow{flex-direction:column;}
+  .flow .arr{transform:rotate(90deg); align-self:center;}
+}
+</style>
+
+<style>
+/* ---- 2차시 보강 스타일 ---- */
+.token{border-left:4px solid var(--good); background:color-mix(in srgb,var(--good) 9%,var(--panel)); border-radius:0 12px 12px 0; padding:12px 16px 12px 18px; font-size:.86rem; margin:16px 0 0; color:var(--ink); line-height:1.7;}
+.token .lf{font-weight:800; color:var(--good); margin-right:6px;}
+.pv{background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:0; overflow:hidden; margin-top:12px;}
+.pv .cap{font-size:.72rem; color:var(--sub); text-align:center; padding:8px; background:var(--chip); border-bottom:1px solid var(--line);}
+.pvcover{background:linear-gradient(150deg,var(--panel),var(--accent-soft)); padding:34px 26px; min-height:180px; display:flex; flex-direction:column; justify-content:center;}
+.pvcover .mark{width:34px; height:34px; border-radius:8px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:14px;}
+.pvcover .kick{font-size:.72rem; font-weight:700; letter-spacing:.1em; color:var(--accent-ink); margin-bottom:8px;}
+.pvcover .ttl{font-size:1.5rem; font-weight:800; letter-spacing:-.02em; line-height:1.25; margin-bottom:10px; color:var(--ink);}
+.pvcover .meta{font-size:.82rem; color:var(--sub);}
+.pvquiz{padding:20px 22px;}
+.pvquiz .qn{font-size:.72rem; font-weight:800; color:var(--accent-ink); margin-bottom:6px;}
+.pvquiz .qq{font-weight:700; margin-bottom:10px; font-size:.95rem;}
+.pvquiz .po{display:block; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:8px 13px; margin:5px 0; font-size:.86rem; cursor:pointer;}
+.pvquiz .po.ok{border-color:var(--good); background:color-mix(in srgb,var(--good) 12%,var(--panel)); font-weight:700;}
+.pvquiz .ex{font-size:.8rem; color:var(--sub); margin-top:10px; padding-top:8px; border-top:1px solid var(--line);}
+.roles{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:stretch; margin:16px 0;}
+.roles .mid{align-self:center; font-weight:800; color:var(--accent); font-size:1.4rem;}
+.rolebox{background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px;}
+.rolebox .rt{font-size:.72rem; font-weight:800; letter-spacing:.06em; color:var(--accent-ink); margin-bottom:8px;}
+.rolebox h4{font-size:1rem; margin-bottom:8px;}
+.rolebox ul{list-style:none;} .rolebox li{font-size:.86rem; color:var(--sub); padding:4px 0 4px 15px; position:relative;}
+.rolebox li::before{content:"›"; position:absolute; left:0; color:var(--accent); font-weight:800;}
+.chk{list-style:none; margin:14px 0 0;}
+.chk li{background:var(--bg); border:1px solid var(--line); border-radius:11px; padding:11px 15px; margin:7px 0; font-size:.9rem; cursor:pointer; display:flex; gap:10px; align-items:flex-start; color:var(--sub); transition:all .12s;}
+.chk li::before{content:"□"; color:var(--sub); font-weight:800; flex:none;}
+.chk li.on{border-color:var(--good); background:color-mix(in srgb,var(--good) 8%,var(--panel)); color:var(--ink);}
+.chk li.on::before{content:"✓"; color:var(--good);}
+.chkbar{margin-top:12px; height:8px; border-radius:99px; background:var(--line); overflow:hidden;}
+.chkbar i{display:block; height:100%; width:0; background:var(--good); transition:width .3s;}
+.chkmsg{font-size:.84rem; color:var(--sub); margin-top:8px; text-align:right;}
+.wait{border-left:4px solid #c98a1a; background:color-mix(in srgb,#c98a1a 11%,var(--panel)); border-radius:0 12px 12px 0; padding:12px 16px 12px 18px; margin:16px 0 0; font-size:.87rem; line-height:1.7; color:var(--ink);}
+.wait .wh{font-weight:800; color:#a86a0c; margin-right:6px; letter-spacing:.01em;}
+[data-theme="dark"] .wait .wh{color:#e0a24e;}
+.wait ul{list-style:none; margin:7px 0 0;}
+.wait li{padding:3px 0 3px 17px; position:relative; color:var(--sub);}
+.wait li b{color:var(--ink);}
+.wait li::before{content:"\25B8"; position:absolute; left:0; color:#c98a1a; font-weight:800;}
+.pin{border-left:4px solid #7a5cc0; background:color-mix(in srgb,#7a5cc0 8%,var(--panel)); border-radius:0 12px 12px 0; padding:11px 16px; margin:14px 0 0; font-size:.86rem; line-height:1.65; color:var(--ink);}
+.pin .pk{font-weight:800; color:#5f45a0; margin-right:6px;}
+[data-theme="dark"] .pin .pk{color:#b49ae8;}
+.pin b{color:var(--ink);}
+.art{border-left:4px solid #d0568f; background:color-mix(in srgb,#d0568f 8%,var(--panel)); border-radius:0 12px 12px 0; padding:12px 16px; margin:14px 0 0; font-size:.86rem; line-height:1.65; color:var(--ink);}
+.art .ak{font-weight:800; color:#b23a72; margin-right:6px;}
+[data-theme="dark"] .art .ak{color:#eaa0c4;}
+.art b{color:var(--ink);}
+.lecture{border:1px solid color-mix(in srgb,#3a6ea5 45%,var(--line)); background:color-mix(in srgb,#3a6ea5 7%,var(--panel)); border-radius:14px; padding:18px 20px; margin:16px 0 0;}
+.lecture .lh{display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.05em; color:#2f5c88; background:color-mix(in srgb,#3a6ea5 16%,var(--panel)); border-radius:99px; padding:3px 12px; margin-bottom:12px;}
+[data-theme="dark"] .lecture .lh{color:#8fbce8;}
+.lecture h4{font-size:1rem; margin:14px 0 4px; letter-spacing:-.01em;}
+.lecture h4:first-of-type{margin-top:0;}
+.lecture p{font-size:.9rem; color:var(--sub); line-height:1.7; margin:2px 0 0;}
+.lecture .eg{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0 0;}
+.lecture .eg div{font-size:.85rem; border-radius:9px; padding:8px 12px; line-height:1.5;}
+.lecture .eg .bad{background:color-mix(in srgb,var(--bad) 10%,var(--panel)); border:1px solid color-mix(in srgb,var(--bad) 30%,var(--line)); color:var(--ink);}
+.lecture .eg .good{background:color-mix(in srgb,var(--good) 10%,var(--panel)); border:1px solid color-mix(in srgb,var(--good) 30%,var(--line)); color:var(--ink);}
+.lecture .eg b.x{color:var(--bad);} .lecture .eg b.o{color:var(--good);}
+.lecture .say{margin-top:12px; font-size:.84rem; color:var(--ink); border-top:1px dashed color-mix(in srgb,#3a6ea5 35%,var(--line)); padding-top:10px;}
+.lecture .say b{color:#2f5c88;} [data-theme="dark"] .lecture .say b{color:#8fbce8;}
+@media (max-width:900px){.lecture .eg{grid-template-columns:1fr;}}
+</style>
+
+<style>
+/* ---- 3차시 보강 ---- */
+.paths{display:grid; grid-template-columns:1.2fr 1fr; gap:12px; margin:14px 0 0;}
+.pathbox{border-radius:14px; padding:16px 18px; border:1px solid var(--line); background:var(--bg);}
+.pathbox.chat{border:2px solid var(--accent); background:color-mix(in srgb,var(--accent) 7%,var(--panel));}
+.pathbox .pt{font-size:.72rem; font-weight:800; letter-spacing:.04em; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+.pathbox.chat .pt{color:var(--accent-ink);}
+.pathbox.fold .pt{color:var(--sub);}
+.pathbox .pt .tagm{font-size:.62rem; font-weight:800; padding:1px 7px; border-radius:99px; background:var(--accent); color:#fff;}
+.pathbox ul{list-style:none;} .pathbox li{font-size:.87rem; color:var(--sub); padding:4px 0 4px 15px; position:relative; line-height:1.5;}
+.pathbox li b{color:var(--ink);}
+.pathbox li::before{content:"›"; position:absolute; left:0; color:var(--accent); font-weight:800;}
+/* interactive diagram */
+.diagram{margin:16px 0 0;}
+.dgrid{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:8px; align-items:center;}
+.dnode{border:1px solid var(--line); background:var(--bg); border-radius:14px; padding:14px 12px; text-align:center; cursor:pointer; transition:all .15s;}
+.dnode:hover,.dnode.on{border-color:var(--accent); background:var(--accent-soft); transform:translateY(-2px);}
+.dnode .di{font-size:1.4rem; margin-bottom:4px;}
+.dnode .dt{font-size:.82rem; font-weight:700; line-height:1.3;}
+.dnode .ds{font-size:.68rem; color:var(--sub); margin-top:2px;}
+.darr{color:var(--accent); font-weight:800; font-size:1.1rem; text-align:center;}
+.dpanel{margin-top:12px; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:0 12px 12px 0; background:var(--bg); padding:14px 18px; font-size:.9rem; line-height:1.7; color:var(--ink); min-height:64px;}
+.dpanel b{color:var(--accent-ink);}
+.dpanel .star{display:inline-block; font-size:.68rem; font-weight:800; color:#fff; background:var(--accent); border-radius:99px; padding:1px 8px; margin-left:6px;}
+.faq details{border:1px solid var(--line); border-radius:12px; background:var(--bg); margin:10px 0;}
+.faq summary{cursor:pointer; padding:14px 16px; font-weight:700; font-size:.98rem; list-style:none; display:flex; gap:9px; align-items:flex-start;}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::before{content:"Q"; color:var(--accent); font-weight:800; flex:none;}
+.faq details[open] summary{border-bottom:1px solid var(--line);}
+.faq .a{padding:14px 16px 16px; font-size:.9rem; color:var(--sub); line-height:1.75;}
+.faq .a b{color:var(--ink);}
+.faq .a ul{margin:8px 0 0 18px;} .faq .a li{margin:5px 0;}
+.faq .a .ex{margin-top:10px; background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:12px 14px; font-size:.85rem; line-height:1.6;}
+.faq .a .ex b{color:#fff;}
+.pz{margin:14px 0 0;}
+.pzq{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin:8px 0; display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:.92rem;}
+.pzbtns{display:flex; gap:6px; flex:none;}
+.pzb{border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:8px; padding:6px 16px; font-size:.85rem; cursor:pointer; font-family:inherit;}
+.pzb:hover{border-color:var(--accent);}
+.pzb.sel{background:var(--accent); border-color:var(--accent); color:#fff;}
+.who{display:inline-block; font-size:.68rem; font-weight:800; border-radius:99px; padding:2px 8px; margin-bottom:6px;}
+.who.hu{background:color-mix(in srgb,var(--good) 16%,var(--panel)); color:var(--good);}
+.who.ai{background:var(--accent-soft); color:var(--accent-ink);}
+@media (max-width:600px){.pzq{flex-direction:column; align-items:flex-start;}}
+@media (max-width:900px){.paths{grid-template-columns:1fr;} .dgrid{grid-template-columns:1fr;} .darr{transform:rotate(90deg);}}
+</style>
+</head>
+
+<body data-theme="paper" data-mode="normal">
+
+<div class="topbar">
+  <button class="tbtn menubtn" onclick="document.querySelector('nav.toc').classList.toggle('open')">목차</button>
+  <a class="brand" href="#top">전문대학교육협의회 <b>Claude 기본 셋팅</b> · 3차시 입체 실습교재</a>
+  <div class="spacer"></div>
+  <button class="tbtn mode on" data-mode="normal" onclick="setMode('normal',this)">화면 보통</button>
+  <button class="tbtn mode" data-mode="class" onclick="setMode('class',this)">수업</button>
+  <button class="tbtn th on" data-th="paper" onclick="setTheme('paper',this)">종이</button>
+  <button class="tbtn th" data-th="sepia" onclick="setTheme('sepia',this)">세피아</button>
+  <button class="tbtn th" data-th="dark" onclick="setTheme('dark',this)">다크</button>
+</div>
+
+<div class="wrap" id="top">
+<nav class="toc">
+  <div class="grp">들어가며</div>
+  <a href="#intro">강의를 시작하며</a>
+  <a href="#story">셋팅 전 vs 후, 하루</a>
+  <a href="#flow">오늘의 흐름</a>
+  <a href="#warmup">워밍업 퀴즈</a>
+  <div class="grp">CH1 · 왜 셋팅</div>
+  <a href="#ch1">매번 처음부터</a>
+  <div class="grp">CH2 · 지침</div>
+  <a href="#ch2">지침이 담는 것</a>
+  <a href="#claude-ex">실제 예시 · CLAUDE.md</a>
+  <a href="#inst-do">✎ 실습 · 지침 빌더</a>
+  <div class="grp">CH3 · 자료 한곳에</div>
+  <a href="#ch3">흩어지지 않게</a>
+  <div class="grp">CH4 · 스킬</div>
+  <a href="#ch4">반복을 스킬로</a>
+  <a href="#meta-skill">🧩 내 메타 스킬</a>
+  <a href="#skill-where">📊 스킬 어디 있지?</a>
+  <a href="#style-do">✎ 실습 · 문체 스킬</a>
+  <a href="#make-do">✎ 실습 · 스킬 만들기</a>
+  <a href="#skill-quest">🎯 스킬 판별 퀘스트</a>
+  <div class="grp">CH5 · 게임화 HTML</div>
+  <a href="#game-html">✎ 1편 · 게임화 맛보기</a>
+  <a href="#personalize">✎ 2편 · 실력별 개인화</a>
+  <div class="grp">CH6 · 직접 셋팅</div>
+  <a href="#setup-do">✎ 오늘 남길 것</a>
+  <div class="grp">자주 하는 질문</div>
+  <a href="#faq">FAQ · 윤리·참고문헌</a>
+  <div class="grp">마무리</div>
+  <a href="#summary">핵심 요약</a>
+  <a href="#next">다음 단계</a>
+</nav>
+<main>
+
+<section id="intro">
+  <div class="hero">
+    <div class="eyebrow">교수 워크숍 · A HANDS-ON WORKSHOP · 3차시</div>
+    <h1>매번 처음부터,<br>이제 그만</h1>
+    <p class="sub">지침 · 자료 정리 · 스킬 —<br><b>한 번 해두면 계속 쓰는 토대</b>를 오늘 내 손으로. <b>채팅(claude.ai)만으로 충분합니다.</b></p>
+    <div class="chips">
+      <span class="chip">Claude 기본 셋팅</span>
+      <span class="chip">약 1시간</span>
+      <span class="chip">✎ 손으로 하는 실습 5개</span>
+      <span class="chip">💬 채팅 우선 · 폴더는 선택</span>
+    </div>
+  </div>
+</section>
+
+<section id="story"><div class="sec">
+  <span class="kicker">왜 하는가</span>
+  <h2>셋팅 전 vs 후 — 어느 교수의 하루</h2>
+  <div class="vs">
+    <div class="vsbox warn"><h4>셋팅이 없는 하루</h4><ul>
+      <li>오전: "나는 게임 가르치는 교수야, 존댓말로…" 또 설명</li>
+      <li>점심: 어제 만든 자료가 어느 대화에 있었더라</li>
+      <li>오후: 회의록 양식을 처음부터 다시 불러줌</li>
+      <li>저녁: 내일 또 처음부터</li>
+    </ul></div>
+    <div class="mid">→</div>
+    <div class="vsbox okay"><h4>셋팅이 된 하루</h4><ul>
+      <li>오전: 새 대화도 나를 이미 앎 — 바로 본론</li>
+      <li>점심: 프로젝트 열면 어제 자료가 그대로</li>
+      <li>오후: "회의록 써줘" 한마디로 그 양식</li>
+      <li>저녁: 오늘 맥락을 정리해 두고 퇴근</li>
+    </ul></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>차이는 재능이 아니라 <b>한 번의 셋팅</b>입니다. 오늘 그 하루를 만듭니다.</div>
+</div></section>
+
+<section id="flow"><div class="sec">
+  <span class="kicker">오늘의 흐름</span>
+  <h2>여섯 걸음, 약 1시간 30분</h2>
+  <p class="lead">2차시가 <b>만드는 법</b>이었다면, 오늘은 그게 흩어지지 않게 <b>토대를 까는 법</b>. 대부분 채팅에서 바로 됩니다.</p>
+  <div class="grid g4">
+    <div class="card"><div class="tag">CH 1</div><h4>왜 셋팅</h4><p>매번 처음부터의 낭비.</p></div>
+    <div class="card"><div class="tag">CH 2</div><h4>지침</h4><p>나를 기억하는 AI.</p></div>
+    <div class="card"><div class="tag">CH 3</div><h4>자료 한곳에</h4><p>흩어지지 않게.</p></div>
+    <div class="card"><div class="tag">CH 4</div><h4>스킬</h4><p>반복을 자산으로.</p></div>
+    <div class="card"><div class="tag">CH 5</div><h4>게임화 HTML</h4><p>학생용 자료 만들기.</p></div>
+    <div class="card"><div class="tag">CH 6</div><h4>직접 셋팅</h4><p>오늘 남길 것.</p></div>
+    <div class="card"><div class="tag">💬</div><h4>채팅 우선</h4><p>폴더 연결은 '선택'으로.</p></div>
+  </div>
+</div></section>
+
+<section id="warmup"><div class="sec">
+  <span class="kicker">워밍업</span>
+  <h2>몸풀기 퀴즈</h2>
+  <p class="lead">시작 전 가볍게. 정답을 눌러 해설을 확인하세요. (점수는 없어요)</p>
+  <div class="quiz" data-q>
+    <div class="qk">Q · 새 대화창을 열 때마다 클로드가 나를 '다시 모르는' 이유는?</div>
+    <button class="opt" data-c="0">클로드가 일부러 기억을 지워서</button>
+    <button class="opt" data-c="1">대화창마다 백지에서 시작하기 때문 — 그래서 '지침'으로 나를 미리 알려둔다</button>
+    <button class="opt" data-c="0">유료 계정만 기억하기 때문</button>
+    <div class="expl">기본적으로 새 대화는 백지에서 출발합니다. 그래서 <b>지침(맞춤 설정)</b>에 한 번 적어 두면, 이후 대화가 그 위에서 시작됩니다. 오늘 그걸 만듭니다.</div>
+  </div>
+</div></section>
+<div class="divider"><div class="ch">CHAPTER 1</div><h2>왜 셋팅인가</h2><p>셋팅 없는 AI는, 매번 처음부터 시작합니다.</p></div>
+
+<section id="ch1"><div class="sec">
+  <span class="kicker">문제의식</span>
+  <h2>매번 처음부터 설명하고 있지 않나요</h2>
+  <p class="lead">좋은 답을 얻어도, 다음 대화창을 열면 클로드는 나를 <b>다시 모릅니다</b>. 호칭도, 과목도, 말투도 처음부터. 오늘 만드는 다섯 가지는 전부 '두 번 설명하지 않기' 장치입니다.</p>
+  <div class="grid g3">
+    <div class="card"><div class="tag">지침</div><h4>나를 기억</h4><p>누구인지·어떻게 답할지를 한 번 적어 자동 적용.</p></div>
+    <div class="card"><div class="tag">자료·스킬</div><h4>자산 누적</h4><p>결과와 반복 작업을 한곳에 쌓아 재사용.</p></div>
+    <div class="card"><div class="tag">이어가기</div><h4>맥락 인계</h4><p>끊긴 작업을 다음 대화에서 그대로 잇기.</p></div>
+  </div>
+</div></section>
+
+<div class="divider"><div class="ch">CHAPTER 2</div><h2>지침 · 나를 기억하는 AI</h2><p>한 번 적어 두면, 모든 대화가 그 위에서 시작됩니다.</p></div>
+
+<section id="ch2"><div class="sec">
+  <span class="kicker">개념</span>
+  <h2>지침이 담는 것</h2>
+  <p class="lead">AI가 매번 먼저 읽는 '설명서'. 세 덩어리면 충분합니다.</p>
+  <div class="grid g3">
+    <div class="card"><div class="tag">나에 대해</div><h4>정체</h4><p>소속·담당·호칭 — 내가 누구인지, 어떤 일을 하는지.</p></div>
+    <div class="card"><div class="tag">응답 방식</div><h4>스타일</h4><p>말투·길이·형식 — 어떻게 답해 주길 바라는지.</p></div>
+    <div class="card"><div class="tag">반복 규칙</div><h4>트리거</h4><p>"회의록 써줘" 한마디면 바로 그 양식으로.</p></div>
+  </div>
+  <h3>지침, 어디에 넣나 — 두 경로</h3>
+  <div class="paths">
+    <div class="pathbox chat">
+      <div class="pt"><span class="tagm">기본</span>💬 채팅(claude.ai)</div>
+      <ul>
+        <li><b>설정 &gt; 맞춤 지침(프로필)</b> — 모든 대화에 적용 (약 1,500자)</li>
+        <li><b>프로젝트 지침</b> — 특정 과목·업무 단위, 더 길게 + 자료 첨부</li>
+        <li><b>메모리</b> — 대화하며 자동으로 기억되게</li>
+      </ul>
+    </div>
+    <div class="pathbox fold">
+      <div class="pt">📁 폴더 연결(선택)</div>
+      <ul>
+        <li><b>CLAUDE.md</b> 파일에 기록 — 폴더를 읽는 도구에서만</li>
+        <li>채팅의 맞춤 지침과 <b>동기화 안 됨</b> (별개 저장소)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>외워서 쓰는 게 아니라 — <b>대화한 뒤 "이 내용을 내 지침에 기록해 줘"</b> 한마디면 정리됩니다. 채팅이면 그걸 <b>설정 &gt; 맞춤 지침</b>에 붙여넣으면 끝.</div>
+</div></section>
+
+<section id="claude-ex"><div class="sec">
+  <span class="kicker">실제 예시</span>
+  <h2>지침이 쌓이면 이렇게 됩니다</h2>
+  <p class="lead">아래는 김민철 교수가 실제로 쓰는 지침의 <b>발췌</b>입니다. 처음엔 세 줄로 시작해, 쓸수록 이렇게 자랍니다. (민감한 개인 정보는 뺐어요)</p>
+  <div class="prompt">
+    <div class="plabel">김민철 교수 지침 (발췌) <span class="hint">참고용 — 그대로 베끼지 말고 구조만</span></div>
+    <pre># 김민철 교수 — AI 지침
+
+## 응답 스타일
+- 한국어 기본, 간결하게. 불필요한 서론·맺음말 최소화.
+- 교수님 호칭 대신 자연스러운 대화체.
+- 공식 문서(보고서·제안서)는 보고체(~함/~임)로.
+
+## 자동 트리거 규칙
+| 트리거 키워드            | 실행            |
+|------------------------|-----------------|
+| "회의록 쓰자"           | 표준 회의록 양식 |
+| "강의계획서"            | 주차별 계획 틀   |
+| "굿모닝 / 모닝 브리핑"   | 아침 루틴 브리핑 |
+
+## 장기목표 (역할별)
+1. 학자 — 게임기반학습 프레임워크 정립, 국제저널 게재
+2. 아버지 — 분기 1회 아들과 프로젝트
+3. 개발자 — 인디게임 매년 1편 출시
+...</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="note"><span class="k">보는 법</span>내용을 베끼지 말고 <b>칸(응답 스타일·트리거·목표)만</b> 참고하세요. 여러분의 지침은 여러분 것으로 채웁니다 — 아래 실습에서 바로.</div>
+</div></section>
+
+<section id="inst-do"><div class="sec">
+  <span class="kicker">✎ 실습 1 · 약 5분</span>
+  <h2>지침 메타 프롬프트로 내 지침 만들기</h2>
+  <p class="lead">폼을 채우는 대신, <b>아래 프롬프트 하나</b>를 붙여넣으면 클로드가 인터뷰하며 내 지침을 만들어 줍니다. 완성본을 <b>채팅이면 설정 &gt; 맞춤 지침</b>에 붙여넣으면 끝. (폴더면 CLAUDE.md에)</p>
+  <div class="prompt">
+    <div class="plabel">지침 메타 프롬프트 <span class="hint">💬 붙여넣기 → 대화 → 완성</span></div>
+    <pre>너는 내 'AI 지침(맞춤 설정)' 설계 전문가야. 인터뷰로 내 지침을 만들 거야.
+
+[진행 방식]
+· 아래 항목을 한 번에 하나씩 물어봐. 내가 짧게 답하면 다음으로.
+· 답이 막연하면 예시를 제시해 구체화하도록 도와줘.
+
+[물어볼 것]
+① 소속·담당 (학교/학과/가르치는 과목)
+② 호칭 — 어떻게 불러주길 (예: 편한 대화체 / 교수님)
+③ 답변 스타일 — 길이(간결/보통/자세히)·말투·이모지 사용 여부
+④ 공식 문서 톤 — 보고체(~함/~임) / 평서체(~다) / 대화체
+⑤ 자주 하는 반복 업무 1~3개 + 각 트리거 한마디 (예: "회의록 써줘")
+⑥ 피해야 할 것 — 절대 안 했으면 하는 말투·행동(금지어)
+⑦ (선택) 올해 이루고 싶은 목표 1~2개
+
+[출력]
+· '나에 대해 / 응답 방식 / 반복 규칙 / 하지 말 것' 4섹션으로 정리
+· 채팅 맞춤 지침에 들어가게 1,500자 이내, 군더더기 없이
+· 마지막 줄에: 채팅이면 '설정 > 맞춤 지침', 폴더면 CLAUDE.md에 넣는 법
+
+자, ①부터 하나씩 물어봐 줘.</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="wait"><span class="wh">⏳ 돌아가는 동안 · 하나 더 돌리기</span>지침을 정리하는 사이, <b>새 대화창</b>을 하나 열어 던져 두세요.
+    <div class="prompt" style="margin-top:10px">
+      <div class="plabel">보조 실습 · 적용 확인 준비 <span class="hint">🪶 짧음</span></div>
+      <pre>내 소개를 한 문장으로 만들어 줘 — 나중에 "나 누구야?"로 지침이 적용됐는지 확인할 거야.</pre>
+      <button class="copybtn">복사</button>
+    </div>
+    <div style="margin-top:8px; font-size:.83rem; color:var(--sub)">👉 지침을 저장한 뒤 새 대화에서 "나 누구야?"를 물어, 나를 기억하는지 확인하세요.</div>
+  </div>
+</div></section>
+<div class="divider"><div class="ch">CHAPTER 3</div><h2>자료, 흩어지지 않게</h2><p>산출물을 한곳에 — 규칙대로.</p></div>
+
+<section id="ch3"><div class="sec">
+  <span class="kicker">한곳에</span>
+  <h2>어제 만든 자료가 어디 있더라</h2>
+  <p class="lead">대화가 쌓이면 자료가 흩어집니다. '한곳에 모으는 규칙'만 있으면 찾는 시간이 0이 됩니다.</p>
+  <div class="paths">
+    <div class="pathbox chat">
+      <div class="pt"><span class="tagm">기본</span>💬 채팅(claude.ai)</div>
+      <ul>
+        <li><b>프로젝트</b>를 과목·업무별로 하나씩 — 관련 대화·자료가 그 안에 모임</li>
+        <li><b>구글 드라이브 연동</b> — 설정 &gt; 커넥터에서 Drive 연결 → 내 문서를 대화에서 바로 검색·참조 (읽기 전용)</li>
+        <li>중요한 결과물은 <b>다운로드해 내 폴더</b>에, 이름은 <b>주제_버전_날짜</b></li>
+      </ul>
+    </div>
+    <div class="pathbox fold">
+      <div class="pt">📁 폴더 연결(선택)</div>
+      <ul>
+        <li>클라우드(Dropbox·구글드라이브) 폴더 하나를 연결 → 집↔연구실 동기화</li>
+        <li>산출물은 <b>outputs/YYYY-MM</b> 하위로 자동 정리</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:12px">
+    <div class="card"><div class="tag">프로젝트 예</div><h4>과목·업무별로</h4><p>게임기획(2-2) · 학과 행정 · 연구-논문A — 대화가 섞이지 않아요.</p></div>
+    <div class="card"><div class="tag">파일명 예</div><h4>주제_버전_날짜</h4><p>평가루브릭_v3_2026-07.pdf — 최신만 남기고 공유.</p></div>
+    <div class="card"><div class="tag">드라이브 예</div><h4>연동해서 참조</h4><p>지난 강의안 Drive 문서를 "이거 참고해"로 바로.</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>도구가 무엇이든 원칙은 하나 — <b>한곳에, 이름 규칙대로</b>. 쌓이기 전에 규칙부터.</div>
+</div></section>
+
+<div class="divider"><div class="ch">CHAPTER 4</div><h2>스킬</h2><p>반복하는 일은, 한 번만 정해 두면 됩니다.</p></div>
+
+<section id="ch4"><div class="sec">
+  <span class="kicker">개념</span>
+  <h2>반복을 스킬로 — 자주 하는 일에 이름 붙이기</h2>
+  <p class="lead">잘 만든 프롬프트 하나가 곧 스킬입니다. 한 번의 투자로 계속 절약.</p>
+  <div class="grid g3">
+    <div class="card"><div class="tag">회의록</div><h4>한마디로</h4><p>"회의록 써줘" → 표준 양식까지 한 번에.</p></div>
+    <div class="card"><div class="tag">강의계획서</div><h4>같은 틀</h4><p>주차별 구조를 매번 똑같이 빠르게.</p></div>
+    <div class="card"><div class="tag">보고서</div><h4>일관되게</h4><p>정해진 문체·구조로.</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>한 번 한 일은 다음부터 한마디로 — 쌓일수록 강해집니다.</div>
+</div></section>
+
+<section id="meta-skill"><div class="sec">
+  <span class="kicker">🧩 대표 스킬</span>
+  <h2>내 메타 스킬 — 스킬 만드는 스킬</h2>
+  <p class="lead">GRASP·PRECISE·FUN9처럼 <b>N요소 프레임워크</b>를 만드는 규칙 자체를 스킬로 굳힌 게 <b>메타 스킬</b>입니다. 아래는 김민철 교수의 <b>k-meta-skill 전문</b>(프레임워크형·참조형·정보형 3유형 포함) — 새 스킬을 만들 때 이걸 먼저 붙이면 약어·요소·품질이 자동으로 잡힙니다.</p>
+  <div class="prompt">
+    <div class="plabel">k-meta-skill 전문 (복사용) <span class="hint">🧩 스킬 만드는 스킬 · 원문</span></div>
+    <pre>---
+name: k-meta-skill
+description: 사다리스쿨 스타일 지식 스킬 생성 가이드. "스킬 만들어줘", "프레임워크 정리", "KB 문서화", "새 스킬 개발" 요청 시 사용한다.
+---
+
+# K-META-SKILL: 스킬 생성 가이드
+
+## 품질 기준 (가장 중요)
+
+**핵심: 읽고 바로 실행 가능한가?**
+
+| ❌ 나쁜 스킬 | ✅ 좋은 스킬 |
+|-------------|-------------|
+| "적절한 보상을 설계하라" | "기본 활동 5-10XP, 주간 과제 20-50XP" |
+| "난이도를 조절하라" | "정답률 70% 유지, 3연속 정답→난이도↑" |
+| "피드백을 제공하라" | "행동 후 3초 내 시각+청각 피드백" |
+| "좋은 제목을 써라" | "숫자 + 호기심 + 8자 이내" |
+
+**원칙:** 요소 이름만 나열 = 실패. 수치/공식/비율까지 = 성공.
+
+---
+
+## 3유형 판단
+
+| 유형 | 언제 | 참고 |
+|------|------|------|
+| **프레임워크형** | 방법론/절차 전달 | k-grasp, k-precise |
+| **참조형** | 빠른 조회 | k-fun9, k-retention |
+| **정보형** | 팩트 제공 | k-psn-sadari |
+
+---
+
+## 프레임워크형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 3개+] 요청 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## [NAME] N요소
+| 요소 | 영어 | 한글 | 핵심 기준 |
+|------|------|------|----------|
+| X | ... | ... | [수치/공식] |
+
+## 요소별 상세
+### X - [명칭]
+**기준:** [구체적 수치]
+❌ ...
+✅ ...
+
+## 상황별 배합
+| 상황 | 강조 요소 |
+### [상황] 예시
+"[실제 예문]"
+
+## 관련 스킬
+```
+
+**체크:** □ 약어=단어 □ 5-8요소 □ 각 요소에 수치/기준 □ ❌/✅ 예시 □ 배합+예문
+
+---
+
+## 참조형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 3개+] 조회 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## 핵심 요소
+| # | 요소 | 핵심 | 기준값 |
+
+## 상황별 조합
+| 상황 | 조합 |
+
+## 체크리스트
+□ A? □ B? □ C?
+
+💡 [한 줄 팁]
+```
+
+**체크:** □ 50줄 이하 □ 3섹션 이하 □ 테이블에 기준값 □ 💡 팁
+
+---
+
+## 정보형
+
+```markdown
+---
+name: k-[스킬명]
+description: [정의]. [키워드 10개+] 언급 시 사용한다.
+---
+
+# K-[NAME]: [풀네임]
+
+## Overview
+## 핵심 정보
+## [카테고리]
+## When to Apply
+```
+
+**체크:** □ 키워드 10개+ □ 계층 구조 □ When to Apply
+
+---
+
+## 약어 만들기
+
+| 좋은 예 | 의미 | 연결 |
+|---------|------|------|
+| GRASP | 파악하다 | 지식 습득 |
+| PRECISE | 정밀한 | 글쓰기 |
+| REWARD | 보상 | 게이미피케이션 |
+
+요소 정하기 → 첫 글자로 단어 → 안 되면 순서/동의어 → 안 되면 숫자형
+
+---
+*© 사다리스쿨 (www.sadarischool.com)*</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="note"><span class="k">핵심</span>요소 이름만 나열 = 실패, <b>수치·공식·비율까지 = 성공</b>. 이 한 장이 모든 스킬 품질의 기준 — 아래 문체·스킬 실습에서도 먼저 붙여 쓰세요.</div>
+</div></section>
+
+<section id="skill-where"><div class="sec">
+  <span class="kicker">📊 자주 받는 질문</span>
+  <h2>스킬, 대체 어디 있지?</h2>
+  <p class="lead">아래 각 단계를 <b>눌러 보세요</b> — 스킬이 어디서 와서 어떻게 실행되는지 한 장으로 보입니다.</p>
+  <div class="diagram">
+    <div class="dgrid">
+      <div class="dnode on" data-d="where"><div class="di">📍</div><div class="dt">어디서 오나</div><div class="ds">설치·저장 위치</div></div>
+      <div class="darr">→</div>
+      <div class="dnode" data-d="live"><div class="di">🗂️</div><div class="dt">어디 사나</div><div class="ds">클로드가 읽는 곳</div></div>
+      <div class="darr">→</div>
+      <div class="dnode" data-d="run"><div class="di">⚡</div><div class="dt">어떻게 실행</div><div class="ds">트리거 한마디</div></div>
+    </div>
+    <div class="dpanel" id="dPanel"></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>채팅이면 <b>설정 &gt; Capabilities</b>에서 켜고, 폴더를 쓰면 파일로 소유합니다. 어느 쪽이든 <b>부르는 건 한마디</b>.</div>
+</div></section>
+
+<section id="style-do"><div class="sec">
+  <span class="kicker">✎ 실습 2 · 약 5분</span>
+  <h2>문체 스킬 만들기</h2>
+  <p class="lead">내 글투를 클로드가 그대로 흉내 내게 하는 스킬 — <b>이미 가진 내 문서에서</b> 문체를 뽑습니다. 내가 쓴 문서(보고서·공문·강의안 등) <b>파일 1개를 대화창에 첨부</b>하고 아래를 이어 붙이세요. 채팅에서 <b>SKILL.md로 만들고 → 스킬로 업로드</b>까지. <span style="color:var(--sub)">(한글 파일이면 PDF로 저장해 첨부)</span></p>
+  <div class="builder">
+    <div class="bform">
+      <label>어떤 문서의 문체? <select id="kType"><option selected>메일·업무 메시지</option><option>보고서·공문</option><option>강의·교육 콘텐츠</option><option>칼럼·에세이</option></select></label>
+      <label>스킬 이름 <input id="kName" type="text" placeholder="예: 내 문체"></label>
+      <label>특히 지켜줬으면 하는 것 <input id="kKeep" type="text" placeholder="예: 문장 짧게, 존댓말"></label>
+    </div>
+    <div class="prompt">
+      <div class="plabel">문체 추출 프롬프트 <span class="hint">📎 문서 첨부 후 붙여넣기</span></div>
+      <pre id="kOut"></pre>
+      <button class="copybtn">복사</button>
+    </div>
+  </div>
+  <div class="pin"><span class="pk">🔺 스킬로 업로드</span>채팅에서 만든 문체 스킬을 <b>업로드</b>해 두면, 프로젝트가 바뀌어도 어디서나 "내 문체로 써줘"로 불립니다.
+    <div style="margin-top:8px; line-height:1.9">① 클로드가 만든 <b>SKILL.md</b>를 받는다 &nbsp;→&nbsp; ② <b>설정 &gt; Capabilities(기능)</b>에서 스킬로 추가·업로드 &nbsp;→&nbsp; ③ 새 대화에서 "내 문체로 써줘"로 확인</div>
+    <span style="color:var(--sub)">(폴더 연결이면: SKILL.md를 스킬 폴더에 저장하면 끝. 업로드 불필요)</span></div>
+  <div class="wait"><span class="wh">⏳ 돌아가는 동안</span>클로드가 내 문서를 분석하는 사이:
+    <ul><li>내 글에서 <b>절대 안 쓰는 표현(금지어)</b> 2개 떠올리기</li><li>다음 실습(스킬 만들기)에 쓸 <b>내 반복 업무 1개</b> 정해두기</li></ul></div>
+</div></section>
+<section id="make-do"><div class="sec">
+  <span class="kicker">✎ 실습 3 · 약 6분</span>
+  <h2>스킬 만드는 실습 — 반복 업무 하나를 스킬로</h2>
+  <p class="lead">방금 정한 내 반복 업무를 스킬로 굳힙니다. 아래를 채우면 <b>스킬 생성 요청</b>이 완성돼요. 핵심은 "요소 이름만 나열 = 실패, <b>수치·기준까지 = 성공</b>".</p>
+  <div class="builder">
+    <div class="bform">
+      <label>반복 업무 (무엇을) <input id="mTask" type="text" placeholder="예: 매주 학과 회의록 정리"></label>
+      <label>부를 트리거 (한마디) <input id="mTrig" type="text" placeholder='예: "회의록 써줘"'></label>
+      <label>꼭 지킬 규칙 (수치·형식) <input id="mRule" type="text" placeholder="예: 참석자 자동 기재, 결정사항 3줄, 표로"></label>
+    </div>
+    <div class="prompt">
+      <div class="plabel">스킬 생성 요청 <span class="hint">💬 채팅 그대로 OK</span></div>
+      <pre id="mOut"></pre>
+      <button class="copybtn">복사</button>
+    </div>
+  </div>
+  <div class="pin"><span class="pk">🧩 팁</span>위 <b>「내 메타 스킬」</b>을 이 요청 앞에 먼저 붙이면, 형식·품질(수치·✗/✓ 예시)까지 자동으로 맞춰집니다.</div>
+  <div class="wait"><span class="wh">⏳ 돌아가는 동안</span>스킬이 만들어지는 사이:
+    <ul><li>이 스킬을 <b>어느 프로젝트</b>에 넣을지 정하기</li><li>다음에 스킬로 만들 반복 업무 <b>하나 더</b> 메모</li></ul></div>
+</div></section>
+
+<section id="skill-quest"><div class="sec">
+  <span class="kicker">🎯 퀘스트</span>
+  <h2>스킬로 만들 가치가 있을까?</h2>
+  <p class="lead">아래 넷 중 <b>스킬로 만들 가치가 가장 낮은(일회성)</b> 카드를 골라 보세요. 카드를 누르면 판정과 해설이 나옵니다. (점수 없음)</p>
+  <div class="quest" id="quest">
+    <div class="grid g2">
+      <div class="card qcard" data-i="0"><div class="tag">A</div><h4>매주 학과 회의록 정리</h4><p>포맷·참석자·결정사항이 매번 비슷.<div class="verdict"></div></p></div>
+      <div class="card qcard" data-i="1"><div class="tag">B</div><h4>주차별 강의계획서 작성</h4><p>같은 틀을 학기마다 반복.<div class="verdict"></div></p></div>
+      <div class="card qcard" data-i="2"><div class="tag">C</div><h4>이번 신입생 환영사 초안 1회</h4><p>올해 한 번, 다시 안 씀.<div class="verdict"></div></p></div>
+      <div class="card qcard" data-i="3"><div class="tag">D</div><h4>내 문체로 메일 쓰기</h4><p>말투를 매번 똑같이 유지하고 싶음.<div class="verdict"></div></p></div>
+    </div>
+  </div>
+  <div id="questResult"></div>
+  <div class="note"><span class="k">기준</span>스킬은 <b>반복 + 일정한 규칙</b>이 있을 때 값집니다. 한 번 쓰고 마는 일은 그냥 그 자리에서 부탁하면 됩니다.</div>
+</div></section>
+<div class="divider"><div class="ch">CHAPTER 5</div><h2>게이미피케이션 HTML 자료 만들기</h2><p>셋팅을 살려, 학생이 재미있게 푸는 한 페이지로.</p></div>
+
+<section id="game-html"><div class="sec">
+  <span class="kicker">✎ 1편 · 게이미피케이션 맛보기 · 약 6분</span>
+  <h2>2차시 수업 설계로, 게이미피케이션 HTML 만들기</h2>
+  <p class="lead"><b>2차시에서 만든 수업 설계</b>(학습목표·개념 구조)를 그대로 살려, 학생이 <b>퀴즈·배지·진행도</b>로 즐기는 한 페이지 HTML 자료를 만듭니다. <b>지금 보는 이 교재</b>가 바로 그 예시예요. 🪶 토큰을 아끼려 처음엔 <b>맛보기(짧은 버전)</b>로 만들고, 마음에 들면 늘리세요.</p>
+  <div class="grid g4">
+    <div class="card"><div class="tag">QUIZ</div><h4>즉시 피드백</h4><p>정답 고르면 바로 채점·해설.</p></div>
+    <div class="card"><div class="tag">BADGE</div><h4>포인트·배지</h4><p>맞히면 배지 획득 — 성취감.</p></div>
+    <div class="card"><div class="tag">BAR</div><h4>진행도</h4><p>얼마나 왔는지 한눈에.</p></div>
+    <div class="card"><div class="tag">CLEAR</div><h4>완주 보상</h4><p>끝까지 풀면 완주 배지.</p></div>
+  </div>
+  <div class="pin"><span class="pk">📎 먼저</span>2차시 <b>교육설계 빌더</b>에서 만든 수업 설계(학습목표·개념 구조)를 대화창에 붙여넣고, 아래 프롬프트를 이어 붙이세요.</div>
+  <div class="builder">
+    <div class="bform">
+      <label>과목 · 주제 <input id="hSub" type="text" placeholder="예: 게임기획 · 몰입 이론"></label>
+      <label>퀴즈로 낼 핵심 개념 <input id="hConcept" type="text" placeholder="예: 몰입의 3조건, 난이도-실력 균형"></label>
+      <label>대상 <select id="hWho"><option>학부 1학년</option><option selected>학부 2학년</option><option>학부 3학년</option></select></label>
+    </div>
+    <div class="prompt">
+      <div class="plabel">게이미피케이션 HTML 프롬프트 <span class="hint">🪶 한 페이지 HTML</span></div>
+      <pre id="hOut"></pre>
+      <button class="copybtn">복사</button>
+    </div>
+  </div>
+  <div class="pin"><span class="pk">🔒 팁</span>완성되면 "색·글꼴을 내 강의자료 톤으로", "문항 하나 더"처럼 <b>한 번에 하나씩</b> 다듬으세요. 링크로 학생에게 바로 공유됩니다.</div>
+  <div class="wait"><span class="wh">⏳ 돌아가는 동안</span>HTML이 만들어지는 사이:
+    <ul><li>퀴즈 <b>오답 보기</b> 하나를 직접 떠올려 적어두기 (학생이 헷갈릴 만한)</li><li>이 자료를 공유할 <b>대상(반·조)</b> 정해두기</li></ul></div>
+</div></section>
+
+<section id="personalize"><div class="sec">
+  <span class="kicker">✎ 2편 · 실력별 개인화 · 약 8분</span>
+  <h2>초반 진단 퀴즈로, 실력별 개인 페이지</h2>
+  <p class="lead">한 자료로 모두를? 아니요 — <b>시작에 진단 퀴즈</b>를 넣어 학생을 <b>기초·중급·심화</b>로 나누고, 각자에게 맞는 내용을 보여줍니다. 아래에서 <b>직접 진단</b>을 눌러 보세요 (작동 예시).</p>
+  <div class="pz" id="pz">
+    <div class="pzq" data-q="0"><span><b>Q1.</b> 나만의 지침(맞춤 설정)을 만들어 봤다</span><span class="pzbtns"><button class="pzb" data-v="1">예</button><button class="pzb" data-v="0">아니오</button></span></div>
+    <div class="pzq" data-q="1"><span><b>Q2.</b> 나만의 스킬을 만들어 봤다</span><span class="pzbtns"><button class="pzb" data-v="1">예</button><button class="pzb" data-v="0">아니오</button></span></div>
+    <div class="pzq" data-q="2"><span><b>Q3.</b> 게이미피케이션/HTML 자료를 만들어 봤다</span><span class="pzbtns"><button class="pzb" data-v="1">예</button><button class="pzb" data-v="0">아니오</button></span></div>
+  </div>
+  <div id="pzResult"></div>
+  <p class="lead" style="margin-top:18px">이 원리로 <b>내 과목의 개인화 자료</b>를 만들어 봅니다.</p>
+  <div class="builder">
+    <div class="bform">
+      <label>과목 · 주제 <input id="zSub" type="text" placeholder="예: 게임기획 · 레벨 디자인"></label>
+      <label>수준을 나눌 기준 <input id="zBasis" type="text" placeholder="예: 핵심 개념 이해도 / 사전 경험"></label>
+    </div>
+    <div class="prompt">
+      <div class="plabel">개인화 HTML 프롬프트 <span class="hint">🪶 맛보기 · 한 페이지</span></div>
+      <pre id="zOut"></pre>
+      <button class="copybtn">복사</button>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>개인화의 시작은 <b>진단 한 번</b> — 같은 자료도 학생마다 다른 문으로 들어오게.</div>
+</div></section>
+
+<div class="divider"><div class="ch">CHAPTER 6</div><h2>직접 셋팅</h2><p>지금, 내 손으로 오늘 것을 남깁니다.</p></div>
+
+<section id="setup-do"><div class="sec">
+  <span class="kicker">✎ 최종 실습 · 오늘 남길 것</span>
+  <h2>오늘 끝에 이건 남기고 갑니다</h2>
+  <p class="lead">아래를 하나씩 눌러 완료하세요. 대부분 <b>채팅에서 바로</b> 됩니다. 다 채우면 오늘의 셋팅 완료 배지가 열려요.</p>
+  <ul class="chk" id="chk">
+    <li data-k>내 <b>지침 초안</b>을 만들어 설정 &gt; 맞춤 지침에 붙였다 💬</li>
+    <li data-k>과목·업무별 <b>프로젝트</b>를 하나 만들었다 💬</li>
+    <li data-k><b>문체 스킬</b> 1개를 만들어 프로젝트 지침에 넣었다 💬</li>
+    <li data-k>반복 업무 1개를 <b>스킬로</b> 만들었다 (메타 스킬 활용) 🧩</li>
+    <li data-k>(선택) 클라우드 <b>폴더를 연결</b>해 봤다 📁</li>
+  </ul>
+  <div class="chkbar"><i id="chkFill"></i></div>
+  <div class="chkmsg" id="chkMsg">0 / 5 완료</div>
+  <div id="chkBadge" style="margin-top:14px"></div>
+</div></section>
+
+<div class="divider"><div class="ch">FAQ</div><h2>자주 하는 질문</h2><p>워크숍에서 자주 나오는 두 가지.</p></div>
+
+<section id="faq"><div class="sec">
+  <span class="kicker">자주 하는 질문</span>
+  <h2>윤리 · 참고문헌</h2>
+  <div class="faq">
+    <details>
+      <summary>내 문체로 논문까지 써주니 놀라운데, 윤리적으로 괜찮나? 어디까지 허용되나?</summary>
+      <div class="a">
+        <b>짧게 — 문체는 빌리되, 생각·검증·책임은 내 것으로.</b> AI를 '초안·교정·다듬기 도우미'로 쓰는 건 대체로 받아들여지지만, 최종 진실성과 책임은 전적으로 저자에게 있습니다.
+        <ul>
+          <li><b>대체로 괜찮은 영역</b> — 내 아이디어·내 데이터의 구조 잡기, 표현 다듬기, 문체 교정, 초안 속도내기.</li>
+          <li><b>조심할 영역</b> — 없는 사실·인용·데이터를 생성하게 두거나, 내가 이해·검증하지 않은 주장을 그대로 싣는 것.</li>
+          <li><b>경계선 = 저자성과 책임</b> — 내가 내용을 이해하고 검증하고 책임질 수 있는가. AI는 저자가 될 수 없습니다.</li>
+          <li><b>공개(disclosure)</b> — 많은 학회·저널·대학이 'AI 사용 시 밝히기'를 요구합니다. 투고 전 해당 정책을 꼭 확인하세요.</li>
+        </ul>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--line)">
+        <b>"AI 탐지기에도 안 걸리던데?"</b> — 그건 윤리 기준이 아닙니다. 탐지기는 오탐·미탐이 많아 신뢰도가 낮고, '안 걸림 = 괜찮음'으로 두면 그건 윤리가 아니라 리스크 관리예요. '걸리느냐'가 유일한 문제라면 이미 답이 불편하다는 신호이기도 합니다.<br><br>
+        <b>문체 ≠ 알맹이.</b> 문체가 나와 구별이 안 되는 건 핵심이 아닙니다(문체는 원래 내 것). 진짜 질문은 <b>생각·주장·근거가 누구 것이냐</b>. 내 아이디어·데이터를 내 목소리로 다듬은 것이라면 좋은 편집자·공저자를 쓴 것과 다르지 않습니다.<br><br>
+        <b>그리고 — 이건 분명히 내 노력입니다.</b> 이렇게 쓰는 클로드를 만든 것(지침·스킬·문체 셋팅)도, 나온 알맹이를 <b>검증하고 이해하고 활용하는 것</b>도 전부 나입니다. 저자성은 바로 그 지점에 있어요. AI는 내 사고를 확장하는 도구이고, 이해·검증·책임의 주체는 여전히 나입니다.<br><br>
+        <b>자가 테스트 둘</b> — ① "밝혀져도 나는 떳떳한가?" ② "이 내용을 내가 이해하고 검증하고 책임질 수 있나?" 둘 다 통과하면 대개 괜찮고, 걸리는 곳이 진짜 손봐야 할 지점입니다.
+        </div>
+        이 논의는 분야·저널마다 기준이 다르고 아직 진행 중입니다. 여기 정리한 건 현재 통용되는 관점이에요.
+      </div>
+    </details>
+    <details>
+      <summary>참고문헌을 할루시네이션 없이 정확히 달게 하려면? (실제 검색이 답일까?)</summary>
+      <div class="a">
+        <b>핵심 — AI가 만든 인용은 '그럴듯한 가짜'일 수 있습니다. 반드시 실제 출처와 대조하세요.</b> 맞아요, <b>실제로 검색하게</b> 만드는 게 첫 번째 답입니다.
+        <ul>
+          <li><b>① 검색형 클로드</b> — 웹 검색이 켜진 클로드(또는 크롬 연동)로 "출처를 <b>실제로 찾아서</b> 링크·DOI와 함께" 요청. 생성이 아니라 검색.</li>
+          <li><b>② 근거 고정형 · NotebookLM</b> — 내가 올린 논문 <b>안에서만</b> 답하게 하면 없는 인용을 못 만듭니다. (추천)</li>
+          <li><b>③ 학술 검색 도구</b> — Google Scholar, Consensus·Elicit 등에서 실제 논문을 찾아 근거로.</li>
+          <li><b>④ 항상 육안 검증</b> — 저자·연도·제목·DOI를 원문에서 직접 확인, 못 찾으면 삭제.</li>
+        </ul>
+        <div class="ex">프롬프트 예 — "각 주장에 <b>실제 존재하는 출처만</b> 붙여. 검색해서 DOI·링크와 함께 제시하고, 못 찾으면 「출처 없음」이라고 표시해. <b>지어내지 마.</b>"</div>
+        추천 순서: <b>NotebookLM(내 자료 안) → 검색형 클로드(웹) → 학술 검색엔진 → 최종 육안 검증.</b>
+      </div>
+    </details>
+    <details>
+      <summary>학생들이 다 AI를 쓰는데, 과제·평가는 어떻게 설계하나?</summary>
+      <div class="a">
+        <b>금지·탐지보다 '전제'로.</b> 학생이 AI를 쓴다는 걸 전제하고, <b>AI가 대신 못 하는 것</b>을 요구하도록 과제를 바꾸는 게 현실적입니다.
+        <ul>
+          <li><b>과정 평가</b> — 결과물만이 아니라 초안·수정 이력·중간 산출·구두 설명까지.</li>
+          <li><b>개인 맥락 요구</b> — 수업 중 사례·본인 경험·현장 데이터 (AI가 모르는 것).</li>
+          <li><b>판단·적용 중심</b> — 정보 재생산이 아니라 비교·비판·적용·의사결정.</li>
+          <li><b>사용 공개</b> — "AI를 썼다면 어떻게 썼는지(프롬프트·수정)"를 함께 제출.</li>
+          <li><b>구두·실연</b> — 짧은 발표·질의로 이해를 확인.</li>
+        </ul>
+        <div class="ex">과제 예 — "AI로 초안을 만든 뒤, <b>틀린 곳 3개를 찾아 근거와 함께 고치고</b>, 왜 고쳤는지 설명하라." → AI를 쓰되 사고를 요구.</div>
+        평가 기준을 '내용 재생산'에서 <b>'판단·적용·검증'</b>으로 옮기는 게 핵심입니다.
+      </div>
+    </details>
+  </div>
+  <h3 style="margin-top:26px">사람의 역할 · AI의 역할 — 함께 쓰는 법</h3>
+  <p class="lead">AI로 긴 글·교재를 쓸 때, 역할을 이렇게 나누면 저자성이 흔들리지 않습니다 — <b>알맹이는 사람, 속도는 AI</b>.</p>
+  <div class="roles">
+    <div class="rolebox"><div class="rt">🧑 사람 · 알맹이</div><h4>판단하고 책임지는 일</h4><ul>
+      <li>무엇을 다룰지 설계 (인덱싱 기준·범위)</li>
+      <li>소스 큐레이션 (개념·사례·비유 고르기)</li>
+      <li>구조·메시지 짜기</li>
+      <li>사실 검증·퇴고·의견</li>
+      <li>최종 이해와 책임</li>
+    </ul></div>
+    <div class="mid">+</div>
+    <div class="rolebox"><div class="rt">🤖 AI · 속도</div><h4>빠르게 처리하는 일</h4><ul>
+      <li>방대한 원서·자료 인덱싱 (며칠 — 예전엔 몇 달)</li>
+      <li>학습한 문체로 절 단위 초안 작성</li>
+      <li>수정 의견을 받아 다시 반영</li>
+      <li>지루한 반복 작업의 가속</li>
+    </ul></div>
+  </div>
+  <p class="lead" style="margin-top:16px">예시 흐름 — 긴 글·교재 한 권을 이렇게 만들 수 있습니다.</p>
+  <div class="grid g3">
+    <div class="card"><span class="who ai">🤖 실행 · 🧑 설계</span><div class="tag">STEP 1</div><h4>원서 인덱싱</h4><p>방대한 원서·자료를 교재용으로 인덱싱. 무엇을·어떻게는 사람이 설계·검수.</p></div>
+    <div class="card"><span class="who hu">🧑 사람</span><div class="tag">STEP 2</div><h4>집필 팩 구성</h4><p>장별 소스팩(개념·사례·비유)을 큐레이션.</p></div>
+    <div class="card"><span class="who hu">🧑 사람</span><div class="tag">STEP 3</div><h4>구조 설계</h4><p>장·절 구조와 각 절의 메시지를 설계.</p></div>
+    <div class="card"><span class="who ai">🤖 AI · 학습한 문체</span><div class="tag">STEP 4</div><h4>절 단위 초안</h4><p>학습한 문체로 챕터의 작은 절들을 작성.</p></div>
+    <div class="card"><span class="who hu">🧑 사람</span><div class="tag">STEP 5</div><h4>퇴고·검증·의견</h4><p>고치고, 검증하고, 코멘트를 달아 다시 전달.</p></div>
+    <div class="card"><span class="who hu">🧑 사람 책임</span><div class="tag">STEP 6</div><h4>초안 완성</h4><p>4↔5 반복 끝에, 저자의 이해·검증·책임 하에 완성.</p></div>
+  </div>
+  <div class="note" style="margin-bottom:0"><span class="k">여기서 저자성</span><b>알맹이·구조·검증·책임은 사람, 속도는 AI.</b> 인덱싱을 설계하고 소스를 큐레이션하고 퇴고로 책임진 것 — 그 전부가 저자의 지적 노동입니다.</div>
+
+  <div class="note"><span class="k">원칙</span>AI는 <b>속도</b>를 주고, <b>진실성</b>은 내가 지킵니다. 특히 인용은 '검색 + 검증' 없이는 믿지 않기.</div>
+</div></section>
+
+<section id="summary"><div class="sec">
+  <span class="kicker">핵심 요약</span>
+  <h2>오늘 기억할 다섯 가지</h2>
+  <div class="grid g2">
+    <div class="card"><div class="tag">01</div><h4>지침 — 나를 기억하게</h4><p>한 번 적어 두면 모든 대화가 그 위에서 시작.</p></div>
+    <div class="card"><div class="tag">02</div><h4>자료 — 한곳에</h4><p>프로젝트·폴더에, 이름 규칙대로.</p></div>
+    <div class="card"><div class="tag">03</div><h4>스킬 — 반복은 한마디로</h4><p>잘 만든 프롬프트 하나가 곧 스킬.</p></div>
+    <div class="card"><div class="tag">04</div><h4>메타 — 만드는 법까지 자산</h4><p>스킬 만드는 규칙도 복사해 재사용.</p></div>
+    <div class="card"><div class="tag">05</div><h4>채팅만으로 충분</h4><p>폴더 연결은 '있으면 좋은' 선택.</p></div>
+    <div class="card"><div class="tag">💡</div><h4>완성이 아니라 시작</h4><p>한 줄부터, 오늘 바로.</p></div>
+  </div>
+</div></section>
+
+<section id="next"><div class="sec">
+  <span class="kicker">다음 단계</span>
+  <h2>한 줄부터, 지금 시작하세요</h2>
+  <p class="lead">가장 빠른 셋팅은 직접 해보는 것입니다. 오늘 만든 <b>지침 한 줄</b>을 설정에 붙이는 것으로 시작하세요.</p>
+  <div class="practice"><b>돌아보기</b> — 1차시 평가(루브릭), 2차시 강의자료 만들기, 3차시 기본 셋팅. 이제 <b>나를 아는 클로드</b>가 매주 곁에서 함께 일합니다.</div>
+</div></section>
+
+<footer>
+  전문대학교육협의회 교수 워크숍 · 3차시 「Claude 기본 셋팅」 입체 실습교재<br>
+  화면 상단에서 <b>테마</b>와 <b>수업 모드</b>(글자 크게)를 바꿀 수 있고, <b>PageUp/PageDown</b>으로 섹션을 넘길 수 있습니다.
+</footer>
+</main>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal"><h4 id="mTitle"></h4><div class="body" id="mBody"></div><button class="close" onclick="closeModal()">닫기</button></div>
+</div>
+<div class="lightbox" id="lb" onclick="this.classList.remove('show')"><img id="lbImg" src="" alt="확대"></div>
+<script>
+function setTheme(t,btn){document.body.dataset.theme=t;document.querySelectorAll('.tbtn.th').forEach(b=>b.classList.toggle('on',b===btn));}
+function setMode(m,btn){document.body.dataset.mode=m;document.querySelectorAll('.tbtn.mode').forEach(b=>b.classList.toggle('on',b===btn));}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+function openLb(src){document.getElementById('lbImg').src=src;document.getElementById('lb').classList.add('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();document.getElementById('lb').classList.remove('show');}});
+/* copy */
+document.querySelectorAll('.copybtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const txt=btn.parentElement.querySelector('pre').innerText;
+    navigator.clipboard.writeText(txt).then(()=>{const o=btn.textContent;btn.textContent='복사됨 ✓';setTimeout(()=>btn.textContent=o,1500);});
+  });
+});
+/* quiz + 게이미피케이션(배지) */
+document.querySelectorAll('.quiz[data-q]').forEach(q=>{
+  q.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      if(q.classList.contains('done'))return;
+      q.classList.add('done');
+      let ok=false;
+      q.querySelectorAll('.opt').forEach(x=>{
+        if(x.dataset.c==='1'){x.classList.add('correct'); if(x===o)ok=true;}
+        else if(x===o)x.classList.add('wrong');
+        x.disabled=true;
+      });
+      const b=document.createElement('div');
+      b.style.marginTop='12px';
+      b.innerHTML=ok
+        ? '<span class="badge">🎉 정답! 「몸풀기 클리어」 배지 획득</span>'
+        : '<span class="badge" style="background:var(--sub)">🔎 아쉬워요 — 정답과 해설을 확인!</span>';
+      q.appendChild(b);
+    });
+  });
+});
+/* builder 2: 문체 스킬 */
+function kBuild(){
+  const t=document.getElementById('kType').value;
+  const name=(document.getElementById('kName').value.trim())||'내 문체';
+  const keep=(document.getElementById('kKeep').value.trim())||'(지킬 점)';
+  document.getElementById('kOut').textContent=
+`첨부한 내 ${t} 문서에서 "${name}" 문체 스킬을 만들어 줘.
+1) 어미·문장 리듬·즐겨 쓰는 표현·금지어를 분석
+2) 특히 이건 꼭 지켜: ${keep}
+3) 아래 형식의 SKILL.md 파일로 정리해 줘 (그대로 업로드할 거야):
+---
+name: ${name}
+description: 내 글투로 쓰기. "${name}로 써줘" 요청 시 사용한다.
+---
+# ${name}
+## 문체 특징 (어미·리듬·표현)
+## 금지어
+## 예시 문장 2개
+
+만든 SKILL.md를 '설정 > Capabilities'에서 스킬로 업로드하는 법도 한 줄로 알려 줘.`;
+}
+/* builder 3: 스킬 만들기 */
+function mBuild(){
+  const task=(document.getElementById('mTask').value.trim())||'(반복 업무)';
+  const trig=(document.getElementById('mTrig').value.trim())||'"써줘"';
+  const rule=(document.getElementById('mRule').value.trim())||'(지킬 규칙)';
+  document.getElementById('mOut').textContent=
+`"${task}"를 스킬로 만들어 줘.
+· 트리거: ${trig} 라고 하면 실행
+· 꼭 지킬 규칙(수치·형식): ${rule}
+· 요소 이름만 나열하지 말고, 수치·기준까지 구체적으로
+· ✗나쁜 예 / ✓좋은 예를 각 규칙에 붙여 줘
+완성되면 채팅이면 프로젝트 지침에, 폴더면 스킬 파일로 저장하는 법도 알려 줘.`;
+}
+/* builder 4: 게이미피케이션 HTML */
+function hBuild(){
+  const sub=(document.getElementById('hSub').value.trim())||'(과목·주제)';
+  const con=(document.getElementById('hConcept').value.trim())||'(핵심 개념)';
+  const who=document.getElementById('hWho').value;
+  document.getElementById('hOut').textContent=
+`2차시에서 만든 수업 설계를 살려, "${sub}" 학생용 게이미피케이션 HTML '맛보기' 한 장을 만들어 줘. 대상: ${who}.
+(위에 붙여넣은 학습목표·개념 구조 반영. 핵심 개념: ${con})
+🪶 토큰을 아끼게 짧게:
+· 학습목표 1줄 + 핵심 개념 요약
+· 객관식 퀴즈 2문항 — 정답 즉시 채점·해설
+· 정답 시 배지 1개 + 간단한 진행 표시
+내 지침의 톤·색으로, 모바일에서도. (이미지·PPTX 없이 HTML로만, 길게 늘이지 말고 맛보기로)`;
+}
+/* builder 5: 개인화 */
+function pzBuild(){
+  const sub=(document.getElementById('zSub').value.trim())||'(과목·주제)';
+  const basis=(document.getElementById('zBasis').value.trim())||'핵심 개념 이해도';
+  document.getElementById('zOut').textContent=
+`"${sub}" 학생용 '실력별 개인화' 한 페이지 HTML 맛보기를 만들어 줘.
+· 시작에 3문항 진단 퀴즈 (${basis} 기준)
+· 결과에 따라 기초 / 중급 / 심화 세 갈래로 다른 요약·연습을 보여주기
+· 각 갈래는 짧게(맛보기), 다시 진단할 수 있게
+내 지침의 톤·색으로, 모바일에서도. (이미지·PPTX 없이 HTML로만)`;
+}
+[['kType','kName','kKeep'],['mTask','mTrig','mRule'],['hSub','hConcept','hWho'],['zSub','zBasis']]
+.forEach((ids,gi)=>{const fn=[kBuild,mBuild,hBuild,pzBuild][gi];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',fn);el.addEventListener('change',fn);}});});
+[kBuild,mBuild,hBuild,pzBuild].forEach(f=>{try{f();}catch(e){}});
+/* 개인화 진단 데모 */
+const PZ={ans:{}};
+document.querySelectorAll('#pz .pzb').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const row=b.closest('.pzq'); PZ.ans[row.dataset.q]=+b.dataset.v;
+    row.querySelectorAll('.pzb').forEach(x=>x.classList.toggle('sel',x===b));
+    if(Object.keys(PZ.ans).length>=3){
+      const sum=Object.values(PZ.ans).reduce((a,c)=>a+c,0);
+      let lv,msg;
+      if(sum<=1){lv='기초';msg='먼저 <b>지침(맞춤 설정)</b>부터 — CH2로 돌아가 나를 기억하는 AI를 만들어 보세요.';}
+      else if(sum===2){lv='중급';msg='좋아요. 이제 <b>스킬</b>을 늘릴 때 — CH4 메타 스킬로 나만의 프레임워크를.';}
+      else{lv='심화';msg='이미 능숙하시네요. 이제 <b>개인화·자동화</b> — 아래 빌더로 적응형 자료를 만들어 보세요.';}
+      document.getElementById('pzResult').innerHTML='<div class="simbox"><b>진단 결과 · '+lv+' 경로</b><br>'+msg+'<br><span style="color:var(--sub);font-size:.85rem">↑ 학생도 이렇게 실력별로 다른 문으로 들어옵니다.</span></div>';
+    }
+  });
+});
+/* 스킬 도식 */
+const DIA={
+ where:'<b>📍 어디서 오나</b><br>💬 <b>채팅</b>: 설정 &gt; Capabilities에서 스킬을 켜거나, 플러그인·마켓플레이스에서 설치.<br>📁 <b>폴더(선택)</b>: 스킬 파일을 내 폴더에 둠. <span class="star">김민철 방식 ★</span> — 동기화·직접 편집·자산화가 이점(옛날처럼 "업로드 귀찮아서"가 아니라).',
+ live:'<b>🗂️ 어디 사나</b><br>켜 둔 스킬은 대화가 필요할 때 참조하도록 대기합니다. 폴더를 쓰면 클로드가 그 스킬 폴더를 읽어, 조건이 맞을 때 자동으로 꺼내 씁니다. <b>내가 매번 부르지 않아도</b> 됩니다.',
+ run:'<b>⚡ 어떻게 실행</b><br>트리거 한마디면 끝 — "회의록 써줘"라고 하면 조건이 맞는 스킬이 자동 실행돼 그 양식으로 만들어 줍니다. <b>부르는 건 언제나 한마디.</b>'
+};
+const dnodes=[...document.querySelectorAll('.dnode')];
+function dShow(k,el){document.getElementById('dPanel').innerHTML=DIA[k];dnodes.forEach(n=>n.classList.toggle('on',n===el));}
+dnodes.forEach(n=>n.addEventListener('click',()=>dShow(n.dataset.d,n)));
+if(document.getElementById('dPanel'))document.getElementById('dPanel').innerHTML=DIA.where;
+/* 스킬 판별 퀘스트 + 게이미피케이션 */
+let questDone=false;
+const QCORRECT=2;
+document.querySelectorAll('#quest .qcard').forEach(c=>{
+  c.addEventListener('click',()=>{
+    if(questDone)return; questDone=true;
+    const q=document.getElementById('quest'); q.classList.add('done');
+    const picked=+c.dataset.i;
+    q.querySelectorAll('.qcard').forEach(card=>{
+      const j=+card.dataset.i; const v=card.querySelector('.verdict');
+      if(j===QCORRECT){card.classList.add('free'); v.className='verdict v-free'; v.textContent='✗ 일회성 — 스킬 가치 낮음';}
+      else{card.classList.add('contrib'); v.className='verdict v-ok'; v.textContent='✓ 반복 — 스킬 감';}
+    });
+    const r=document.getElementById('questResult');
+    if(picked===QCORRECT){
+      r.innerHTML='<div class="badge">🏆 「반복 감별사」 배지 획득!</div><div class="simbox" style="margin-top:10px">정확합니다. <b>C(환영사 초안)</b>는 올해 한 번 쓰고 마는 일 — 그 자리에서 부탁하면 됩니다. 나머지 A·B·D는 <b>반복 + 일정한 규칙</b>이 있어 스킬로 만들면 계속 절약됩니다.</div>';
+    }else{
+      r.innerHTML='<div class="badge" style="background:var(--sub)">🔎 다시 골라볼까요</div><div class="simbox" style="margin-top:10px">이 카드는 <b>반복 + 규칙</b>이 있어 스킬로 값집니다. 정답은 <b>C</b> — 한 번 쓰고 마는 일회성이라 스킬로 만들 이유가 약합니다.</div><button class="replay" onclick="questReset()">다시 도전</button>';
+    }
+  });
+});
+function questReset(){
+  questDone=false;
+  const q=document.getElementById('quest'); q.classList.remove('done');
+  q.querySelectorAll('.qcard').forEach(c=>{c.classList.remove('free','contrib'); const v=c.querySelector('.verdict'); v.className='verdict'; v.textContent='';});
+  document.getElementById('questResult').innerHTML='';
+}
+/* 최종 체크리스트 + 완료 배지 */
+const chkItems=[...document.querySelectorAll('#chk li[data-k]')];
+function chkUpdate(){
+  const on=chkItems.filter(x=>x.classList.contains('on')).length;
+  document.getElementById('chkFill').style.width=(on/chkItems.length*100)+'%';
+  const msgs=['시작해 볼까요','좋아요','절반 왔어요','거의 다 왔어요','한 걸음 남았어요','완료!'];
+  document.getElementById('chkMsg').textContent=on+' / '+chkItems.length+' 완료'+(on?' · '+msgs[Math.min(on,6)-1]:'');
+  const badge=document.getElementById('chkBadge');
+  badge.innerHTML=(on===chkItems.length)?'<span class="badge">🎓 오늘의 셋팅 완료! 「나를 아는 클로드」 배지 획득</span>':'';
+}
+chkItems.forEach(li=>li.addEventListener('click',()=>{li.classList.toggle('on');chkUpdate();}));
+chkUpdate();
+/* scroll spy */
+const links=[...document.querySelectorAll('nav.toc a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const spy=(typeof IntersectionObserver!=='undefined')&&new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+e.target.id));}});},{rootMargin:'-20% 0px -70% 0px'});
+if(spy)secs.forEach(s=>spy.observe(s));
+links.forEach(a=>a.addEventListener('click',()=>document.querySelector('nav.toc').classList.remove('open')));
+/* presenter paging */
+(function(){
+  const secs=Array.from(document.querySelectorAll('main > section, main > .divider'));
+  if(!secs.length)return; const topOffset=76;
+  function curIdx(){let idx=0;for(let i=0;i<secs.length;i++){if(secs[i].getBoundingClientRect().top-topOffset<=1)idx=i;}return idx;}
+  function goTo(i){i=Math.max(0,Math.min(secs.length-1,i));secs[i].scrollIntoView({behavior:'smooth',block:'start'});}
+  document.addEventListener('keydown',function(e){
+    const tag=(document.activeElement&&document.activeElement.tagName)||'';
+    if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;
+    if(e.key==='PageDown'){e.preventDefault();goTo(curIdx()+1);}
+    else if(e.key==='PageUp'){e.preventDefault();goTo(curIdx()-1);}
+  });
+})();
+</script>
+</body>
+</html>
