@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 활용하기 : 첫번째, 루브릭 — 전문대학교육협의회 교수 워크숍 · 입체 교재</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#faf7f2; --panel:#ffffff; --ink:#2b2620; --sub:#6b6257; --line:#e8e1d6;
+  --accent:#b3541e; --accent-soft:#f7e8dd; --accent-ink:#8a3e13;
+  --chip:#f1ece3; --good:#2e7d32; --bad:#c62828; --shadow:0 2px 14px rgba(60,45,20,.08);
+  --code-bg:#2d2a26; --code-ink:#f0e9dd;
+  --fs:17.5px;
+}
+[data-theme="sepia"]{
+  --bg:#f3e9d8; --panel:#fbf4e6; --ink:#3a2f22; --sub:#7a6a52; --line:#e2d4bb;
+  --accent:#9c4a1a; --accent-soft:#efdcc6; --accent-ink:#7c3a12; --chip:#ecdfc8;
+}
+[data-theme="dark"]{
+  --bg:#1d1b18; --panel:#282521; --ink:#ece5d8; --sub:#a89c8a; --line:#3b362f;
+  --accent:#e08a4e; --accent-soft:#3a2d21; --accent-ink:#f0b184;
+  --chip:#33302a; --shadow:0 2px 14px rgba(0,0,0,.4);
+  --code-bg:#141311; --code-ink:#e8e0d2;
+}
+[data-mode="class"]{ --fs:21px; }
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; scroll-padding-top:76px; font-size:var(--fs);}
+body{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,"Malgun Gothic",sans-serif;
+  background:var(--bg); color:var(--ink); font-size:1rem; line-height:1.75;
+  transition:background .3s,color .3s;
+}
+/* ---------- top bar ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50; height:56px;
+  display:flex; align-items:center; gap:10px; padding:0 16px;
+  background:color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+}
+.topbar .brand{font-weight:700; font-size:.85rem; color:var(--sub); text-decoration:none; letter-spacing:-.01em;}
+.topbar .brand b{color:var(--accent);}
+.topbar .spacer{flex:1;}
+.tbtn{
+  border:1px solid var(--line); background:var(--panel); color:var(--sub);
+  border-radius:8px; padding:4px 11px; font-size:.78rem; cursor:pointer; font-family:inherit;
+}
+.tbtn.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.tbtn:hover{border-color:var(--accent);}
+/* ---------- layout ---------- */
+.wrap{display:flex; max-width:1240px; margin:0 auto; padding-top:56px;}
+nav.toc{
+  width:230px; flex:none; position:sticky; top:56px; height:calc(100vh - 56px);
+  overflow-y:auto; padding:24px 8px 60px 16px; font-size:.83rem;
+}
+nav.toc .grp{margin:14px 0 4px; font-size:.7rem; font-weight:700; color:var(--accent); letter-spacing:.06em;}
+nav.toc a{
+  display:block; padding:5px 10px; border-radius:8px; color:var(--sub);
+  text-decoration:none; margin:1px 0; line-height:1.4;
+}
+nav.toc a:hover{background:var(--chip); color:var(--ink);}
+nav.toc a.cur{background:var(--accent-soft); color:var(--accent-ink); font-weight:600;}
+main{flex:1; min-width:0; padding:28px 26px 120px;}
+/* ---------- sections ---------- */
+section{margin:0 0 26px;}
+.sec{
+  background:var(--panel); border:1px solid var(--line); border-radius:18px;
+  padding:34px 38px; box-shadow:var(--shadow);
+}
+.kicker{
+  display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.08em;
+  color:var(--accent-ink); background:var(--accent-soft); border-radius:99px;
+  padding:3px 12px; margin-bottom:12px;
+}
+h2{font-size:1.55rem; letter-spacing:-.02em; line-height:1.3; margin-bottom:12px;}
+h3{font-size:1.05rem; margin:22px 0 8px; letter-spacing:-.01em;}
+.lead{color:var(--sub); margin-bottom:18px;}
+.lead b,.card p b,.note b{color:var(--ink);}
+/* hero */
+.hero{
+  background:linear-gradient(145deg,var(--panel), var(--accent-soft));
+  border:1px solid var(--line); border-radius:22px; padding:52px 44px; box-shadow:var(--shadow);
+  text-align:left;
+}
+.hero .eyebrow{font-size:.8rem; font-weight:700; color:var(--accent-ink); letter-spacing:.12em; margin-bottom:14px;}
+.hero h1{font-size:2.3rem; line-height:1.25; letter-spacing:-.03em; margin-bottom:14px;}
+.hero p.sub{color:var(--sub); max-width:640px; margin-bottom:22px;}
+.chips{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{background:var(--chip); border:1px solid var(--line); border-radius:99px; padding:4px 14px; font-size:.78rem; color:var(--sub);}
+/* cards */
+.grid{display:grid; gap:12px; margin:16px 0;}
+.g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+.card{
+  background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px;
+  position:relative;
+}
+.card .tag{font-size:.7rem; font-weight:700; color:var(--accent-ink); letter-spacing:.05em; margin-bottom:5px;}
+.card h4{font-size:.98rem; margin-bottom:6px; letter-spacing:-.01em;}
+.card p{font-size:.9rem; color:var(--sub); line-height:1.65;}
+.card.pop{cursor:pointer; transition:transform .15s, border-color .15s;}
+.card.pop:hover{transform:translateY(-2px); border-color:var(--accent);}
+.card.pop::after{content:"+ 자세히"; position:absolute; top:14px; right:14px; font-size:.68rem; color:var(--accent);}
+/* key line */
+.note{
+  border-left:4px solid var(--accent); background:var(--accent-soft);
+  border-radius:0 12px 12px 0; padding:13px 18px; font-size:.92rem; margin:18px 0 0; color:var(--ink);
+}
+.note .k{font-weight:800; color:var(--accent-ink); margin-right:8px; font-size:.78rem; letter-spacing:.06em;}
+/* vs blocks */
+.vs{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:stretch; margin:16px 0;}
+.vs .mid{align-self:center; font-weight:800; color:var(--accent); font-size:1.1rem;}
+.vsbox{background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px;}
+.vsbox h4{font-size:.95rem; margin-bottom:8px;}
+.vsbox ul{list-style:none;}
+.vsbox li{font-size:.9rem; color:var(--sub); padding:4px 0 4px 16px; position:relative;}
+.vsbox li::before{content:"—"; position:absolute; left:0; color:var(--accent);}
+.vsbox.warn{border-color:color-mix(in srgb,var(--bad) 40%,var(--line));}
+.vsbox.okay{border-color:color-mix(in srgb,var(--good) 40%,var(--line));}
+/* flow arrows */
+.flow{display:flex; align-items:stretch; gap:10px; margin:16px 0; flex-wrap:wrap;}
+.flow .step{flex:1; min-width:150px; background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:15px 16px;}
+.flow .step .n{font-size:.7rem; font-weight:800; color:var(--accent); letter-spacing:.08em; margin-bottom:4px;}
+.flow .step h4{font-size:.92rem; margin-bottom:4px;}
+.flow .step p{font-size:.8rem; color:var(--sub); line-height:1.55;}
+.flow .arr{align-self:center; color:var(--accent); font-weight:800;}
+/* prompt block */
+.prompt{position:relative; margin:16px 0;}
+.prompt .plabel{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.78rem; font-weight:700; color:var(--accent-ink); margin-bottom:6px;
+}
+.prompt .plabel span.hint{font-weight:500; color:var(--sub);}
+.prompt pre{
+  background:var(--code-bg); color:var(--code-ink); border-radius:14px;
+  padding:20px 22px; font-size:.9rem; line-height:1.7; white-space:pre-wrap;
+  font-family:"Pretendard Variable",Pretendard,sans-serif; word-break:keep-all;
+}
+.copybtn{
+  position:absolute; right:12px; bottom:12px;
+  background:var(--accent); color:#fff; border:none; border-radius:8px;
+  padding:6px 14px; font-size:.78rem; cursor:pointer; font-family:inherit;
+}
+.copybtn:hover{filter:brightness(1.1);}
+/* tables */
+table.tb{width:100%; border-collapse:collapse; margin:16px 0; font-size:.9rem;}
+.tb th{background:var(--chip); text-align:left; padding:10px 12px; border:1px solid var(--line); font-size:.8rem;}
+.tb td{padding:10px 12px; border:1px solid var(--line); color:var(--sub); vertical-align:top;}
+.tb td:first-child{color:var(--ink); font-weight:600;}
+/* quiz */
+.quiz{background:var(--bg); border:1px dashed var(--accent); border-radius:14px; padding:20px 22px; margin:18px 0 0;}
+.quiz .qk{font-size:.72rem; font-weight:800; color:var(--accent-ink); letter-spacing:.08em; margin-bottom:8px;}
+.quiz p.q{font-weight:700; font-size:.95rem; margin-bottom:10px;}
+.quiz .opt{
+  display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line);
+  border-radius:10px; padding:9px 14px; margin:6px 0; font-size:.86rem; cursor:pointer;
+  color:var(--ink); font-family:inherit;
+}
+.quiz .opt:hover{border-color:var(--accent);}
+.quiz .opt.correct{border-color:var(--good); background:color-mix(in srgb,var(--good) 12%,var(--panel)); font-weight:700;}
+.quiz .opt.wrong{border-color:var(--bad); opacity:.6;}
+.quiz .expl{display:none; font-size:.82rem; color:var(--sub); margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+.quiz.done .expl{display:block;}
+/* betting game */
+.bet{margin:20px 0 0;}
+.bet .stage{background:var(--bg); border:1px solid var(--line); border-radius:16px; padding:22px; text-align:center;}
+.bet .pgnum{font-size:.78rem; font-weight:700; color:var(--accent-ink); letter-spacing:.08em; margin-bottom:12px;}
+.bet .imgwrap{max-height:430px; overflow:auto; border:1px solid var(--line); border-radius:12px; background:#fff; cursor:zoom-in;}
+.bet .imgwrap img{width:100%; display:block;}
+.bet .btns{display:flex; gap:12px; justify-content:center; margin-top:16px;}
+.betbtn{
+  border:2px solid var(--line); background:var(--panel); color:var(--ink);
+  border-radius:12px; padding:12px 30px; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit;
+  transition:all .15s;
+}
+.betbtn:hover{border-color:var(--accent); transform:translateY(-2px);}
+.bet .dots{display:flex; gap:6px; justify-content:center; margin-top:14px;}
+.bet .dots i{width:9px; height:9px; border-radius:50%; background:var(--line); display:block;}
+.bet .dots i.did{background:var(--accent);}
+.bet .result{display:none;}
+.bet.finished .stage{display:none;}
+.bet.finished .result{display:block;}
+.bet .score{
+  text-align:center; font-size:1.25rem; font-weight:800; margin:6px 0 16px; letter-spacing:-.01em;
+}
+.bet .rgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px;}
+.bet .rcell{border:2px solid var(--line); border-radius:12px; padding:10px; text-align:center; background:var(--panel);}
+.bet .rcell.hit{border-color:var(--good);}
+.bet .rcell.miss{border-color:var(--bad);}
+.bet .rcell img{width:100%; border-radius:6px; border:1px solid var(--line); cursor:zoom-in;}
+.bet .rcell .ans{font-size:.8rem; font-weight:800; margin-top:6px;}
+.bet .rcell .ans.ai{color:var(--accent-ink);} .bet .rcell .ans.hu{color:var(--good);}
+.bet .rcell .my{font-size:.7rem; color:var(--sub);}
+.replay{margin:14px auto 0; display:block; background:none; border:1px solid var(--line); color:var(--sub); border-radius:8px; padding:6px 16px; font-size:.78rem; cursor:pointer; font-family:inherit;}
+/* practice callout */
+.practice{
+  background:linear-gradient(135deg,var(--accent-soft),var(--panel));
+  border:1px solid var(--accent); border-radius:14px; padding:18px 22px; margin:18px 0 0; font-size:.9rem;
+}
+.practice b{color:var(--accent-ink);}
+/* divider */
+.divider{
+  text-align:center; padding:44px 20px; background:transparent;
+}
+.divider .ch{font-size:.78rem; font-weight:800; letter-spacing:.22em; color:var(--accent);}
+.divider h2{font-size:1.8rem; margin:8px 0 6px;}
+.divider p{color:var(--sub); font-size:.95rem;}
+/* modal */
+.modal-bg{
+  position:fixed; inset:0; background:rgba(20,15,8,.55); z-index:90;
+  display:none; align-items:center; justify-content:center; padding:24px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:var(--panel); border-radius:18px; max-width:640px; width:100%;
+  max-height:82vh; overflow-y:auto; padding:30px 32px; box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.modal h4{font-size:1.1rem; margin-bottom:10px; color:var(--accent-ink);}
+.modal .body{font-size:.9rem; color:var(--ink); line-height:1.8;}
+.modal .body p{margin-bottom:10px; color:var(--sub);}
+.modal .body ul{margin:0 0 10px 18px;}
+.modal .body li{font-size:.87rem; color:var(--sub); margin:4px 0;}
+.modal .close{
+  margin-top:16px; background:var(--accent); color:#fff; border:none; border-radius:10px;
+  padding:8px 22px; font-size:.85rem; cursor:pointer; font-family:inherit; display:block; margin-left:auto;
+}
+/* lightbox */
+.lightbox{position:fixed; inset:0; background:rgba(10,8,5,.85); z-index:99; display:none; align-items:center; justify-content:center; padding:30px; cursor:zoom-out;}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px; background:#fff;}
+/* audit game */
+.audit tr.pk td{cursor:pointer; transition:background .15s;}
+.audit tr.pk:hover td{background:var(--accent-soft);}
+.audit.done tr.pk td{cursor:default;}
+.audit tr.hit td{background:color-mix(in srgb,var(--bad) 12%,var(--panel)); border-color:var(--bad);}
+.audit tr.safe td{background:color-mix(in srgb,var(--good) 8%,var(--panel));}
+/* builder */
+.builder{display:grid; grid-template-columns:1fr 1.1fr; gap:14px; margin:16px 0 0; align-items:start;}
+.bform label{display:block; font-size:.8rem; font-weight:700; color:var(--accent-ink); margin-bottom:10px;}
+.bform textarea,.bform input,.bform select{width:100%; margin-top:4px; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.88rem; background:var(--panel); color:var(--ink); resize:vertical;}
+.bform textarea:focus,.bform input:focus,.bform select:focus{outline:2px solid var(--accent); border-color:var(--accent);}
+.brow{display:flex; gap:10px;}
+.brow label{flex:1;}
+/* sim */
+.sim .scenario{background:var(--bg); border-left:4px solid var(--accent); border-radius:0 12px 12px 0; padding:14px 18px; font-size:.92rem; margin:12px 0; line-height:1.8;}
+.sim td label{margin-right:10px; font-weight:400; cursor:pointer; font-size:.85rem; color:var(--sub); display:inline-flex; align-items:center; gap:4px; white-space:nowrap;}
+.sim td label:hover{color:var(--ink);}
+.simbox{margin-top:14px; border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--bg); font-size:.9rem; line-height:2;}
+.simbox .ok{color:var(--good); font-weight:700;} .simbox .no{color:var(--bad); font-weight:700;}
+/* quest */
+.qbrief{background:linear-gradient(135deg,var(--accent-soft),var(--panel)); border:1px solid var(--accent); border-radius:12px; padding:14px 18px; font-size:.9rem; margin:12px 0 4px;}
+.qbrief .xp{display:inline-block; margin-left:6px; font-size:.78rem; font-weight:800; color:var(--accent-ink);}
+.qcard{cursor:pointer; transition:all .15s;}
+.qcard:hover{transform:translateY(-2px); border-color:var(--accent);}
+.quest.done .qcard{cursor:default;}
+.qcard.free{border-color:var(--bad); box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 35%,transparent);}
+.qcard.contrib{border-color:var(--good);}
+.qcard .verdict{display:none; margin-top:8px; font-size:.8rem; font-weight:800;}
+.qcard .verdict.v-free{color:var(--bad);} .qcard .verdict.v-ok{color:var(--good);}
+.quest.done .qcard .verdict{display:block;}
+.qresult{margin-top:14px;}
+.badge{display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border-radius:99px; padding:8px 20px; font-weight:800; font-size:.9rem; animation:bpop .4s;}
+@keyframes bpop{0%{transform:scale(.6); opacity:0}100%{transform:scale(1); opacity:1}}
+/* footer */
+footer{color:var(--sub); font-size:.78rem; text-align:center; padding:30px 20px 60px; line-height:1.8;}
+/* mobile */
+.menubtn{display:none;}
+@media (max-width:900px){
+  nav.toc{position:fixed; left:0; top:56px; background:var(--panel); z-index:60; transform:translateX(-105%); transition:transform .25s; border-right:1px solid var(--line); width:250px; padding-left:14px;}
+  nav.toc.open{transform:none;}
+  .menubtn{display:inline-block;}
+  main{padding:20px 14px 100px;}
+  .sec{padding:24px 20px;}
+  .hero{padding:36px 24px;}
+  .hero h1{font-size:1.7rem;}
+  .g2,.g3,.g4{grid-template-columns:1fr;}
+  .vs{grid-template-columns:1fr;}
+  .vs .mid{justify-self:center;}
+  .bet .rgrid{grid-template-columns:repeat(2,1fr);}
+  .builder{grid-template-columns:1fr;}
+  .flow{flex-direction:column;}
+  .flow .arr{transform:rotate(90deg); align-self:center;}
+}
+</style>
+</head>
+<body data-theme="paper" data-mode="normal">
+
+<div class="topbar">
+  <button class="tbtn menubtn" onclick="document.querySelector('nav.toc').classList.toggle('open')">목차</button>
+  <a class="brand" href="#top">전문대학교육협의회 <b>AI 평가 워크숍</b> · 입체 교재</a>
+  <div class="spacer"></div>
+  <button class="tbtn mode on" data-mode="normal" onclick="setMode('normal',this)">화면 보통</button>
+  <button class="tbtn mode" data-mode="class" onclick="setMode('class',this)">수업</button>
+  <button class="tbtn th on" data-th="paper" onclick="setTheme('paper',this)">종이</button>
+  <button class="tbtn th" data-th="sepia" onclick="setTheme('sepia',this)">세피아</button>
+  <button class="tbtn th" data-th="dark" onclick="setTheme('dark',this)">다크</button>
+</div>
+
+<div class="wrap" id="top">
+<nav class="toc">
+  <div class="grp">들어가며</div>
+  <a href="#intro">강의를 시작하며</a>
+  <a href="#instructor">강사 소개</a>
+  <a href="#why-ai">그런데, 왜 AI?</a>
+  <a href="#flow">오늘의 흐름</a>
+  <a href="#why-now">왜 지금, 평가인가</a>
+  <a href="#field-q">AI일까, 학생일까</a>
+  <a href="#example">오늘의 예시 문항</a>
+  <div class="grp">CHAPTER 1 · 2</div>
+  <a href="#ch1">왜 평가가 지치게 하는가</a>
+  <a href="#principle">이 워크숍의 원칙</a>
+  <a href="#ch2">내 수업은 어떤 평가인가</a>
+  <div class="grp">CHAPTER 3 · 1부</div>
+  <a href="#rubric-what">루브릭이란 무엇인가</a>
+  <a href="#hands-prep">직접 따라 하기 · 준비</a>
+  <a href="#type1-rubric">유형 1 · 지필 루브릭</a>
+  <a href="#type2">유형 2 · 실습·수행</a>
+  <a href="#type3">유형 3 · PBL·팀</a>
+  <a href="#part1-do">지금 5분, 내 과목으로</a>
+  <div class="grp">CHAPTER 4 · 2부</div>
+  <a href="#setup">무엇을 주면, 무엇이</a>
+  <a href="#type1-grade">유형 1 · 실제 채점</a>
+  <a href="#q1">Q1 · 점수 그대로 써도?</a>
+  <a href="#q2">Q2 · 30명 같은 기준?</a>
+  <a href="#q3">Q3 · AI가 못 보는 것</a>
+  <a href="#q45">Q4·5 · 학생 설득</a>
+  <a href="#safety">안전하게 넣는 법</a>
+  <a href="#feedback">유형 1 · 피드백</a>
+  <div class="grp">CHAPTER 5 · 6</div>
+  <a href="#ch5">어디까지 맡길 것인가</a>
+  <a href="#balance">완벽한 평가는 없다</a>
+  <a href="#asset">자산으로 남기기</a>
+  <a href="#summary">핵심 요약</a>
+  <a href="#appendix">부록 · 프롬프트 모음</a>
+  <a href="#wrap-up">강의를 닫으며</a>
+</nav>
+
+<main>
+
+<!-- ================= HERO ================= -->
+<section id="intro">
+  <div class="hero">
+    <div class="eyebrow">교수 워크숍 · A HANDS-ON WORKSHOP</div>
+    <h1>AI 활용하기 :<br>첫번째, 루브릭</h1>
+    <p class="sub">루브릭·채점·피드백을 AI에 맡기고, <b>판단의 키는 내가 쥡니다.</b><br>예시 하나를 처음부터 끝까지 함께 따라가 봅니다.</p>
+    <div class="chips">
+      <span class="chip">전문대학교육협의회 · 1차시</span>
+      <span class="chip">여섯 단계 · 두 개의 부</span>
+      <span class="chip">노트북 + 클로드/ChatGPT</span>
+      <span class="chip">결과물 · 내 과목 루브릭</span>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:14px">
+    <p style="font-size:.9rem; color:var(--sub)"><b style="color:var(--ink)">읽는 법</b> — 본문은 누구나, <b style="color:var(--ink)">카드를 누르면</b> 심화 내용이 팝업으로 열립니다. 프롬프트는 <b style="color:var(--ink)">복사 버튼</b>으로 그대로 가져가고, 상단 <b style="color:var(--ink)">화면</b>(보통·수업)·<b style="color:var(--ink)">테마</b>(종이·세피아·다크)를 바꿔 보세요.</p>
+  </div>
+</section>
+
+<!-- ================= INSTRUCTOR ================= -->
+<section id="instructor" class="sec">
+  <span class="kicker">소개</span>
+  <h2>강사 소개 — 김민철</h2>
+  <p class="lead">서일대학교 AI게임융합학과 교수 · <b>연구자 · 개발자 · 교육자, 세 개의 눈으로 게임과 교육을 봅니다.</b></p>
+  <div class="grid g3">
+    <div class="card">
+      <div class="tag">1 · 사회과학 연구자</div>
+      <p>영상문화 전반의 콘텐츠를 배움 (미학 · 영화 · 스토리텔링 · 게임 · 방송영상 · 애니메이션)<br><br>
+      문화산업 · 콘텐츠 중 <b>게임을 전공</b><br>
+      박사논문 : 부모의 디지털 게임콘텐츠 인식격차와 청소년 자녀의 행복<br><br>
+      문화부 주관 <b>게임문화포럼 위원</b> — 과몰입 대처방안, 기능성 게임 활성화 방안 등 실용적 연구 수행</p>
+    </div>
+    <div class="card">
+      <div class="tag">2 · 게임 개발 실무자</div>
+      <p>게임 개발 Startup 회사의 <b>창업, 8년간 운영</b><br><br>
+      모바일 게임, 교육용 Gamification 콘텐츠의 개발<br><br>
+      투자 유치 후 큰 규모의 회사에 <b>인수합병</b> — 게임 개발 실무자로 근무</p>
+    </div>
+    <div class="card">
+      <div class="tag">3 · 공학계열의 교육자</div>
+      <p>서일대학교 <b>AI게임융합학과 교수</b><br><br>
+      전문대학교육협의회 / 대학교육협의회 <b>전문 연수 강사</b><br><br>
+      <b>Gamification in Learning</b> 전문가</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY AI ================= -->
+<section id="why-ai" class="sec">
+  <span class="kicker">그런데, 왜 AI?</span>
+  <h2>게임을 하던 사람이 왜 AI를 말하는가</h2>
+  <div class="grid g2" style="align-items:center">
+    <div>
+      <div class="card" style="margin-bottom:10px"><p style="color:var(--ink)">게임은 AI에 대하여 <b>가장 많은 고민을 했던 분야</b> 중 하나.</p></div>
+      <div class="card" style="margin-bottom:10px"><p style="color:var(--ink)">게임은 <b>디지털의 발전과 그 궤적이 같았고</b>, AI 역시 마찬가지.</p></div>
+      <div class="card" style="margin-bottom:10px"><p style="color:var(--ink)">게임은 AI에게 <b>학습·실험·성장의 환경</b>을 제공하고,</p></div>
+      <div class="card"><p style="color:var(--ink)">AI는 게임에 <b>새로운 몰입과 지능</b>을 불어넣고 있음.</p></div>
+    </div>
+    <div>
+      <figure style="margin:0 0 10px">
+        <img src="img/alphago.jpg" alt="2016 이세돌 vs 알파고" style="width:100%; border-radius:12px; border:1px solid var(--line); display:block" onerror="this.style.display='none'; this.nextElementSibling.style.padding='30px 16px'; this.nextElementSibling.style.background='var(--chip)'; this.nextElementSibling.style.borderRadius='12px'">
+        <figcaption style="font-size:.78rem; color:var(--sub); text-align:center; margin-top:6px">2016 · 이세돌 vs 알파고 — 바둑</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="img/deepblue.jpg" alt="1997 카스파로프 vs 딥블루" style="width:100%; border-radius:12px; border:1px solid var(--line); display:block" onerror="this.style.display='none'; this.nextElementSibling.style.padding='30px 16px'; this.nextElementSibling.style.background='var(--chip)'; this.nextElementSibling.style.borderRadius='12px'">
+        <figcaption style="font-size:.78rem; color:var(--sub); text-align:center; margin-top:6px">1997 · 카스파로프 vs 딥블루 — 체스</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>AI의 역사적 이정표는 늘 게임에서 나왔다 — 게임 전공자가 AI 활용을 말하는 이유</div>
+</section>
+
+<!-- ================= FLOW ================= -->
+<section id="flow" class="sec">
+  <span class="kicker">오늘의 흐름</span>
+  <h2>여섯 단계, 두 개의 부</h2>
+  <div class="grid g3">
+    <div class="card"><div class="tag">01</div><h4>왜 평가가 우리를 지치게 하는가</h4><p>평가의 두 얼굴 — 판단과 반복</p></div>
+    <div class="card"><div class="tag">02</div><h4>내 수업은 어떤 평가인가</h4><p>지필·실습·PBL, 평가 유형 지도</p></div>
+    <div class="card"><div class="tag">03 · 1부</div><h4>유형별 루브릭 만들기</h4><p>유형마다 프롬프트와 완성 루브릭</p></div>
+    <div class="card"><div class="tag">04 · 2부</div><h4>AI로 실제 평가하기</h4><p>채점에서 부딪히는 다섯 가지 질문</p></div>
+    <div class="card"><div class="tag">05</div><h4>어디까지 맡길 것인가</h4><p>윤리와 신뢰의 경계, 비판에 답하기</p></div>
+    <div class="card"><div class="tag">06</div><h4>내 평가 도구 완성</h4><p>다음 학기에 그대로 쓰는 자산으로</p></div>
+  </div>
+</section>
+
+<!-- ================= WHY NOW ================= -->
+<section id="why-now" class="sec">
+  <span class="kicker">왜 지금, 평가인가</span>
+  <h2>지식의 시대에서 경험의 시대로</h2>
+  <p class="lead">인터넷이 <b>공간</b>을, 스마트폰이 <b>시간</b>을 — 생성형 AI는 <b>'지식의 희소성'</b>을 지웠다.</p>
+  <div class="flow">
+    <div class="step"><div class="n">인터넷</div><h4>공간</h4></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">스마트폰</div><h4>시간</h4></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">생성형 AI</div><h4>지식의 희소성</h4></div>
+  </div>
+  <div class="vs">
+    <div class="vsbox">
+      <h4>지식의 시대</h4>
+      <ul>
+        <li>지식 — 희소한 자원</li>
+        <li>교수 — 지식의 출처</li>
+        <li>평가 — 얼마나 외웠나</li>
+      </ul>
+    </div>
+    <div class="mid">→</div>
+    <div class="vsbox okay">
+      <h4>경험의 시대</h4>
+      <ul>
+        <li>지식 — 즉시 꺼내 쓰는 것</li>
+        <li>교수 — 경험·판단의 설계자</li>
+        <li>평가 — 무엇을 할 수 있나</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>학생도 AI로 답을 쓰는 시대 — 평가는 '아는가'가 아니라 '할 수 있는가'로</div>
+</section>
+
+<!-- ================= FIELD QUESTION / BETTING ================= -->
+<section id="field-q" class="sec">
+  <span class="kicker">현장의 질문</span>
+  <h2>교수님, 학생이 AI로 과제를 했어요</h2>
+  <p class="lead">실제 제출된 과제물 다섯 장입니다. 한 장씩 읽고 <b>AI가 썼는지, 학생이 썼는지</b> 직접 판정해 보세요. 이미지를 누르면 크게 볼 수 있습니다.</p>
+
+  <div class="bet" id="betGame">
+    <div class="stage">
+      <div class="pgnum" id="betNum">1 / 5 장</div>
+      <div class="imgwrap" onclick="openLb(this.querySelector('img').src)"><img id="betImg" src="img/page1.png" alt="과제물"></div>
+      <div class="btns">
+        <button class="betbtn" onclick="betPick('ai')">🤖 AI가 썼다</button>
+        <button class="betbtn" onclick="betPick('hu')">✍️ 학생이 썼다</button>
+      </div>
+      <div class="dots" id="betDots"></div>
+    </div>
+    <div class="result">
+      <div class="score" id="betScore"></div>
+      <div class="rgrid" id="betCells"></div>
+      <button class="replay" onclick="betReset()">다시 해보기</button>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px">그래서, 어느 쪽이? — 더 매끄러운 쪽이, AI였다</h3>
+  <p class="lead" style="margin-bottom:10px">5장 중 <b>앞 3장은 AI, 뒤 2장은 학생</b> — 표면 완성도는 오히려 AI가 더 높다.</p>
+  <div class="vs">
+    <div class="vsbox warn">
+      <h4>🤖 AI가 쓴 글 · 앞 3장</h4>
+      <ul>
+        <li><b>추상·일반론</b> — "게임은 ~할 수 있다" 식, 누구나 쓸 문장</li>
+        <li><b>매끄러운 병렬</b> — 균형 잡힌 반복 리듬</li>
+        <li><b>구체적 사실 0</b> — 언제·어디서·무슨 게임이 없음</li>
+      </ul>
+    </div>
+    <div class="mid">vs</div>
+    <div class="vsbox okay">
+      <h4>✍️ 학생이 쓴 글 · 뒤 2장</h4>
+      <ul>
+        <li><b>구체적 자전</b> — 초2·아르바이트·스티커북·인형놀이</li>
+        <li><b>들쭉날쭉한 리듬</b> — 매끄럽지 않아서 더 사람</li>
+        <li><b>살아본 디테일</b> — AI가 못 지어내는 것</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>매끄러움이 아니라 '고유한 경험'이 진짜의 증거 — 평가가 봐야 할 곳</div>
+</section>
+
+<!-- ================= EXAMPLE ================= -->
+<section id="example" class="sec">
+  <span class="kicker">오늘 함께 볼 예시</span>
+  <h2>서술형 평가 예시</h2>
+  <div class="card" style="padding:24px">
+    <div class="tag">예시 문항 · 지필 서술형 (10점)</div>
+    <p style="font-size:1.05rem; color:var(--ink); font-weight:600; line-height:1.7">"대학 수업에 생성형 AI를 도입할 때의 기대효과와 우려를 각각 서술하고,<br>본인의 입장을 근거와 함께 논하시오."</p>
+  </div>
+  <p class="lead" style="margin-top:14px">이 문항 하나로 — <b>루브릭 만들기 → 학생 답안 채점 → 피드백</b>까지 끝까지. 실습·PBL 예시 자료도 함께 준비했습니다.</p>
+</section>
+
+<!-- ================= CH1 ================= -->
+<section class="divider" id="ch1-div">
+  <div class="ch">CHAPTER 01</div>
+  <h2>왜 평가가 우리를 지치게 하는가</h2>
+  <p>진짜 부담은 채점의 양이 아니라 '매번 처음부터'</p>
+</section>
+
+<section id="ch1" class="sec">
+  <span class="kicker">질문부터</span>
+  <h2>평가는 교수의 본업, 그런데 왜 AI인가?</h2>
+  <p class="lead">평가 한 번에 섞인, <b>성격이 다른 두 일</b></p>
+  <div class="vs">
+    <div class="vsbox okay">
+      <h4>판단 — 교수만 할 수 있는 일</h4>
+      <ul>
+        <li>무엇을 평가할지 설계</li>
+        <li>이 학생이 어디서 막혔는지 읽기</li>
+        <li>경계·예외는 어디인지 결정</li>
+      </ul>
+    </div>
+    <div class="mid">+</div>
+    <div class="vsbox warn">
+      <h4>반복 — 누구나 지치는 일</h4>
+      <ul>
+        <li>같은 기준을 30번 적용</li>
+        <li>비슷한 피드백 문구를 매번 다시 작성</li>
+        <li>점수 합산·표 정리</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>반복의 양에 눌려, 정작 '판단'에 쓸 에너지가 고갈</div>
+</section>
+
+<section id="principle" class="sec">
+  <span class="kicker">이 워크숍의 원칙</span>
+  <h2>역할을 대신하는 게 아니라, 되돌려받는 것</h2>
+  <p class="lead">AI는 교수의 역할을 <b>대신하는 게 아니라, 판단할 시간을 되돌려주는 도구</b></p>
+  <div class="vs">
+    <div class="vsbox">
+      <h4>AI에 맡기는 것 (반복)</h4>
+      <ul>
+        <li>기준표 초안 작성</li>
+        <li>채점의 일관성 점검</li>
+        <li>피드백 문장화</li>
+        <li>점수 합산·정리</li>
+      </ul>
+    </div>
+    <div class="mid">|</div>
+    <div class="vsbox okay">
+      <h4>교수가 쥐는 것 (판단)</h4>
+      <ul>
+        <li>무엇을 평가할지 결정</li>
+        <li>학생 개개인의 이해 파악</li>
+        <li>경계·예외 판단</li>
+        <li>최종 점수와 책임</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>반복을 덜어낸 자리에서 평가는 '더 제대로' — 역할 포기가 아니라 역할 회복</div>
+</section>
+
+<!-- ================= CH2 ================= -->
+<section class="divider">
+  <div class="ch">CHAPTER 02</div>
+  <h2>내 수업은 어떤 평가인가</h2>
+  <p>평가 방식이 다르면, AI에게 시킬 일도 다름</p>
+</section>
+
+<section id="ch2" class="sec">
+  <span class="kicker">평가 유형 지도</span>
+  <h2>세 가지 대표 평가, 무엇이 다른가</h2>
+  <table class="tb">
+    <tr><th>구분</th><th>지필시험(서술형)</th><th>실습·수행평가</th><th>PBL·팀 프로젝트</th></tr>
+    <tr><td>무엇을 보나</td><td>지식의 정확성·논리</td><td>절차·완성도·태도</td><td>산출물·기여도·협업</td></tr>
+    <tr><td>채점 난점</td><td>부분점수 경계</td><td>현장을 다 못 봄</td><td>무임승차 가려내기</td></tr>
+    <tr><td>AI의 역할</td><td>모범답안 대조·부분점수</td><td>증빙 기반 보조</td><td>기록 근거 정리</td></tr>
+  </table>
+  <div class="note"><span class="k">핵심</span>지필 예시는 끝까지, 실습·PBL은 루브릭으로 차이만</div>
+</section>
+
+<!-- ================= CH3 (1부) ================= -->
+<section class="divider">
+  <div class="ch">CHAPTER 03 · 1부</div>
+  <h2>유형별 루브릭 만들기</h2>
+  <p>항목·단계·배점·맥락 네 가지 지정 → 채점 가능한 표 한 번에</p>
+</section>
+
+<section id="rubric-what" class="sec">
+  <span class="kicker">잠깐 · 용어 정리</span>
+  <h2>루브릭이란 무엇인가</h2>
+  <p class="lead">과제를 <b>'무엇을 보는지 × 얼마나 잘했는지 × 몇 점'</b>으로 쪼개 놓은 채점기준표</p>
+  <div class="grid g3">
+    <div class="card pop" data-pop="pop-item"><div class="tag">①</div><h4>항목</h4><p>무엇을 평가하나 — 기대효과·우려·입장 같은 채점 포인트</p></div>
+    <div class="card pop" data-pop="pop-level"><div class="tag">②</div><h4>단계</h4><p>얼마나 잘했나 — 충족 · 부분 · 미흡</p></div>
+    <div class="card pop" data-pop="pop-score"><div class="tag">③</div><h4>배점</h4><p>각 항목·단계에 몇 점 — 합이 곧 총점</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>채점자가 바뀌어도 같은 답안엔 같은 점수 — 그 일관성을 만드는 장치</div>
+  <div class="quiz" data-q>
+    <div class="qk">이해 점검</div>
+    <p class="q">루브릭의 핵심 효용은?</p>
+    <button class="opt" data-c="0">채점을 AI에게 완전히 넘기는 장치</button>
+    <button class="opt" data-c="1">채점자가 바뀌어도 같은 답안엔 같은 점수 — 일관성</button>
+    <button class="opt" data-c="0">문항 없이도 점수를 매기게 해 주는 표</button>
+    <div class="expl">루브릭은 항목·단계·배점을 명시해 <b>채점의 일관성</b>을 만드는 장치입니다. AI 위임의 전제이자, 사람 채점에서도 유효합니다.</div>
+  </div>
+</section>
+
+<section id="hands-prep" class="sec">
+  <span class="kicker">함께 해보기</span>
+  <h2>직접 따라 하기 — 준비 3단계</h2>
+  <div class="grid g3">
+    <div class="card"><div class="tag">1 · 도구 열기</div><p>클로드(claude.ai) 또는 ChatGPT 로그인 — 평소 쓰는 것 하나면 충분</p></div>
+    <div class="card"><div class="tag">2 · 자료 준비</div><p>본인 과목 서술형 문항 1개 + 모범답안 요지·배점 (없으면 오늘 예시 사용)</p></div>
+    <div class="card"><div class="tag">3 · 화면 맞추기</div><p>왼쪽=붙여넣을 자료 / 오른쪽=프롬프트 — 아래 배치 그대로</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>보기만 하지 말고 한 손은 키보드에 — 끝나면 내 과목 루브릭 하나가 남음</div>
+</section>
+
+<section id="type1-rubric" class="sec">
+  <span class="kicker">유형 1 · 지필시험(서술형) — ① 루브릭 만들기</span>
+  <h2>예시 문항으로 부분점수 기준표 라이브 생성</h2>
+  <div class="prompt">
+    <div class="plabel">① 붙여넣을 자료</div>
+    <pre>[문항]
+대학 수업에 생성형 AI를 도입할 때의 기대효과와 우려를 각각 서술하고, 본인의 입장을 근거와 함께 논하시오.
+
+[모범답안 요지]
+기대효과·우려를 각각 구체적 근거로 제시하고, 본인 입장을 이유와 함께 명확히.
+
+[배점] 총 10점</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">② 라이브 실행 프롬프트 <span class="hint">저장해 재사용</span></div>
+    <pre>너는 대학 서술형 평가의 채점 루브릭 설계자.
+좌측 [문항]·[모범답안 요지]·[배점]을 입력으로 줄게.
+
+1) 채점 핵심 요소 3가지 정의 (요소별 배점 합 = 10점)
+2) 요소마다 충족·부분·미흡 3단계 행동 기준 한 문장씩
+3) 0~10점을 4구간으로, 각 구간 판정 조건 명시
+4) 학생이 자주 놓치는 오답 유형 3가지 따로 정리
+
+출력: 표(요소|배점|충족·부분·미흡) + 점수구간표 + 오답 목록
+경계가 애매한 사례는 '교수 확인'으로 표시
+
+▶ 좌측 자료를 채워 붙여넣고 실행</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="note"><span class="k">핵심</span>자료만 바꾸면 어떤 서술형에도 재사용 — 한 번 만든 프롬프트가 자산</div>
+
+  <h3 style="margin-top:30px">🛠 실습 · 내 문항으로 프롬프트 조립기</h3>
+  <p class="lead" style="margin-bottom:10px">아래 칸만 채우면 <b>내 과목용 루브릭 프롬프트</b>가 실시간으로 조립됩니다. 복사해서 클로드/ChatGPT에 그대로 붙여넣으세요.</p>
+  <div class="builder">
+    <div class="bform">
+      <label>내 문항
+        <textarea id="bQ" rows="4" placeholder="예) 대학 수업에 생성형 AI를 도입할 때의 기대효과와 우려를 각각 서술하고, 본인의 입장을 근거와 함께 논하시오."></textarea>
+      </label>
+      <label>모범답안 요지
+        <textarea id="bA" rows="3" placeholder="예) 기대효과·우려를 각각 구체적 근거로 제시하고, 본인 입장을 이유와 함께 명확히."></textarea>
+      </label>
+      <div class="brow">
+        <label>총 배점
+          <input id="bP" type="number" value="10" min="1" max="100">
+        </label>
+        <label>채점 요소 수
+          <select id="bN"><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+        </label>
+      </div>
+    </div>
+    <div class="prompt" style="margin:0">
+      <div class="plabel">조립된 프롬프트 <span class="hint">입력하면 실시간 갱신</span></div>
+      <pre id="bOut"></pre>
+      <button class="copybtn">복사</button>
+    </div>
+  </div>
+  <div class="practice"><b>5분 실습</b> — 조립된 프롬프트를 실행하고, 나온 루브릭에서 <b>고칠 1가지</b>를 찾아보세요. 그게 오늘의 결과물입니다.</div>
+</section>
+
+<section id="type2" class="sec">
+  <span class="kicker">유형 2 · 실습·수행평가 — 루브릭 예시</span>
+  <h2>단계별 수행 체크리스트 만들기</h2>
+  <div class="prompt">
+    <div class="plabel">요청 프롬프트</div>
+    <pre>이 실습의 평가를 현장에서 빠르게 체크할 체크리스트 루브릭으로 만들어 줘.
+
+· 영역은 안전 준수 / 절차 정확도 / 결과물 완성도 / 정리·태도 4개
+· 각 영역을 충족·부분·미흡 3단계 행동 기준으로
+· 영역별 배점도 제안해 줘</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <h3>산출 예시</h3>
+  <table class="tb">
+    <tr><th>영역(배점)</th><th>충족</th><th>부분</th><th>미흡</th></tr>
+    <tr><td>안전 준수(30)</td><td>수칙 완전 준수</td><td>1~2회 지적</td><td>위험 행동</td></tr>
+    <tr><td>절차 정확도(30)</td><td>순서·방법 정확</td><td>일부 오류, 교정</td><td>절차 무시</td></tr>
+    <tr><td>완성도(25)</td><td>기준치 충족</td><td>오차 초과</td><td>미완성</td></tr>
+    <tr><td>정리·태도(15)</td><td>자율 정리</td><td>지시 후 정리</td><td>미정리</td></tr>
+  </table>
+  <div class="note"><span class="k">핵심</span>행동 기준으로 적으면, 현장에서 보며 즉시 체크</div>
+
+  <h3 style="margin-top:30px">🎯 실습 · 체크리스트 시뮬레이션</h3>
+  <p class="lead" style="margin-bottom:6px">가상의 학생 수행 장면입니다. 위 루브릭으로 <b>직접 판정</b>해 보세요 — 행동 기준이 있으면 얼마나 빨리 체크되는지 체감됩니다.</p>
+  <div class="sim" id="sim">
+    <div class="scenario">실습 시작 전 <b>보호구를 빠짐없이 착용</b>하고 안전 수칙을 끝까지 지켰다. 작업은 <b>2단계와 3단계 순서를 바꿔</b> 진행하다 지적을 받고 곧바로 교정했다. 제한 시간 안에 결과물을 내긴 했지만 <b>치수 오차가 허용 기준을 초과</b>했고 마감 처리도 되지 않았다. 종료 후에는 지시 없이 <b>스스로 도구를 정리</b>하고 자리를 떠났다.</div>
+    <table class="tb">
+      <tr><th>영역(배점)</th><th>내 판정</th></tr>
+      <tr><td>안전 준수(30)</td><td><label><input type="radio" name="sim0" value="충족">충족</label><label><input type="radio" name="sim0" value="부분">부분</label><label><input type="radio" name="sim0" value="미흡">미흡</label></td></tr>
+      <tr><td>절차 정확도(30)</td><td><label><input type="radio" name="sim1" value="충족">충족</label><label><input type="radio" name="sim1" value="부분">부분</label><label><input type="radio" name="sim1" value="미흡">미흡</label></td></tr>
+      <tr><td>완성도(25)</td><td><label><input type="radio" name="sim2" value="충족">충족</label><label><input type="radio" name="sim2" value="부분">부분</label><label><input type="radio" name="sim2" value="미흡">미흡</label></td></tr>
+      <tr><td>정리·태도(15)</td><td><label><input type="radio" name="sim3" value="충족">충족</label><label><input type="radio" name="sim3" value="부분">부분</label><label><input type="radio" name="sim3" value="미흡">미흡</label></td></tr>
+    </table>
+    <button class="betbtn" onclick="simCheck()">판정 확인</button>
+    <div id="simResult"></div>
+  </div>
+</section>
+
+<section id="type3" class="sec">
+  <span class="kicker">유형 3 · PBL·팀 프로젝트 — 루브릭 예시</span>
+  <h2>산출물·기여도·발표 3축 루브릭</h2>
+  <div class="prompt">
+    <div class="plabel">요청 프롬프트</div>
+    <pre>이 팀 프로젝트를 세 영역으로 평가하는 루브릭을 만들어 줘.
+
+· ① 팀 산출물 ② 개인 기여도 ③ 발표
+· 개인 기여도는 회의록·역할분담표를 근거로 판단하게 항목을 잡고
+· 무임승차를 가려낼 기준을 포함해 줘</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <h3>산출 예시</h3>
+  <table class="tb">
+    <tr><th>영역(배점)</th><th>우수</th><th>미흡</th></tr>
+    <tr><td>팀 산출물(40)</td><td>문제정의·해결·완성도 우수</td><td>산출물 미완</td></tr>
+    <tr><td>개인 기여도(35)</td><td>역할 명확, 기록상 기여 뚜렷</td><td>기록상 기여 미미</td></tr>
+    <tr><td>발표(25)</td><td>논리·전달·Q&A 우수</td><td>전달 불명확</td></tr>
+  </table>
+  <div class="note"><span class="k">핵심</span>기여도를 기록 근거로 묶으면, 팀 점수에 가렸던 개인이 드러남</div>
+
+  <h3 style="margin-top:30px">⚔️ 퀘스트 · 무임승차자를 찾아라</h3>
+  <div class="quest" id="quest">
+    <div class="qbrief"><b>QUEST BRIEFING</b> — 4인 팀 '알파'의 프로젝트가 끝났습니다. 팀 점수는 같지만, 기록은 다릅니다. 회의록·역할기록 단서를 읽고 <b>무임승차자 1명</b>을 지목하세요. <span class="xp">🏆 보상 : 100 XP + 배지 「기록의 눈」</span></div>
+    <div class="grid g2">
+      <div class="card qcard" onclick="questPick(this,0)">
+        <div class="tag">팀원 A · 김민준 (팀장)</div>
+        <p class="meta">회의 참석 5/5 · 기획서 v1~v3 작성 · 일정표 관리 기록</p>
+        <div class="verdict v-ok">✅ 기여 확인 — 산출물(기획서)과 관리 기록이 뚜렷</div>
+      </div>
+      <div class="card qcard" onclick="questPick(this,1)">
+        <div class="tag">팀원 B · 이서연 (디자인)</div>
+        <p class="meta">회의 참석 4/5 · 시안 3건 제출 · 수정 이력 12회</p>
+        <div class="verdict v-ok">✅ 기여 확인 — 제출물과 수정 이력이 근거</div>
+      </div>
+      <div class="card qcard" onclick="questPick(this,2)">
+        <div class="tag">팀원 C · 박도현 (자료조사)</div>
+        <p class="meta">회의 참석 5/5 · 발언 기록 많음 · 제출 산출물 0건</p>
+        <div class="verdict v-free">🚨 무임승차 — 출석·발언은 '인상', 산출물 0건이 '기록'</div>
+      </div>
+      <div class="card qcard" onclick="questPick(this,3)">
+        <div class="tag">팀원 D · 최지우 (발표)</div>
+        <p class="meta">회의 참석 2/5 · 발표자료 전체 제작 · 리허설 기록 2회</p>
+        <div class="verdict v-ok">✅ 기여 확인 — 참석률은 낮지만 산출물이 명확 (함정 카드)</div>
+      </div>
+    </div>
+    <div class="qresult" id="questResult"></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>사람은 출석·발언 같은 '인상'에 흔들림 — 회의록·역할기록을 AI에 주면 이 판정표를 근거로 정리해 줌</div>
+</section>
+
+<section id="part1-do" class="sec">
+  <span class="kicker">1부 마무리 · 직접 해보기</span>
+  <h2>지금 5분, 내 과목으로</h2>
+  <p class="lead">약 5분 — 방금 본 루브릭 프롬프트를, <b>본인 과목 문항 하나에 그대로</b></p>
+  <div class="grid g4">
+    <div class="card"><div class="tag">1 문항</div><p>내 과목 서술형·실습 문항 1개 떠올리기</p></div>
+    <div class="card"><div class="tag">2 자료</div><p>모범답안 요지·배점 간단히 적기</p></div>
+    <div class="card"><div class="tag">3 실행</div><p>프롬프트 붙여넣고 클로드 실행</p></div>
+    <div class="card"><div class="tag">4 점검</div><p>나온 루브릭에서 고칠 1가지 찾기</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>완성이 아니라 시작 — 오늘 끝에 다듬어 자산으로</div>
+</section>
+
+<!-- ================= CH4 (2부) ================= -->
+<section class="divider">
+  <div class="ch">CHAPTER 04 · 2부</div>
+  <h2>AI로 실제 평가하기</h2>
+  <p>루브릭은 시작일 뿐 — 진짜 일은 채점에서</p>
+</section>
+
+<section id="setup" class="sec">
+  <span class="kicker">기본 셋업</span>
+  <h2>무엇을 주면, 무엇이 나오는가</h2>
+  <div class="flow">
+    <div class="step"><div class="n">INPUT · 투입</div><h4>주는 것</h4><p>루브릭 + 학생 결과물 + 모범답안/기준</p></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">REQUEST · 요청</div><h4>시키는 것</h4><p>"이 루브릭으로 평가하고, 항목별 점수와 그 근거를 표로 줘"</p></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">OUTPUT · 산출</div><h4>나오는 것</h4><p>항목별 점수 + 판단 근거 + 피드백 초안</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>점수가 아니라 '근거'를 함께 — 검수 가능해야 신뢰 가능</div>
+</section>
+
+<section id="type1-grade" class="sec">
+  <span class="kicker">유형 1 · 지필시험 — ② 실제 채점</span>
+  <h2>그 루브릭으로 학생 답안 라이브 채점</h2>
+  <div class="prompt">
+    <div class="plabel">① 채점할 학생 답안</div>
+    <pre>"생성형 AI는 학생의 학습 효율을 크게 높인다. 모르는 개념을 즉시 물어볼 수 있고, 수준에 맞는 맞춤 설명을 받을 수 있다. 과제에 드는 시간도 줄여 준다.
+
+다만 표절 문제가 생길 수 있다."
+
+(기대효과는 사례로 구체적 / 우려는 한 줄 / 입장·근거는 거의 없음)</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">② 라이브 실행 프롬프트</div>
+    <pre>위에서 만든 루브릭으로 좌측 [학생 답안]을 채점해 줘.
+
+1) 요소별(기대효과·우려·입장) 충족/부분/미흡 판정
+2) 각 판정의 근거를 답안 문장에서 찾아 인용
+3) 요소별 점수와 총점(/10) 산출
+4) 점수가 흔들릴 경계 지점은 '교수 확인' 표시
+
+출력: 표(요소|판정|점수|근거 인용) + 총점 + 확인 포인트
+
+※ 점수만 내지 말고 반드시 '근거'를 함께 — 내가 검수하게
+
+▶ 좌측 답안을 붙여넣고 실행</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="note"><span class="k">핵심</span>점수가 아니라 '근거'를 받는 채점 — 교수는 타당성만 검수</div>
+</section>
+
+<section id="q1" class="sec">
+  <span class="kicker">질문 1</span>
+  <h2>AI 점수, 그대로 써도 되나?</h2>
+  <p class="lead">그대로 쓰면 안 되는 <b>세 가지 이유</b></p>
+  <div class="grid g3">
+    <div class="card"><div class="tag">흔들림 · 재현성</div><p>같은 답안도 다시 넣으면 점수가 달라질 수 있음</p></div>
+    <div class="card"><div class="tag">맥락 모름 · 수업 맥락</div><p>이 수업의 강조점도, 채점 관행도 알지 못함</p></div>
+    <div class="card pop" data-pop="pop-confab"><div class="tag">그럴듯한 오판 · 설득력 ≠ 사실</div><p>근거가 그럴듯해 보여도, 사실과 다를 수 있음</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>AI는 1차 채점자, 교수는 최종 결정자 — 점수가 아니라 '근거'를 받아 검수</div>
+
+  <h3 style="margin-top:26px">왜 1차 채점자까지인가 — 그럴듯하지만, 틀린 채점</h3>
+  <div class="vs">
+    <div class="vsbox warn">
+      <h4>AI의 채점 (그럴듯함)</h4>
+      <ul>
+        <li>입장·근거 요소 — 충족 (8/10)</li>
+        <li>"학생은 표절 우려를 지적하며 균형 잡힌 시각을 보였다"</li>
+        <li>매끄러운 근거 문장까지 제시</li>
+      </ul>
+    </div>
+    <div class="mid">vs</div>
+    <div class="vsbox okay">
+      <h4>실제 답안 (사실)</h4>
+      <ul>
+        <li>답안에 '본인 입장'은 한 줄도 없음</li>
+        <li>AI가 '우려를 언급한 것'을 '입장을 밝힌 것'으로 잘못 해석</li>
+        <li>없는 근거를 그럴듯하게 생성</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>근거가 매끄러울수록 더 위험 — 점수가 아니라 '근거'를, 답안과 대조해 검수</div>
+
+  <h3 style="margin-top:30px">🔍 실습 · 검수 훈련 — AI 채점에서 오판을 찾아라</h3>
+  <p class="lead" style="margin-bottom:6px">AI가 채점표를 내놨습니다. 답안 원문과 대조해서 <b>잘못된 판정 행을 클릭</b>하세요 — 이게 2부에서 교수가 하는 일의 전부입니다.</p>
+  <div class="sim">
+    <div class="scenario"><b>학생 답안 원문</b> — "생성형 AI는 학생의 학습 효율을 크게 높인다. 모르는 개념을 즉시 물어볼 수 있고, 수준에 맞는 맞춤 설명을 받을 수 있다. 과제에 드는 시간도 줄여 준다. 다만 표절 문제가 생길 수 있다."</div>
+  </div>
+  <table class="tb audit" id="audit">
+    <tr><th>요소</th><th>AI 판정</th><th>AI가 제시한 근거</th></tr>
+    <tr class="pk" onclick="auditPick(this,false)"><td>기대효과 (4점)</td><td>충족 · 4/4</td><td>"학습 효율·맞춤 설명·시간 단축 등 구체적 사례를 제시했다"</td></tr>
+    <tr class="pk" onclick="auditPick(this,false)"><td>우려 (3점)</td><td>부분 · 2/3</td><td>"표절 문제를 언급했으나 한 줄에 그쳐 구체성이 부족하다"</td></tr>
+    <tr class="pk" onclick="auditPick(this,true)"><td>입장·근거 (3점)</td><td>충족 · 3/3</td><td>"학생은 표절 우려를 지적하며 균형 잡힌 시각으로 본인 입장을 밝혔다"</td></tr>
+  </table>
+  <div id="auditResult"></div>
+
+  <div class="quiz" data-q>
+    <div class="qk">이해 점검</div>
+    <p class="q">AI 채점 결과를 다루는 올바른 자세는?</p>
+    <button class="opt" data-c="0">점수를 그대로 성적에 반영한다</button>
+    <button class="opt" data-c="0">AI가 틀릴 수 있으니 아예 쓰지 않는다</button>
+    <button class="opt" data-c="1">근거를 받아 교수가 검수하고 최종 결정한다</button>
+    <div class="expl">AI는 <b>1차 채점자</b>입니다. 근거를 답안과 대조해 검수하고, 최종 점수와 책임은 교수가 집니다.</div>
+  </div>
+</section>
+
+<section id="q2" class="sec">
+  <span class="kicker">질문 2</span>
+  <h2>30명에게 같은 기준이 적용되나?</h2>
+  <div class="grid g3">
+    <div class="card"><div class="tag">고정 · 프롬프트 고정</div><p>같은 채점 요청문을 모두에게 동일 적용</p></div>
+    <div class="card"><div class="tag">분리 · 한 명씩 채점</div><p>한 번에 몰아 넣지 말고 답안별로 — 기준이 섞이지 않게</p></div>
+    <div class="card"><div class="tag">점검 · 표본 재채점</div><p>몇 개를 다시 넣어 점수 흔들림 여부 확인</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>기준 고정 + 표본 점검 → AI 채점의 재현성 관리</div>
+</section>
+
+<section id="q3" class="sec">
+  <span class="kicker">질문 3 · 가장 중요한 고민</span>
+  <h2>AI가 못 보는 것을 어떻게 메우나</h2>
+  <div class="grid g3">
+    <div class="card"><div class="tag">지필 · 부분점수 경계</div><h4>한계: 경계가 흔들림</h4><p>우회: 모범답안·배점 명시, 경계 사례는 교수 확인</p></div>
+    <div class="card"><div class="tag">실습 · 현장을 못 봄</div><h4>한계: 직접 관찰 불가</h4><p>우회: 결과물 사진·영상·산출 파일을 증빙으로 투입</p></div>
+    <div class="card"><div class="tag">PBL · 기여도를 모름</div><h4>한계: 누가 했는지 모름</h4><p>우회: 회의록·역할기록·로그를 근거로, AI는 정리만</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>AI가 못 보는 지점이 곧 교수의 자리 — 경계를 알면 안전한 위임</div>
+</section>
+
+<section id="q45" class="sec">
+  <span class="kicker">질문 4 · 5</span>
+  <h2>학생을 어떻게 설득하나</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="tag">Q4. "AI가 채점했나요?"</div>
+      <p>투명하게 밝힌다<br>최종 점수·설명 책임은 교수<br>이의 제기는 루브릭 근거로 대응</p>
+    </div>
+    <div class="card">
+      <div class="tag">Q5. 학생도 AI로 썼다면?</div>
+      <p>결과물만 보는 평가의 한계<br>과정·구두 확인 평가로 전환<br>중간 산출물 제출, 짧은 구술 점검</p>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>평가의 신뢰는 'AI를 숨기는 것'이 아니라 '책임 소재를 분명히'에서</div>
+</section>
+
+<section id="safety" class="sec">
+  <span class="kicker">안전하게</span>
+  <h2>학생 답안을 안전하게 넣는 법</h2>
+  <div class="grid g3">
+    <div class="card"><div class="tag">가리기</div><p>이름·학번 등 식별정보를 지우고 투입 — 일괄 치환도 가능</p></div>
+    <div class="card"><div class="tag">설정 확인</div><p>입력이 모델 학습에 쓰이는지 도구 설정·약관 점검 (교육·기업 플랜은 대체로 미사용)</p></div>
+    <div class="card"><div class="tag">기관 정책</div><p>학교 AI·개인정보 지침을 우선 확인 — 민감 과목은 더 보수적으로</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>가리고 · 설정 확인하고 · 기관 정책 따르고 — 세 단계면 외부 AI도 안전</div>
+</section>
+
+<section id="feedback" class="sec">
+  <span class="kicker">유형 1 · 지필시험 — ③ 피드백</span>
+  <h2>같은 답안에서 학생 피드백 라이브 생성</h2>
+  <div class="prompt">
+    <div class="plabel">① 붙여넣을 입력</div>
+    <pre>[학생 답안]
+"생성형 AI는 학습 효율을 크게 높인다. 모르는 개념을 즉시 묻고, 맞춤 설명을 받을 수 있다. … 다만 표절 문제가 생길 수 있다."
+
+[채점 결과]
+기대효과 충족 / 우려 부분 / 입장·근거 미흡 — 총 7/10
+
+→ 이 둘을 그대로 붙여넣기</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">② 라이브 실행 프롬프트</div>
+    <pre>위 채점 결과로, 이 학생에게 줄 피드백을 써 줘.
+
+· 잘한 점 1가지 — 답안 근거를 들어 구체적으로
+· 개선점 2가지 — 무엇을, 어떻게 고칠지까지
+· 다음 과제를 위한 조언 1가지
+· 8~10문장, 평가자가 아니라 코치의 목소리로
+· 다시 도전하고 싶게, 격려하는 어조로
+
+출력: 학생에게 그대로 전달 가능한 피드백 글 1편
+
+▶ 좌측 입력을 붙여넣고 실행</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="note"><span class="k">핵심</span>쓰는 노동에서 다듬는 일로 — 가장 지치는 피드백 작성의 최소화</div>
+</section>
+
+<!-- ================= CH5 ================= -->
+<section class="divider">
+  <div class="ch">CHAPTER 05</div>
+  <h2>어디까지 맡길 것인가</h2>
+  <p>AI 평가에 따르는 정당한 비판 — 피하지 않고 정면 대응</p>
+</section>
+
+<section id="ch5" class="sec">
+  <span class="kicker">정면으로</span>
+  <h2>이런 비판, 그리고 이렇게 답한다</h2>
+  <table class="tb">
+    <tr><th style="width:46%">이런 비판</th><th>우리의 답</th></tr>
+    <tr><td>"학생 평가를 기계에 떠넘기는 책무 회피 아니냐"</td><td>AI는 초안만, 최종 점수와 책임은 교수가 집니다</td></tr>
+    <tr><td>"AI가 편향돼 특정 문체·배경 학생에 불리하지 않나"</td><td>명시적 루브릭으로 채점, 익명화, 표본 재점검으로 편향 모니터</td></tr>
+    <tr><td>"학생 답안을 외부 AI에 넣는 건 개인정보 침해 아니냐"</td><td>이름·학번을 가리고 투입, 기관 정책을 확인</td></tr>
+    <tr><td>"학생은 어떻게 평가됐는지 알 권리가 있다"</td><td>루브릭·근거 공개, AI 사용 투명 고지, 이의는 근거로 대응</td></tr>
+  </table>
+  <div class="note"><span class="k">핵심</span>비판마다 답을 준비해 두면, AI 평가는 떳떳해짐</div>
+
+  <h3 style="margin-top:26px">현실적인 우려에 대한 솔직한 답</h3>
+  <table class="tb">
+    <tr><th style="width:46%">이런 우려</th><th>솔직한 답</th></tr>
+    <tr><td>"검수 시간이 직접 채점보다 더 드는 것 아니냐"</td><td>이득은 반복·대량에서 — 30명·매 학기 반복은 크게 줄지만, 소수·1회성은 이득이 작습니다</td></tr>
+    <tr><td>"내 과목은 텍스트가 아닌데(실기·실물·수식) 되나"</td><td>서술형엔 강하지만 실기·실물은 한계 — 증빙으로 보조하되 핵심 판단은 교수가</td></tr>
+    <tr><td>"루브릭으로 환원하면 창의성·통찰이 죽지 않나"</td><td>루브릭은 가두는 게 아니라 드러내는 틀 — 정량화 안 되는 영역은 교수 몫</td></tr>
+    <tr><td>"유료 아니냐 / 학칙상 AI 채점이 되나"</td><td>도구·정책은 기관과 확인 — AI는 보조, 성적 부여 주체는 교수</td></tr>
+  </table>
+  <div class="note"><span class="k">핵심</span>한계를 솔직히 말하는 평가가, 오히려 더 신뢰받음</div>
+</section>
+
+<section id="balance" class="sec">
+  <span class="kicker">관점 전환</span>
+  <h2>완벽한 평가는 없습니다</h2>
+  <div class="vs">
+    <div class="vsbox">
+      <h4>사람의 약점</h4>
+      <ul>
+        <li>피로·순서효과·후광효과</li>
+        <li>같은 답안도 다르게 본다</li>
+        <li>주관적 인상에 흔들림</li>
+      </ul>
+    </div>
+    <div class="mid">↔</div>
+    <div class="vsbox">
+      <h4>AI의 약점</h4>
+      <ul>
+        <li>학습 데이터에서 온 편향</li>
+        <li>이 수업의 맥락을 모름</li>
+        <li>현장·태도를 못 봄</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">핵심</span>명시적 루브릭(일관성) + 사람의 검수(맥락·책임) — AI는 사람의 약점을 메우는 보완재</div>
+</section>
+
+<!-- ================= CH6 ================= -->
+<section class="divider">
+  <div class="ch">CHAPTER 06</div>
+  <h2>내 평가 도구 완성</h2>
+  <p>오늘의 2시간이 매 학기 반복되던 시간을 줄임</p>
+</section>
+
+<section id="asset" class="sec">
+  <span class="kicker">자산으로 남기기</span>
+  <h2>한 번 만들면, 계속 재사용</h2>
+  <div class="flow">
+    <div class="step"><div class="n">01 · 저장</div><h4>모아 둔다</h4><p>오늘 만든 루브릭·채점 프롬프트·피드백 요청문을 한곳에</p></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">02 · 재사용</div><h4>바꿔 쓴다</h4><p>다음 과제는 내용만 바꿔 빠르게 적용</p></div>
+    <div class="arr">→</div>
+    <div class="step"><div class="n">03 · 공유</div><h4>함께 쓴다</h4><p>학과·동료와 기준표를 함께 쓰면 평가의 일관성도 올라감</p></div>
+  </div>
+  <div class="note"><span class="k">핵심</span>프롬프트는 한 번의 투자 — 이후 모든 평가 시간이 줄어듦</div>
+</section>
+
+<section id="summary" class="sec">
+  <span class="kicker">핵심 요약</span>
+  <h2>오늘 기억할 다섯 가지</h2>
+  <div class="grid g2" style="grid-template-columns:1fr">
+    <div class="card"><div class="tag">01</div><p style="color:var(--ink); font-weight:600">평가의 반복은 AI에 위임하되, 판단은 쥔다</p></div>
+    <div class="card"><div class="tag">02</div><p style="color:var(--ink); font-weight:600">내 수업 유형에 맞는 루브릭을 항목·단계·배점·맥락으로 요청한다</p></div>
+    <div class="card"><div class="tag">03</div><p style="color:var(--ink); font-weight:600">AI는 1차 채점자 — 점수가 아니라 '근거'를 받아 검수한다</p></div>
+    <div class="card"><div class="tag">04</div><p style="color:var(--ink); font-weight:600">AI가 못 보는 것(현장·기여도)은 증빙으로 메우거나 교수가 쥔다</p></div>
+    <div class="card"><div class="tag">05</div><p style="color:var(--ink); font-weight:600">개인정보는 가리고, 최종 책임은 교수가 진다</p></div>
+  </div>
+  <div class="practice"><b>요청 전 점검</b> — 자료 첨부 · 항목/배점 지정 · 근거 요청 · 개인정보 가림</div>
+</section>
+
+<section id="appendix" class="sec">
+  <span class="kicker">부록</span>
+  <h2>프롬프트 모음 — 여기서 다 가져가세요</h2>
+  <p class="lead">본문에 흩어진 프롬프트 다섯 개를 한곳에 모았습니다. <b>자료(문항·답안·배점)만 바꾸면 매 학기 재사용</b>됩니다.</p>
+  <div class="prompt">
+    <div class="plabel">① 루브릭 생성 · 지필 서술형 <span class="hint">CH3 · 유형 1</span></div>
+    <pre>너는 대학 서술형 평가의 채점 루브릭 설계자.
+[문항]·[모범답안 요지]·[배점]을 입력으로 줄게.
+
+1) 채점 핵심 요소 3가지 정의 (요소별 배점 합 = 10점)
+2) 요소마다 충족·부분·미흡 3단계 행동 기준 한 문장씩
+3) 0~10점을 4구간으로, 각 구간 판정 조건 명시
+4) 학생이 자주 놓치는 오답 유형 3가지 따로 정리
+
+출력: 표(요소|배점|충족·부분·미흡) + 점수구간표 + 오답 목록
+경계가 애매한 사례는 '교수 확인'으로 표시</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">② 체크리스트 루브릭 · 실습·수행평가 <span class="hint">CH3 · 유형 2</span></div>
+    <pre>이 실습의 평가를 현장에서 빠르게 체크할 체크리스트 루브릭으로 만들어 줘.
+
+· 영역은 안전 준수 / 절차 정확도 / 결과물 완성도 / 정리·태도 4개
+· 각 영역을 충족·부분·미흡 3단계 행동 기준으로
+· 영역별 배점도 제안해 줘</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">③ 3축 루브릭 · PBL·팀 프로젝트 <span class="hint">CH3 · 유형 3</span></div>
+    <pre>이 팀 프로젝트를 세 영역으로 평가하는 루브릭을 만들어 줘.
+
+· ① 팀 산출물 ② 개인 기여도 ③ 발표
+· 개인 기여도는 회의록·역할분담표를 근거로 판단하게 항목을 잡고
+· 무임승차를 가려낼 기준을 포함해 줘</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">④ 실제 채점 · 근거 요청 <span class="hint">CH4 · 2부</span></div>
+    <pre>위에서 만든 루브릭으로 [학생 답안]을 채점해 줘.
+
+1) 요소별 충족/부분/미흡 판정
+2) 각 판정의 근거를 답안 문장에서 찾아 인용
+3) 요소별 점수와 총점 산출
+4) 점수가 흔들릴 경계 지점은 '교수 확인' 표시
+
+출력: 표(요소|판정|점수|근거 인용) + 총점 + 확인 포인트
+
+※ 점수만 내지 말고 반드시 '근거'를 함께 — 내가 검수하게</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="prompt">
+    <div class="plabel">⑤ 학생 피드백 생성 <span class="hint">CH4 · 2부</span></div>
+    <pre>위 채점 결과로, 이 학생에게 줄 피드백을 써 줘.
+
+· 잘한 점 1가지 — 답안 근거를 들어 구체적으로
+· 개선점 2가지 — 무엇을, 어떻게 고칠지까지
+· 다음 과제를 위한 조언 1가지
+· 8~10문장, 평가자가 아니라 코치의 목소리로
+· 다시 도전하고 싶게, 격려하는 어조로
+
+출력: 학생에게 그대로 전달 가능한 피드백 글 1편</pre>
+    <button class="copybtn">복사</button>
+  </div>
+  <div class="practice"><b>요청 전 점검 4가지</b> — 자료 첨부 · 항목/배점 지정 · 근거 요청 · 개인정보 가림</div>
+</section>
+
+<section id="wrap-up" class="sec" style="text-align:center; padding:48px 38px">
+  <span class="kicker">마무리</span>
+  <h2>한 과제를 골라, 지금 바로 적용</h2>
+  <p class="lead" style="max-width:560px; margin:0 auto 4px">가장 빠른 학습은 직접 해보는 것.<br>오늘 본 흐름 그대로, <b>내 과목 과제 하나</b>에 적용해 보세요.</p>
+  <p style="font-size:.85rem; color:var(--sub); margin-top:14px">질문은 워크숍 채널로 · AI 평가 워크숍</p>
+</section>
+
+<footer>
+  전문대학교육협의회 교수 워크숍 — 「AI 활용하기 : 첫번째, 루브릭」<br>
+  서일대학교 AI게임융합학과 김민철 · 입체 교재 형식
+</footer>
+
+</main>
+</div><!-- /wrap -->
+
+<!-- ================= MODAL ================= -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h4 id="mTitle"></h4>
+    <div class="body" id="mBody"></div>
+    <button class="close" onclick="closeModal()">닫기 ✕</button>
+  </div>
+</div>
+<div class="lightbox" id="lb" onclick="this.classList.remove('show')"><img id="lbImg" src="" alt=""></div>
+
+<script>
+/* ---------- theme / mode ---------- */
+function setTheme(t,btn){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn.th').forEach(b=>b.classList.toggle('on',b===btn));
+}
+function setMode(m,btn){
+  document.body.dataset.mode=m;
+  document.querySelectorAll('.tbtn.mode').forEach(b=>b.classList.toggle('on',b===btn));
+}
+/* ---------- popups ---------- */
+const POPS={
+ "pop-item":{t:"① 항목 — 무엇을 평가하나",b:"<p>채점 포인트를 쪼개는 일입니다. 오늘 예시 문항이라면 <b>기대효과 · 우려 · 입장(근거)</b> 세 가지가 항목이 됩니다.</p><p>항목이 명확하면 '어디서 점수를 얻고 잃었는지'를 학생에게 그대로 설명할 수 있습니다.</p>"},
+ "pop-level":{t:"② 단계 — 얼마나 잘했나",b:"<p>각 항목의 도달 수준을 <b>충족 · 부분 · 미흡</b>처럼 계단으로 나눕니다.</p><p>단계마다 '행동으로 확인 가능한 기준 한 문장'을 붙이는 것이 핵심 — 그래야 채점자가 바뀌어도 판정이 흔들리지 않습니다.</p>"},
+ "pop-score":{t:"③ 배점 — 몇 점인가",b:"<p>항목·단계에 점수를 매깁니다. 항목 배점의 합이 곧 총점.</p><p>부분점수의 경계가 애매한 지점은 AI에게 <b>'교수 확인'으로 표시</b>하게 해서, 사람이 최종 판정합니다.</p>"},
+ "pop-confab":{t:"그럴듯한 오판 — 실제 사례",b:"<p>AI가 입장·근거 요소를 <b>충족(8/10)</b>으로 판정하며 \"학생은 표절 우려를 지적하며 균형 잡힌 시각을 보였다\"는 매끄러운 근거까지 제시한 사례.</p><p>그러나 실제 답안에 '본인 입장'은 한 줄도 없었습니다. AI가 '우려를 언급한 것'을 '입장을 밝힌 것'으로 잘못 해석해 <b>없는 근거를 그럴듯하게 생성</b>한 것.</p><p><b>근거가 매끄러울수록 더 위험</b> — 반드시 답안 원문과 대조해 검수해야 하는 이유입니다.</p>"}
+};
+function openModal(id){
+  const p=POPS[id]; if(!p)return;
+  document.getElementById('mTitle').textContent=p.t;
+  document.getElementById('mBody').innerHTML=p.b;
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+document.querySelectorAll('.card.pop').forEach(c=>c.addEventListener('click',()=>openModal(c.dataset.pop)));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();document.getElementById('lb').classList.remove('show');}});
+/* ---------- lightbox ---------- */
+function openLb(src){
+  document.getElementById('lbImg').src=src;
+  document.getElementById('lb').classList.add('show');
+}
+/* ---------- copy buttons ---------- */
+document.querySelectorAll('.copybtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const txt=btn.parentElement.querySelector('pre').innerText;
+    navigator.clipboard.writeText(txt).then(()=>{
+      const o=btn.textContent; btn.textContent='복사됨 ✓';
+      setTimeout(()=>btn.textContent=o,1500);
+    });
+  });
+});
+/* ---------- quizzes ---------- */
+document.querySelectorAll('.quiz[data-q]').forEach(q=>{
+  q.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      if(q.classList.contains('done'))return;
+      q.classList.add('done');
+      q.querySelectorAll('.opt').forEach(x=>{
+        if(x.dataset.c==='1')x.classList.add('correct');
+        else if(x===o)x.classList.add('wrong');
+        x.disabled=true;
+      });
+    });
+  });
+});
+/* ---------- betting game ---------- */
+const BET={
+  pages:[
+    {img:'img/page1.png', ans:'ai'},
+    {img:'img/page2.png', ans:'ai'},
+    {img:'img/page3.png', ans:'ai'},
+    {img:'img/page4.png', ans:'hu'},
+    {img:'img/page5.png', ans:'hu'}
+  ],
+  idx:0, picks:[]
+};
+function betRender(){
+  document.getElementById('betNum').textContent=(BET.idx+1)+' / 5 장';
+  document.getElementById('betImg').src=BET.pages[BET.idx].img;
+  const dots=document.getElementById('betDots');
+  dots.innerHTML=BET.pages.map((_,i)=>'<i class="'+(i<BET.picks.length?'did':'')+'"></i>').join('');
+  document.querySelector('#betGame .stage .imgwrap').scrollTop=0;
+}
+function betPick(v){
+  BET.picks.push(v);
+  if(BET.picks.length>=5){betFinish();return;}
+  BET.idx++;
+  betRender();
+}
+function betFinish(){
+  const g=document.getElementById('betGame');
+  let hit=0;
+  const cells=BET.pages.map((p,i)=>{
+    const ok=BET.picks[i]===p.ans; if(ok)hit++;
+    return '<div class="rcell '+(ok?'hit':'miss')+'">'
+      +'<img src="'+p.img+'" onclick="openLb(this.src)" alt="과제 '+(i+1)+'장">'
+      +'<div class="ans '+p.ans+'">'+(p.ans==='ai'?'🤖 AI':'✍️ 학생')+'</div>'
+      +'<div class="my">내 판정: '+(BET.picks[i]==='ai'?'AI':'학생')+' '+(ok?'⭕':'❌')+'</div>'
+      +'</div>';
+  }).join('');
+  document.getElementById('betCells').innerHTML=cells;
+  document.getElementById('betScore').textContent='5장 중 '+hit+'장 정답 — '
+    +(hit===5?'완벽합니다. 그런데 30장이라면?':hit>=3?'좋은 눈입니다. 그런데 매번 이렇게 볼 수 있을까요?':'괜찮습니다 — 표면 완성도는 AI가 더 높으니까요.');
+  g.classList.add('finished');
+}
+function betReset(){
+  BET.idx=0; BET.picks=[];
+  document.getElementById('betGame').classList.remove('finished');
+  betRender();
+}
+betRender();
+/* ---------- practice: audit game ---------- */
+function auditPick(row,isWrong){
+  const t=document.getElementById('audit');
+  if(t.classList.contains('done'))return;
+  const r=document.getElementById('auditResult');
+  if(isWrong){
+    t.classList.add('done');
+    t.querySelectorAll('tr.pk').forEach(x=>x.classList.add(x===row?'hit':'safe'));
+    r.innerHTML='<div class="simbox">정확합니다. 답안에 <b>본인 입장은 한 줄도 없는데</b>, AI는 \'우려를 언급한 것\'을 \'입장을 밝힌 것\'으로 해석해 <b>없는 근거를 그럴듯하게 생성</b>했습니다. AI 총점 9/10 → 검수 후 7/10. 이 한 번의 대조가 검수의 전부 — 답안 원문과 근거를 나란히 놓고 보면 됩니다.</div>';
+  }else{
+    r.innerHTML='<div class="simbox">이 판정은 답안과 대조하면 타당합니다 — 근거 문장이 실제 답안에 있습니다. <b>근거가 답안에 실재하는지</b>를 기준으로 다시 보세요.</div>';
+  }
+}
+/* ---------- practice: prompt builder ---------- */
+function bBuild(){
+  const q=document.getElementById('bQ').value.trim()||'(내 문항을 입력하세요)';
+  const a=document.getElementById('bA').value.trim()||'(모범답안 요지를 입력하세요)';
+  const pt=document.getElementById('bP').value||10;
+  const n=document.getElementById('bN').value||3;
+  document.getElementById('bOut').textContent=
+`너는 대학 서술형 평가의 채점 루브릭 설계자.
+아래 [문항]·[모범답안 요지]·[배점]을 입력으로 줄게.
+
+1) 채점 핵심 요소 ${n}가지 정의 (요소별 배점 합 = ${pt}점)
+2) 요소마다 충족·부분·미흡 3단계 행동 기준 한 문장씩
+3) 0~${pt}점을 4구간으로, 각 구간 판정 조건 명시
+4) 학생이 자주 놓치는 오답 유형 3가지 따로 정리
+
+출력: 표(요소|배점|충족·부분·미흡) + 점수구간표 + 오답 목록
+경계가 애매한 사례는 '교수 확인'으로 표시
+
+[문항]
+${q}
+
+[모범답안 요지]
+${a}
+
+[배점] 총 ${pt}점`;
+}
+['bQ','bA','bP','bN'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){el.addEventListener('input',bBuild); el.addEventListener('change',bBuild);}
+});
+if(document.getElementById('bOut'))bBuild();
+/* ---------- practice: checklist simulation ---------- */
+const SIM=[['안전 준수',30,'충족'],['절차 정확도',30,'부분'],['완성도',25,'미흡'],['정리·태도',15,'충족']];
+function simPts(area,level){const full=area[1];return level==='충족'?full:level==='부분'?Math.round(full/2):0;}
+function simCheck(){
+  const picks=SIM.map((_,i)=>{const r=document.querySelector('input[name="sim'+i+'"]:checked');return r?r.value:null;});
+  const out=document.getElementById('simResult');
+  if(picks.some(v=>!v)){out.innerHTML='<div class="simbox">네 영역 모두 판정해 주세요.</div>';return;}
+  let mine=0,model=0,match=0;
+  const rows=SIM.map((a,i)=>{
+    const ok=picks[i]===a[2]; if(ok)match++;
+    mine+=simPts(a,picks[i]); model+=simPts(a,a[2]);
+    return `${a[0]} — 내 판정 <b>${picks[i]}</b> ${ok?'<span class="ok">⭕</span>':'<span class="no">❌ 모범: '+a[2]+'</span>'}`;
+  }).join('<br>');
+  const msg=match===4
+    ?'네 영역 모두 일치 — 행동 기준이 있으면 판정이 흔들리지 않는다는 증거입니다.'
+    :'판정이 갈린 영역이 곧 <b>행동 기준을 더 구체화해야 할 곳</b>입니다. 사람끼리도 갈리는 지점 — AI에게는 더 명시적으로 적어 줘야 합니다.';
+  out.innerHTML=`<div class="simbox">${rows}<br><br><b>내 채점 ${mine}점</b> · 모범 채점 ${model}점 (${match}/4 일치)<br>${msg}</div>`;
+}
+/* ---------- practice: PBL quest ---------- */
+let questDone=false;
+function questPick(el,i){
+  if(questDone)return; questDone=true;
+  const q=document.getElementById('quest');
+  q.classList.add('done');
+  q.querySelectorAll('.qcard').forEach((c,j)=>c.classList.add(j===2?'free':'contrib'));
+  const r=document.getElementById('questResult');
+  if(i===2){
+    r.innerHTML='<div class="badge">🏆 QUEST CLEAR! +100 XP · 배지 「기록의 눈」 획득</div><div class="simbox" style="margin-top:10px">정확합니다. 박도현은 <b>회의 5/5 참석에 발언도 많았지만, 제출 산출물이 0건</b> — 출석과 발언은 인상일 뿐, 기여의 근거는 기록입니다. 최지우처럼 참석률이 낮아도 산출물이 명확하면 기여는 인정됩니다.</div>';
+  }else if(i===3){
+    r.innerHTML='<div class="simbox">함정 카드에 걸렸습니다! 참석률 2/5만 보면 최지우가 의심되지만, <b>발표자료 전체 제작 + 리허설 기록</b>이라는 산출물 근거가 있습니다. 정답은 <b>박도현</b> — 회의는 다 나왔지만 산출물이 0건. <b>출석은 인상, 산출물이 근거</b>입니다.</div><button class="replay" onclick="questReset()">다시 도전</button>';
+  }else{
+    r.innerHTML='<div class="simbox">아쉽습니다. 이 팀원은 산출물·기록 근거가 뚜렷합니다. 정답은 <b>박도현</b> — 회의 5/5 참석·발언 다수로 <b>인상은 좋지만 제출 산출물 0건</b>. 기여의 근거는 출석이 아니라 기록입니다.</div><button class="replay" onclick="questReset()">다시 도전</button>';
+  }
+}
+function questReset(){
+  questDone=false;
+  const q=document.getElementById('quest');
+  q.classList.remove('done');
+  q.querySelectorAll('.qcard').forEach(c=>c.classList.remove('free','contrib'));
+  document.getElementById('questResult').innerHTML='';
+}
+/* ---------- scroll spy ---------- */
+const links=[...document.querySelectorAll('nav.toc a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const spy=(typeof IntersectionObserver!=='undefined')&&new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+e.target.id));
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+if(spy)secs.forEach(s=>spy.observe(s));
+/* close mobile toc on click */
+links.forEach(a=>a.addEventListener('click',()=>document.querySelector('nav.toc').classList.remove('open')));
+</script>
+</body>
+</html>
