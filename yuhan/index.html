@@ -309,6 +309,8 @@ html.present .bn{font-size:17px}
     <a class="nav-link" href="#handout">빌더 ⑦ 유인물·안내문</a>
     <a class="nav-link" href="#rubric">빌더 ⑧ 평가 루브릭</a>
     <a class="nav-link" href="#plan">2학기 적용 계획</a>
+    <span class="nav-time">보너스</span>
+    <a class="nav-link" href="#polish">글 다듬기 · 매일 쓰기</a>
     <span class="nav-time">마무리</span>
     <a class="nav-link" href="#wrap">강의를 닫으며</a>
   </nav>
@@ -326,6 +328,10 @@ html.present .bn{font-size:17px}
         <div class="card"><div class="card-icon"><i data-lucide="shield-check"></i></div><h4>목표 3 · 검증 습관</h4><p>생성 자료의 사실 오류를 잡아내고 저작권·개인정보 이슈를 점검하는 루틴을 갖춘다.</p></div>
       </div>
       <div class="callout callout-info"><i data-lucide="info"></i><div><strong>이 교재 읽는 법</strong> — 본문 흐름대로 오늘 수업이 진행됩니다. <strong>빌더 ①~⑧</strong>의 빈칸을 채우면 내 과목에 맞는 프롬프트가 자동으로 완성되고, <strong>복사</strong> 버튼으로 Claude에 붙여넣으면 됩니다. 상단에서 화면(보통·수업)과 테마(종이·세피아·다크)를 바꿀 수 있습니다. <strong>이 교재도 Claude로 만들었습니다 — 오늘 여러분이 만들 바로 그 방식으로.</strong></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="zap"></i><span>오늘의 예고편 — 강사 데모와 같은 프롬프트</span><span class="prompt-persona">교재 목차 사진 1장 → 3분</span></div>
+        <div class="prompt-text">첨부한 사진은 내 교재의 목차다. 나는 전문대 [학과]에서 이 과목을 가르치는 교수다. 이 목차에서 "[개선하고 싶은 단원]"에 해당하는 1개 차시를 골라 ① 학습목표 2개 ② 50분 수업 흐름 ③ 형성평가 퀴즈 5문항(정답·해설 포함)을 만들어 줘. [2학년, 기초가 약한] 학생 눈높이로.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <p style="font-size:13.5px;color:var(--fg-muted)">— 방금 강사가 보여드린 '3분 데모'가 바로 이 프롬프트입니다. 목차 사진 한 장이면 시작되는 것이죠. 오후에는 이걸 여덟 갈래로 쪼개 정교하게 만들어 갑니다.</p>
     </section>
 
     <!-- instructor -->
@@ -424,6 +430,7 @@ html.present .bn{font-size:17px}
       <div class="prompt-box"><div class="prompt-label"><i data-lucide="bookmark-plus"></i><span>내 첫 스킬 만들기 — 오늘 잘 된 프롬프트를 저장</span><span class="prompt-persona">기초 실습 후 언제든</span></div>
         <div class="prompt-text">방금 그 결과물이 마음에 들어. 지금 사용한 작업 방식을 "[스킬 이름: 예. 내 퀴즈 만들기]"라는 이름의 작업 패턴으로 정리해 줘 — 언제 쓰는지, 입력으로 무엇을 주면 되는지, 출력 형식은 어떤지 한 페이지로. 앞으로 내가 "[스킬 이름]"이라고 말하면 이 패턴대로 작업해 줘. (그리고 이 내용을 프로젝트 지침에도 붙여 둘게.)</div>
         <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-tip"><i data-lucide="gift"></i><div><strong>강사의 '스킬 만드는 스킬'을 그대로 드립니다</strong> — 제가 스킬 30여 개를 만들 때 쓰는 메타-스킬 가이드입니다. <a href="k-meta-skill.md" download><b>여기서 내려받아</b></a> Claude에 첨부하고 <b>"이 가이드 방식으로 '[내가 자주 하는 일]' 스킬을 만들어줘"</b>라고 해보세요. 좋은 스킬의 기준(수치까지 적기), 3가지 유형별 틀, 체크리스트가 들어 있습니다.</div></div>
       <h3>계정과 플랜 — 무료로 오늘 하루 충분한가?</h3>
       <p>결론부터 말씀드리면, 충분합니다. 다만 무료 계정은 <b>몇 시간마다 다시 차오르는 '사용량 그릇'</b>이 있어서, 긴 작업을 연달아 시키면 그릇이 먼저 비는 것이죠. 그럼 어떻게 아껴 써야 할까요?</p>
       <div class="check-sheet"><h4>무료 계정 아껴 쓰기 4가지</h4>
@@ -509,6 +516,7 @@ html.present .bn{font-size:17px}
         <p class="cs-sub">막히면 손을 드세요 — 짝꿍 화면을 함께 봐도 좋습니다. (가입 인증 문자가 안 오면 와이파이를 바꿔 재시도)</p>
         <div class="check-item"><input type="checkbox"><div><b>① 로그인 확인</b> — claude.ai 접속, 내 계정으로 대화창이 열린다</div></div>
         <div class="check-item"><input type="checkbox"><div><b>② 업로드 테스트</b> — 내 강의자료(PPT·PDF) 1개를 첨부하고 "이 자료를 3줄로 요약해 줘" → 요약이 돌아오면 성공</div></div>
+        <div class="check-item"><input type="checkbox"><div><b>②-1 자료를 안 가져오셨다면</b> — 공용 샘플 3종 중 내 분야와 가까운 것을 내려받아 그걸로 실습하세요: <a href="sample-1-communication.pdf" download><b>교양(의사소통)</b></a> · <a href="sample-2-accounting.pdf" download><b>전공이론(회계원리)</b></a> · <a href="sample-3-python.pdf" download><b>실습과목(파이썬)</b></a></div></div>
         <div class="check-item"><input type="checkbox"><div><b>③ 교수자 프로필 설정</b> — 아래 빌더 ①로 지침을 만들어 붙여넣는다</div></div>
       </div>
       <p>교수자 프로필(지침)은 <b>Claude에게 나를 한 번만 소개해 두는 것</b>입니다. 왜 이걸 먼저 할까요? 이걸 해두면 오후 내내 — 그리고 다음 학기 내내 — "나는 어느 학교 무슨 과목 교수인데…"를 반복하지 않아도 되기 때문인 것이죠.</p>
@@ -562,6 +570,7 @@ html.present .bn{font-size:17px}
           <div class="prompt-text" data-out></div>
           <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
         <div class="b-hint"><i data-lucide="info"></i><div>결과가 오면 그대로 받지 말고 한 번은 고치세요 — "목표 2번은 우리 수업에 안 맞아, ○○로 바꿔서 흐름 다시" 같은 되받아치기가 실력인 것이죠.</div></div>
+        <div class="b-hint"><i data-lucide="check-circle"></i><div><b>완료 기준</b> — "학생은 ~할 수 있다" 학습목표 1개가 확정되고, 도입-전개-정리 시간이 적힌 50분 흐름표가 손에 있다.</div></div>
       </div>
     </section>
 
@@ -582,6 +591,7 @@ html.present .bn{font-size:17px}
           <div class="prompt-text" data-out></div>
           <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
         <div class="b-hint"><i data-lucide="battery-medium"></i><div><b>무료 계정 팁</b> — 오늘은 개요·텍스트 중심으로 뽑는 것까지. 디자인이 입혀진 PPTX 완성본 만들기는 사용량을 많이 쓰므로 강사 데모로 함께 봅니다.</div></div>
+        <div class="b-hint"><i data-lucide="check-circle"></i><div><b>완료 기준</b> — 전체 개요가 확정되고, 최소 3장의 본문(핵심 한 줄+개조식)이 채워져 있다.</div></div>
       </div>
     </section>
 
@@ -604,6 +614,7 @@ html.present .bn{font-size:17px}
           <div class="prompt-text" data-out></div>
           <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
         <div class="b-hint"><i data-lucide="shield-check"></i><div>퀴즈가 나오면 <b>내가 직접 풀어보는 것</b>이 검증의 시작입니다. 정답이 틀린 문항, 보기 두 개가 다 맞는 문항이 종종 숨어 있는 것이죠.</div></div>
+        <div class="b-hint"><i data-lucide="check-circle"></i><div><b>완료 기준</b> — 전 문항을 내가 직접 풀어 정답을 확인했고, 학생용/교수용 두 버전이 분리돼 있다.</div></div>
       </div>
     </section>
 
@@ -624,6 +635,7 @@ html.present .bn{font-size:17px}
           <div class="prompt-text" data-out></div>
           <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
         <div class="b-hint"><i data-lucide="paperclip"></i><div>이 프롬프트는 <b>내 PPT·PDF를 첨부한 뒤</b> 보내세요. 진단표를 받고 나서 "아쉬운 점 1번만 고친 버전을 보여줘"로 이어가면 됩니다.</div></div>
+        <div class="b-hint"><i data-lucide="check-circle"></i><div><b>완료 기준</b> — '지금 바로 고칠 3가지' 중 1개를 실제로 고친 개선 전→후를 확인했다.</div></div>
       </div>
       <div class="callout callout-tip"><i data-lucide="users"></i><div><strong>검증 실습 + 공유 (마지막 20분)</strong> — 오늘 생성한 자료에서 <b>사실 오류·저작권 이슈를 1개 이상</b> 찾아 직접 수정하고, 짝과 화면을 바꿔 서로의 자료를 점검해 주세요. 그리고 잘 된 사례 1~2분을 다 함께 봅니다. "AI가 만든 걸 그대로 쓰지 않는다"를 몸에 새기는 시간입니다.</div></div>
     </section>
@@ -642,6 +654,7 @@ html.present .bn{font-size:17px}
           <button class="opt">아니다. 검증은 아예 불가능하니 AI 자료는 쓰면 안 된다</button>
           <button class="opt">아니다. AI 점검은 '의심 목록 뽑기'이고, 원 출처 대조는 내가 한다</button></div>
       </div>
+      <p><b>완료 기준: 오늘 생성한 자료에서 오류·이슈 1개를 직접 찾아 수정했고, 짝과 교차 점검을 마쳤다.</b></p>
     </section>
     <!-- PART 4 -->
     <section id="gami">
@@ -776,6 +789,29 @@ html.present .bn{font-size:17px}
         <div class="step"><div class="step-num">5</div><div><b>완료 기준 (2분)</b><p><b>첫 행동이 달력에 들어갈 만큼 구체적이면 완료.</b> "AI 활용하기"(✗) 대신 "9/2 화요일, 3주차 퀴즈를 빌더 ④로 제작"(✓).</p></div></div>
       </div>
       <div class="callout callout-tip"><i data-lucide="flag"></i><div><strong>순회 지도 시간</strong> — 작성하는 동안 강사가 돌면서 개별 질문을 받습니다. "우리 과목은 이런 게 될까요?"를 가장 환영합니다.</div></div>
+    </section>
+
+    <!-- polish -->
+    <section id="polish">
+      <div class="section-header"><span class="section-tag">보너스 · 내일부터 매일</span><h2>글 다듬기 — 가장 자주 쓰게 될 기능</h2>
+        <p class="section-lead">수업자료 다음으로 교수가 매일 만드는 건 무엇일까요? <b>글</b>입니다 — 공지, 이메일, 시험 문항, 보고서. 다듬기는 Claude가 가장 잘하고, 사용량도 가장 적게 드는 일인 것이죠.</p></div>
+      <p>요령은 하나입니다. "더 좋게 해줘"가 아니라 <b>무엇을 지키고 무엇을 바꿀지</b>를 말하는 것 — 오전에 배운 역할·맥락·형식 3원칙이 여기서도 그대로 통합니다. 상황별로 복사해 쓰세요.</p>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="mail"></i><span>① 공지·이메일 다듬기</span><span class="prompt-persona">내용 유지 · 어조 교정</span></div>
+        <div class="prompt-text">아래는 내가 쓴 [학생 공지 / 학부모 안내 / 동료 교수 이메일] 초안이다. 내용과 사실은 그대로 두고, ① 정중하지만 간결하게 ② 군더더기 문장 삭제 ③ 중요한 정보(날짜·장소·해야 할 일)가 한눈에 보이게 다듬어 줘. 고친 부분에는 이유를 한 줄씩 달아 줘.
+
+[초안 붙여넣기]</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="file-question"></i><span>② 시험 문항 윤문</span><span class="prompt-persona">출제 의도 유지 · 표현만</span></div>
+        <div class="prompt-text">아래 시험 문항들을 검토해 줘. 출제 의도와 정답은 절대 바꾸지 말고, ① 문장이 두 가지로 해석될 여지 ② 불필요하게 어려운 표현 ③ 보기 길이·형식의 불균형만 찾아 고쳐 줘. 고치기 전→후를 표로 보여줘.
+
+[문항 붙여넣기]</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="pen-line"></i><span>③ 내 문체를 지키며 다듬기</span><span class="prompt-persona">AI 냄새 빼기</span></div>
+        <div class="prompt-text">아래 글을 다듬되, 내 문체를 유지해 줘. 규칙: ① 문장 구조와 어투는 내 것을 최대한 보존 ② 오탈자·비문·중복만 교정 ③ 화려한 수식어나 "혁신적인, 놀라운" 같은 AI 특유의 과장 표현을 추가하지 말 것 ④ 바꾼 곳에 밑줄 목록으로 표시.
+
+[글 붙여넣기]</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-tip"><i data-lucide="lightbulb"></i><div><strong>다듬기의 철칙</strong> — 다듬은 글도 보내기 전에 한 번은 소리 내어 읽어 보세요. 내 이름으로 나가는 글의 마지막 검수자는 언제나 나인 것이죠. 특히 날짜·이름·금액은 AI가 아니라 눈으로.</div></div>
     </section>
 
     <!-- wrap -->
