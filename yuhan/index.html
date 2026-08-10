@@ -311,6 +311,7 @@ html.present .bn{font-size:17px}
     <a class="nav-link" href="#rubric">빌더 ⑧ 평가 루브릭</a>
     <a class="nav-link" href="#plan">2학기 적용 계획</a>
     <span class="nav-time">보너스</span>
+    <a class="nav-link" href="#deploy">배포와 공유 · 웹 주소로</a>
     <a class="nav-link" href="#polish">글 다듬기 · 매일 쓰기</a>
     <span class="nav-time">마무리</span>
     <a class="nav-link" href="#wrap">강의를 닫으며</a>
@@ -819,6 +820,49 @@ html.present .bn{font-size:17px}
         <div class="step"><div class="step-num">5</div><div><b>완료 기준 (2분)</b><p><b>첫 행동이 달력에 들어갈 만큼 구체적이면 완료.</b> "AI 활용하기"(✗) 대신 "9/2 화요일, 3주차 퀴즈를 빌더 ④로 제작"(✓).</p></div></div>
       </div>
       <div class="callout callout-tip"><i data-lucide="flag"></i><div><strong>순회 지도 시간</strong> — 작성하는 동안 강사가 돌면서 개별 질문을 받습니다. "우리 과목은 이런 게 될까요?"를 가장 환영합니다.</div></div>
+    </section>
+
+    <!-- deploy -->
+    <section id="deploy">
+      <div class="section-header"><span class="section-tag">보너스 · 만든 다음</span><h2>배포와 공유 — 만든 자료를 학생 손까지</h2>
+        <p class="section-lead">오늘 만든 HTML 학습자료, 학생에게 어떻게 전달할까요? 방법은 셋이고, <b>손이 갈수록 학생이 편해집니다.</b></p></div>
+      <p>지금 여러분이 보고 있는 이 교재도 웹 주소 하나로 열렸습니다. 파일을 보내드린 적이 없는데도 말이죠. 그 차이가 오늘 마지막으로 남길 이야기인 것입니다.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><b>파일 그대로 주기 — 가장 쉬움</b><p>HTML 파일을 카톡·메일·USB로 전달. <span class="accent-text">장점</span> 준비 0분. <span class="accent-text">단점</span> 학생이 내려받아 열어야 하고, 고칠 때마다 다시 보내야 합니다. 폰에서는 안 열린다는 문의가 옵니다.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><b>LMS에 올리기 — 가장 현실적</b><p>학교 LMS 강의실에 자료로 첨부. <span class="accent-text">장점</span> 수강생만 보고, 출결·과제와 한곳에 모입니다. <span class="accent-text">단점</span> 여전히 '내려받아 열기'이고, LMS가 HTML 미리보기를 막아둔 경우가 있습니다. <b>대부분의 차시 자료는 여기까지면 충분한 것이죠.</b></p></div></div>
+        <div class="step"><div class="step-num">3</div><div><b>웹 주소로 만들기 — 오늘 이 교재의 방식</b><p>파일을 웹에 올려 <b>주소(링크) 하나</b>로 만듭니다. <span class="accent-text">장점</span> 클릭 즉시 열림, 폰·PC 모두 동일, <b>파일을 고치면 같은 주소가 자동으로 최신</b>. <span class="accent-text">단점</span> 첫 세팅에 30분 정도 걸리고, 공개 주소라 <b>학생 개인정보·성적은 절대 올리면 안 됩니다.</b></p></div></div>
+      </div>
+      <h3>3번은 어떻게 하나 — 이 교재가 올라간 경로</h3>
+      <p>제가 쓰는 방법은 <b>GitHub Pages</b>입니다. 무료이고, 광고가 없고, 파일 하나만 올려도 바로 주소가 생기는 것이죠. 흐름은 네 걸음입니다.</p>
+      <table class="timegrid">
+        <thead><tr><th>걸음</th><th>하는 일</th><th>다음 학기부터</th></tr></thead>
+        <tbody>
+          <tr><td class="tg-time">① 계정</td><td>github.com 무료 가입 → 저장소(repository) 1개 만들기 <span class="tg-tag tg-rest">최초 1회</span></td><td>생략</td></tr>
+          <tr><td class="tg-time">② 켜기</td><td>저장소 Settings → Pages에서 게시 켜기 <span class="tg-tag tg-rest">최초 1회</span></td><td>생략</td></tr>
+          <tr><td class="tg-time">③ 올리기</td><td>과목 이름 폴더를 만들고 <span class="mono">index.html</span>로 파일 올리기</td><td><b>1분</b></td></tr>
+          <tr><td class="tg-time">④ 줄이기</td><td>긴 주소를 단축 URL·QR로 → 칠판·LMS에 안내 <span class="tg-tag tg-prac">배포</span></td><td><b>2분</b></td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-tip"><i data-lucide="refresh-cw"></i><div><strong>업데이트가 진짜 강점입니다</strong> — 자료를 고쳤을 때 <b>같은 이름(index.html)으로 다시 올리기만</b> 하면 끝. 학생에게 준 주소는 그대로인데 내용만 최신으로 바뀝니다. "수정본 v2 최종.html"을 다시 뿌릴 일이 없어지는 것이죠. 실제로 이 교재도 오늘까지 여러 번 고쳐 올렸지만, 여러분이 받은 주소는 처음부터 하나였습니다.</div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="upload-cloud"></i><span>배포 도우미 프롬프트 — 처음 세팅할 때</span><span class="prompt-persona">한 단계씩 물어가며 진행</span></div>
+        <div class="prompt-text">나는 대학 교수이고, 내가 만든 HTML 학습자료를 학생들에게 웹 주소로 배포하고 싶다. GitHub Pages를 처음 쓴다. 컴퓨터를 잘 모르는 사람도 따라 할 수 있게, 화면에서 무엇을 누르는지까지 포함해 한 번에 한 단계씩 알려 줘. 내가 "다음"이라고 하면 다음 단계로 넘어가 줘. 마지막에는 학생 안내용 문구와 주소를 짧게 만드는 방법까지 알려 줘.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <h3>강사는 이걸 '스킬'로 만들어 씁니다</h3>
+      <p>저는 이 네 걸음을 매번 기억하지 않습니다. <b>배포 절차 자체를 스킬로 저장</b>해 뒀거든요 — 계정 정보, 저장소 이름, 폴더 규칙, 커밋 메시지 형식까지 한 문서에 적어두고, "이거 배포해 줘" 한마디면 그대로 실행됩니다. 오늘 만든 이 교재도 그렇게 올라갔습니다. 앞에서 받으신 <a href="k-meta-skill.md" download><b>'스킬 만드는 스킬'</b></a>로 여러분의 반복 업무도 똑같이 만들 수 있는 것이죠.</p>
+      <div class="check-sheet"><h4>공개 주소로 배포하기 전 — 3초 점검</h4>
+        <p class="cs-sub">웹 주소는 링크를 아는 사람이면 누구나 열 수 있습니다. 아래 셋만 확인하세요.</p>
+        <div class="check-item"><input type="checkbox"><div><b>학생 이름·학번·성적·연락처</b>가 자료 안에 없다</div></div>
+        <div class="check-item"><input type="checkbox"><div><b>출판사 교재 본문·그림</b>을 그대로 옮겨 붙이지 않았다 (내가 만든 요약·도식은 괜찮습니다)</div></div>
+        <div class="check-item"><input type="checkbox"><div><b>시험 문제·정답</b>처럼 공개되면 안 되는 자료는 LMS(2번)로 보낸다</div></div>
+      </div>
+      <div class="quiz" data-quiz>
+        <span class="quiz-eyebrow">이해 점검</span><h4>배포, 이렇게 고르면 됩니다</h4>
+        <div class="q" data-a="2" data-explain="같은 파일명으로 덮어쓰면 주소는 그대로, 내용만 최신이 됩니다 — 이것이 웹 주소 배포의 가장 큰 실익이죠.">
+          <div class="qq">학기 중에 자료를 자주 고칠 예정이라면, 어떤 방식이 가장 편할까요?</div>
+          <button class="opt">카톡으로 파일 전송 — 고칠 때마다 새로 보내기</button>
+          <button class="opt">USB로 나눠주기</button>
+          <button class="opt">웹 주소로 배포 — 같은 이름으로 덮어쓰면 주소 그대로 최신</button></div>
+      </div>
     </section>
 
     <!-- polish -->
