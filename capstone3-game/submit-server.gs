@@ -44,7 +44,9 @@ function lookup(team, week) {
     var wk = String(week || 1) + '주차';
     for (var i = vals.length - 1; i >= 0; i--) {
       if (String(vals[i][1]) === wk && String(vals[i][2]) === String(team)) {
-        return { ok: true, found: true, at: String(vals[i][0]), url: String(vals[i][8]) };
+        var at = vals[i][0];
+        at = (at instanceof Date) ? Utilities.formatDate(at, TZ, 'yyyy-MM-dd HH:mm') : String(at);
+        return { ok: true, found: true, at: at, url: String(vals[i][8]) };
       }
     }
     return { ok: true, found: false };
@@ -179,6 +181,7 @@ function logRow(root, p, url) {
     }
   }
   if (!target) target = last + 1;
+  sh.getRange(target, 1).setNumberFormat('@');   // 제출시각은 문자열 그대로
   sh.getRange(target, 1, 1, row.length).setValues([row]);
   sh.getRange(target, 6).setNumberFormat('0%');
 }
