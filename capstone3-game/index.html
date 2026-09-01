@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="서일대학교 AI게임융합학과 캡스톤디자인Ⅲ(게임반) 1주차 팀 워크시트 — 빌드 현황 점검·졸업작품 확정·코어 루프 선언·팀 편성·출시 로드맵">
+<title>캡스톤Ⅲ 게임반 팀 워크시트</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    color-scheme: light dark;
+    --ground:#F6F7FC; --panel:#FFFFFF; --panel-2:#EDEFF8;
+    --ink:#141830; --ink-2:#40476B; --muted:#71789B; --line:#DEE2F0;
+    --accent:#5A31E8; --accent-soft:#EDE8FF;
+    --gate:#0C7C8A; --gate-soft:#E0F3F5;
+    --warn:#A5731C; --warn-soft:#FAF0DA;
+    --done:#2C7D5C; --done-soft:#E2F3EB;
+    --field:#FFFFFF; --field-line:#C7CCE0;
+    --shadow:0 1px 2px rgba(20,24,48,.06), 0 8px 24px rgba(20,24,48,.05);
+    --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    --display:"Gothic A1","Noto Sans KR",system-ui,sans-serif;
+    --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0A0D1C; --panel:#141930; --panel-2:#1C2340;
+      --ink:#EEF0FB; --ink-2:#B4BBDB; --muted:#7D86AC; --line:#252E55;
+      --accent:#9B7BFF; --accent-soft:#241a4d;
+      --gate:#4FD2E3; --gate-soft:#10303a;
+      --warn:#E0AC57; --warn-soft:#2A2412;
+      --done:#5FCB9B; --done-soft:#12261E;
+      --field:#0E1326; --field-line:#313B6B;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0A0D1C; --panel:#141930; --panel-2:#1C2340;
+    --ink:#EEF0FB; --ink-2:#B4BBDB; --muted:#7D86AC; --line:#252E55;
+    --accent:#9B7BFF; --accent-soft:#241a4d;
+    --gate:#4FD2E3; --gate-soft:#10303a;
+    --warn:#E0AC57; --warn-soft:#2A2412;
+    --done:#5FCB9B; --done-soft:#12261E;
+    --field:#0E1326; --field-line:#313B6B;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  img{max-width:100%}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px 90px}
+  [hidden]{display:none !important}
+
+  /* ---- top bar ---- */
+  .bar{position:sticky;top:0;z-index:20;background:#0C1024;color:#ECEFFB;border-bottom:1px solid #212A50}
+  .bar .in{max-width:1000px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .bar .brand{font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:-.01em}
+  .bar .brand i{font-style:normal;color:#9B7BFF;margin-right:6px}
+  .bar .who{font-family:var(--mono);font-size:11.5px;color:#8B95C4}
+  .bar .spacer{flex:1}
+  .save{font-family:var(--mono);font-size:11px;color:#8B95C4;display:flex;align-items:center;gap:6px}
+  .save .dot{width:7px;height:7px;border-radius:99px;background:#4B5590}
+  .save.ok .dot{background:#4FCF95}
+  .save.busy .dot{background:#E8B04F}
+  .save.err .dot{background:#FF5C70}
+  button{font-family:var(--body);cursor:pointer}
+  .btn{background:transparent;border:1px solid #37416E;color:#D4DAF5;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:500}
+  .btn:hover{border-color:#5C68A6}
+  .btn.solid{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+  .btn:focus-visible{outline:2px solid #9B7BFF;outline-offset:2px}
+  .btn[disabled]{opacity:.5;cursor:default}
+
+  /* ---- headings ---- */
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(24px,4vw,34px);line-height:1.2;letter-spacing:-.02em;margin:28px 0 6px;text-wrap:balance}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-top:30px}
+  .lede{color:var(--muted);font-size:14px;margin:0 0 22px}
+  h2{font-family:var(--display);font-weight:800;font-size:19px;margin:0;letter-spacing:-.01em}
+  section{margin-top:34px}
+  .shead{display:flex;align-items:baseline;gap:10px;padding-bottom:8px;border-bottom:2px solid var(--accent);margin-bottom:6px}
+  .shead .k{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent)}
+  .shead .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .hint{font-size:12.5px;color:var(--muted);margin:8px 0 14px}
+
+  /* ---- fields ---- */
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  label.f{display:block}
+  label.f .lb{font-size:11.5px;font-weight:700;font-family:var(--display);color:var(--ink-2);letter-spacing:.02em;margin-bottom:4px}
+  input[type=text], textarea, select{
+    width:100%;background:var(--field);color:var(--ink);border:1px solid var(--field-line);
+    border-radius:7px;padding:9px 11px;font-family:var(--body);font-size:14px;line-height:1.5;
+  }
+  textarea{resize:vertical;min-height:62px}
+  input[type=text]:focus, textarea:focus, select:focus{outline:2px solid var(--gate);outline-offset:1px;border-color:transparent}
+  input::placeholder, textarea::placeholder{color:var(--muted);opacity:.65}
+
+  .chk{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+  .chk input{margin:3px 0 0;accent-color:var(--accent);width:15px;height:15px;flex:none}
+  .chk:has(input:checked){background:var(--done-soft);border-color:var(--done);color:var(--ink)}
+
+  /* ---- tables ---- */
+  .scroll{overflow-x:auto}
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+  .tbl th{background:var(--panel-2);font-family:var(--display);font-weight:700;font-size:12px;text-align:left;padding:8px 10px;border:1px solid var(--line);color:var(--ink-2)}
+  .tbl td{border:1px solid var(--line);padding:0;background:var(--panel)}
+  .tbl td.n{width:44px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:8px 0}
+  .tbl td.wk{padding:8px 10px;font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+  .tbl td.fixed{padding:9px 10px;font-size:13px}
+  .tbl input[type=text]{border:0;border-radius:0;background:transparent;padding:9px 10px}
+  .tbl input[type=text]:focus{outline:2px solid var(--gate);outline-offset:-2px}
+  .tbl tr.gate td{background:var(--gate-soft)}
+  .tbl tr.gate td.fixed{font-weight:700;color:var(--gate)}
+
+  /* ---- radios / questions ---- */
+  .radios{display:grid;gap:9px}
+  .radios label{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+  .radios label input{margin:3px 0 0;accent-color:var(--accent);width:15px;height:15px;flex:none}
+  .radios label b{display:block;font-family:var(--display);color:var(--ink);margin-bottom:1px}
+  .radios label:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
+
+  .qrow{display:grid;grid-template-columns:32px 1fr 132px 30%;gap:10px;align-items:start;
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px 12px;margin-bottom:9px}
+  .qrow .qn{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13px;padding-top:2px}
+  .qrow .qt{font-size:13.5px;font-weight:700;font-family:var(--display);color:var(--ink)}
+  .qrow .qt em{display:block;font-style:normal;font-weight:400;font-size:12.5px;color:var(--muted);margin-top:2px;font-family:var(--body)}
+  .qrow .yn{display:flex;gap:8px}
+  .qrow .yn label{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--ink-2)}
+  .qrow .yn input{accent-color:var(--accent)}
+  .qrow .memo input{font-size:13px;padding:6px 9px}
+
+  /* ---- notes ---- */
+  .note{background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 7px 7px 0;padding:11px 14px;font-size:13px;color:var(--ink-2);margin-top:14px}
+  .rule{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 7px 7px 0;padding:11px 14px;font-size:13px;color:var(--ink);margin-top:14px;font-weight:500}
+
+  /* ---- team picker ---- */
+  .teams{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .tcard{display:flex;align-items:center;gap:12px;text-align:left;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:13px 14px;box-shadow:var(--shadow);color:var(--ink)}
+  .tcard:hover{border-color:var(--accent)}
+  .tcard .nm{display:block;font-family:var(--display);font-weight:700;font-size:14.5px}
+  .tcard .pj{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+  .tcard .meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  .ring{--p:0;flex:none;width:38px;height:38px;border-radius:99px;display:grid;place-items:center;
+    background:conic-gradient(var(--accent) calc(var(--p)*1%), var(--panel-2) 0)}
+  .ring i{width:29px;height:29px;border-radius:99px;background:var(--panel);display:grid;place-items:center;
+    font-style:normal;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2)}
+  .empty{border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--muted);font-size:13.5px}
+  .tools{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+  .tools .t{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:7px 12px;font-size:12.5px;color:var(--ink-2)}
+
+  /* ---- dashboard ---- */
+  .dash{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+  .dash th{background:var(--panel-2);font-family:var(--display);font-size:12px;text-align:left;padding:9px 10px;border:1px solid var(--line);color:var(--ink-2)}
+  .dash td{border:1px solid var(--line);padding:9px 10px;background:var(--panel);vertical-align:top}
+  .dash .mono{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .meter{height:6px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+  .meter i{display:block;height:100%;background:var(--accent)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:99px;background:var(--panel-2);color:var(--muted)}
+  .pill.ok{background:var(--done-soft);color:var(--done)}
+  .pill.mid{background:var(--warn-soft);color:var(--warn)}
+  .pill.no{background:var(--accent-soft);color:var(--accent)}
+
+  /* ---- submit box ---- */
+  .subbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:var(--shadow)}
+  .subrow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+  .subrow .f{flex:1;min-width:200px}
+  .bigbtn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;font-family:var(--display)}
+  .bigbtn[disabled]{opacity:.5}
+  .ghost{background:transparent;border:1px solid var(--line);color:var(--ink-2);border-radius:8px;padding:11px 16px;font-size:13.5px}
+  .status{margin-top:12px;font-size:13px;padding:10px 12px;border-radius:7px;display:none}
+  .status.show{display:block}
+  .status.ok{background:var(--done-soft);color:var(--done)}
+  .status.err{background:var(--warn-soft);color:var(--warn)}
+  .status.busy{background:var(--panel-2);color:var(--muted)}
+  .status a{color:inherit}
+
+  .foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;
+    font-size:12.5px;color:var(--muted);flex-wrap:wrap;gap:8px}
+  .foot .mono{font-family:var(--mono)}
+
+  @media (max-width:720px){
+    .g2,.g3{grid-template-columns:1fr}
+    .qrow{grid-template-columns:26px 1fr;gap:8px}
+    .qrow .yn,.qrow .memo{grid-column:2}
+  }
+  @media print{
+    .noprint,.bar{display:none !important}
+    body{background:#fff}
+    section{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="in">
+    <span class="brand"><i>▶</i>캡스톤Ⅲ 게임반 워크시트</span>
+    <span class="who" id="who"></span>
+    <span class="spacer"></span>
+    <span class="save" id="save"><span class="dot"></span><span id="savetxt">준비 중</span></span>
+    <button class="btn noprint" id="btnPrint" hidden>인쇄</button>
+    <button class="btn noprint" id="btnExport" hidden>파일로 저장</button>
+    <button class="btn noprint" id="btnDash">전체 현황</button>
+    <button class="btn noprint" id="btnBack" hidden>팀 목록</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ PICKER ============ -->
+  <div id="viewPick">
+    <div class="eyebrow">2026학년도 2학기 · AI게임융합학과 · 캡스톤디자인 Ⅲ (게임반)</div>
+    <h1>1주차 워크시트 — 팀을 선택하세요</h1>
+    <p class="lede">이번 학기는 <b>졸업작품 게임을 남이 플레이할 수 있는 상태로 완성</b>하는 마지막 학기입니다. 팀 하나당 시트 하나이고, 입력은 자동 저장됩니다.</p>
+    <div class="teams" id="teamList"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <input type="text" id="newName" placeholder="새 팀 이름 (예: 4조 · 나이트폴)" style="max-width:320px">
+      <button class="btn solid" id="btnNew">새 시트 만들기</button>
+    </div>
+    <div class="tools noprint">
+      <button class="t" id="btnImport">시트 파일 불러오기 (.json)</button>
+      <input type="file" id="fileIn" accept="application/json,.json" multiple hidden>
+    </div>
+    <div class="note">입력은 <b>지금 쓰는 브라우저</b>에 저장됩니다. 팀원 화면에 자동으로 공유되지 않으니 한 사람이 대표로 작성하고, 다 쓰면 시트 맨 아래 <b>「구글드라이브로 제출」</b>을 누르세요.</div>
+  </div>
+
+  <!-- ============ SHEET ============ -->
+  <div id="viewSheet" hidden>
+    <div class="eyebrow" id="sheetKicker">1주차 워크시트</div>
+    <h1 id="sheetTitle">팀 워크시트</h1>
+    <p class="lede">제출 마감 <b>9월 8일(화) 수업 시작 전</b> · 12월 1일 졸업작품전에서 <b>관람객이 직접 한 판을 끝내는 상태</b>가 목표입니다.</p>
+
+    <!-- A -->
+    <section>
+      <div class="shead"><span class="k">A</span><h2>빌드 현황 카드</h2><span class="cnt" id="cntA"></span></div>
+      <p class="hint">캡스톤Ⅱ 빌드를 5분 시연한 직후 작성합니다. 빌드가 없으면 지금 가진 것(기획서·프로토타입·에셋)을 그대로 적습니다.</p>
+      <div class="grid g2">
+        <label class="f"><span class="lb">게임 타이틀</span><input type="text" data-f="projectName" placeholder="게임 이름"></label>
+        <label class="f"><span class="lb">장르 · 플랫폼</span><input type="text" data-f="kind" placeholder="예: 2D 로그라이크 · PC(Windows) / WebGL"></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">엔진 · 버전</span><input type="text" data-f="engine" placeholder="예: Unity 6000.0.32f1 / Unreal 5.4"></label>
+        <label class="f"><span class="lb">저장소 · 빌드 배포처</span><input type="text" data-f="repo" placeholder="예: GitHub 링크 / itch.io 페이지"></label>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <label class="f"><span class="lb">기존 팀 구성원</span><input type="text" data-f="members" placeholder="이름을 쉼표로 구분"></label>
+        <label class="f"><span class="lb">한 문장 설명 — 플레이어는 무엇을 하고, 무엇이 재미인가</span><textarea data-f="oneLine" placeholder="예: 제한 시간 안에 손님 주문을 맞추는 1인 주방 시뮬레이터. 주문이 몰릴수록 동선이 꼬이는 데서 재미가 나온다"></textarea></label>
+      </div>
+
+      <p class="hint" style="margin-top:20px"><b>지금 빌드에서 되는 것</b> — 실제로 확인된 항목에만 체크</p>
+      <div class="grid g2" id="buildBox"></div>
+
+      <p class="hint" style="margin-top:20px"><b>미구현 · 미완성 항목</b> — 우선순위 순 5개. 이 목록이 이번 학기 백로그의 출발점입니다.</p>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th style="width:44px">#</th><th>내용</th><th style="width:130px">예상 소요</th><th style="width:130px">담당</th></tr></thead>
+          <tbody id="gapBox"></tbody>
+        </table>
+      </div>
+
+      <p class="hint" style="margin-top:20px"><b>교수 판정</b> — 시연 직후 기록</p>
+      <div class="radios">
+        <label><input type="radio" name="verdict" data-f="verdict" value="존속"><span><b>존속</b>한 판이 돌아간다. 완성 단계로 직행.</span></label>
+        <label><input type="radio" name="verdict" data-f="verdict" value="수정"><span><b>수정</b>움직이긴 하나 코어 루프·범위 재설정 필요.</span></label>
+        <label><input type="radio" name="verdict" data-f="verdict" value="폐기"><span><b>폐기</b>플레이되는 것이 없다. 신규 합류.</span></label>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section>
+      <div class="shead"><span class="k">B</span><h2>졸업작품 확정 — Go / No-Go</h2><span class="cnt" id="cntB"></span></div>
+      <p class="hint">다섯 문항에 모두 '예'라야 계승 트랙으로 확정됩니다. 하나라도 '아니오'면 피벗 또는 신규로 넘어갑니다.</p>
+      <div id="qBox"></div>
+
+      <p class="hint" style="margin-top:20px"><b>선택 트랙</b></p>
+      <div class="radios">
+        <label><input type="radio" name="track" data-f="track" value="계승"><span><b>계승</b>기존 게임을 그대로 완성</span></label>
+        <label><input type="radio" name="track" data-f="track" value="피벗"><span><b>피벗</b>범위·장르를 줄여 재구성</span></label>
+        <label><input type="radio" name="track" data-f="track" value="신규"><span><b>신규</b>12주 안에 완성 가능한 규모만 승인</span></label>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <label class="f"><span class="lb">확정 게임 — 이름과 한 줄 정의</span><input type="text" data-f="finalTopic" placeholder="12월 1일 부스에서 전시할 게임"></label>
+        <label class="f"><span class="lb">피벗 · 신규 사유 (해당 시)</span><textarea data-f="pivotReason" placeholder="무엇을 줄였고 왜 줄였는지"></textarea></label>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section>
+      <div class="shead"><span class="k">C</span><h2>코어 루프 선언</h2><span class="cnt" id="cntC"></span></div>
+      <p class="hint">이 칸이 흐릿하면 12주 내내 흔들립니다. <b>플레이어가 반복하는 한 사이클</b>을 먼저 못박고 시작합니다.</p>
+      <div class="grid">
+        <label class="f"><span class="lb">코어 루프 — 플레이어가 반복하는 3~5단계</span><textarea data-f="coreLoop" placeholder="예: 재료를 고른다 → 주문에 맞춰 조리한다 → 손님 반응으로 평점을 받는다 → 평점으로 주방을 업그레이드한다"></textarea></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">승리 · 클리어 조건</span><input type="text" data-f="winCond" placeholder="무엇을 하면 이기는가"></label>
+        <label class="f"><span class="lb">패배 · 종료 조건</span><input type="text" data-f="loseCond" placeholder="무엇이 일어나면 끝나는가"></label>
+      </div>
+      <div class="grid g3" style="margin-top:12px">
+        <label class="f"><span class="lb">1회 플레이 시간 (부스 기준)</span><input type="text" data-f="playtime" placeholder="예: 5분"></label>
+        <label class="f"><span class="lb">목표 플레이어</span><input type="text" data-f="target" placeholder="예: 게임 안 하는 관람객도 가능"></label>
+        <label class="f"><span class="lb">조작 방식</span><input type="text" data-f="control" placeholder="예: 마우스만 / 게임패드"></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">레퍼런스 게임 2종 — 무엇을 참고하는가</span><input type="text" data-f="refs" placeholder="예: 오버쿡드(동선 압박), 파파스 시리즈(주문 처리)"></label>
+        <label class="f"><span class="lb">콘텐츠 분량 목표</span><input type="text" data-f="volume" placeholder="예: 스테이지 8 · 적 5종 · 보스 1"></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">반드시 넣을 것 하나</span><textarea data-f="mustHave" placeholder="이게 없으면 이 게임이 아니다"></textarea></label>
+        <label class="f"><span class="lb">과감히 버릴 것 하나</span><textarea data-f="dropIt" placeholder="욕심내다 12주를 잡아먹을 항목"></textarea></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">AI 도구 활용 계획</span><input type="text" data-f="aiTools" placeholder="예: 컨셉 아트 생성 · 코드 보조 · 사운드 생성"></label>
+        <label class="f"><span class="lb">사람이 직접 할 영역</span><input type="text" data-f="humanScope" placeholder="예: 레벨 디자인 · 밸런스 · 최종 검수"></label>
+      </div>
+      <div class="rule">재미는 문서가 아니라 빌드로 증명합니다. 실행되는 빌드가 없는 주는 진행 없음으로 기록됩니다.</div>
+    </section>
+
+    <!-- D -->
+    <section>
+      <div class="shead"><span class="k">D</span><h2>팀 확정서</h2><span class="cnt" id="cntD"></span></div>
+      <p class="hint">팀 규모 3~5인. 다섯 역할을 모두 채웁니다. 겸임은 허용하되 담당자 없는 역할은 남길 수 없습니다.</p>
+      <div class="grid g3">
+        <label class="f"><span class="lb">팀명</span><input type="text" data-f="teamName"></label>
+        <label class="f"><span class="lb">팀장</span><input type="text" data-f="leader"></label>
+        <label class="f"><span class="lb">연락 채널</span><input type="text" data-f="channel" placeholder="예: 디스코드 서버"></label>
+      </div>
+      <div class="scroll" style="margin-top:14px">
+        <table class="tbl">
+          <thead><tr><th style="width:140px">역할</th><th style="width:120px">담당자</th><th>주 담당 업무</th><th style="width:30%">12월까지 본인이 완성할 결과물</th></tr></thead>
+          <tbody id="roleBox"></tbody>
+        </table>
+      </div>
+      <p class="hint" style="margin-top:20px"><b>팀 규칙 합의</b> — 팀원 전원 동의</p>
+      <div class="grid" id="ruleBox"></div>
+    </section>
+
+    <!-- E -->
+    <section>
+      <div class="shead"><span class="k">E</span><h2>출시 로드맵 (3~14주차)</h2><span class="cnt" id="cntE"></span></div>
+      <p class="hint">관문 주차는 목표가 고정되어 있습니다. 나머지 주차는 <b>완료 판정이 가능한 문장</b>으로 채우세요. ("최적화" ✗ / "1스테이지 클리어 후 결과 화면까지 동작" ○)</p>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th style="width:96px">주차</th><th>이번 주 목표</th><th style="width:150px">담당</th></tr></thead>
+          <tbody id="weekBox"></tbody>
+        </table>
+      </div>
+      <div class="note">10/6 AIG 특강 · 10/20 중간고사 · 10/27 ETRI 현장견학이 화요일과 겹칩니다. 해당 주차 계획은 수업 없이 진행되는 것을 전제로 세우세요.</div>
+    </section>
+
+    <!-- F -->
+    <section>
+      <div class="shead"><span class="k">F</span><h2>제출</h2></div>
+      <p class="hint">제출하면 교수 구글드라이브에 <b>팀 이름으로 된 문서</b>가 만들어집니다. 마감 전이면 다시 제출해도 됩니다 — 최신 내용으로 갱신됩니다.</p>
+      <div class="subbox">
+        <div class="grid g2">
+          <label class="f"><span class="lb">제출자 이름</span><input type="text" data-f="submitter" placeholder="대표로 작성한 사람"></label>
+          <label class="f"><span class="lb">교수에게 한마디 (선택)</span><input type="text" data-f="memo" placeholder="지금 가장 막혀 있는 것 한 줄"></label>
+        </div>
+        <div class="subrow">
+          <button class="bigbtn" id="btnSubmit">구글드라이브로 제출</button>
+          <button class="ghost" id="btnExport2">파일로 저장 (.json)</button>
+        </div>
+        <div class="status" id="subStatus"></div>
+      </div>
+    </section>
+
+    <div class="foot">
+      <div>완성해서 남이 플레이한 것만이 포트폴리오가 됩니다.</div>
+      <div class="mono" id="stamp"></div>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div id="viewDash" hidden>
+    <div class="eyebrow">교수용</div>
+    <h1>팀별 작성 현황</h1>
+    <p class="lede">이 브라우저에 저장된 시트 목록입니다. 팀 이름을 누르면 해당 시트가 열립니다.</p>
+    <div class="scroll">
+      <table class="dash">
+        <thead><tr><th>팀 · 게임</th><th style="width:130px">작성률</th><th style="width:80px">판정</th><th style="width:80px">트랙</th><th style="width:90px">역할 배정</th><th style="width:90px">로드맵</th><th style="width:120px">최종 수정</th></tr></thead>
+        <tbody id="dashBox"></tbody>
+      </table>
+    </div>
+    <div class="note noprint">인쇄(Ctrl/⌘+P)하면 이 표를 그대로 출력할 수 있습니다.</div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     설정 — 구글 Apps Script 웹앱 주소를 아래 따옴표 안에 붙여넣으세요.
+     (배포 방법은 함께 드린 「구글드라이브_제출_설치안내.md」 참고)
+     ========================================================= */
+  var ENDPOINT = "";
+
+  try {
+    var qp = new URLSearchParams(location.search).get("ep");
+    if (qp) { localStorage.setItem("c3g-endpoint", qp); }
+    var saved = localStorage.getItem("c3g-endpoint");
+    if (saved) ENDPOINT = saved;
+  } catch (e) {}
+
+  /* ---------- 정적 콘텐츠 ---------- */
+  var BUILD = [
+    ["b1", "빌드(실행 파일 또는 웹 빌드)가 오류 없이 실행된다"],
+    ["b2", "시작 → 플레이 → 결과까지 한 판이 끝난다"],
+    ["b3", "승리 · 패배(또는 종료) 조건이 실제로 작동한다"],
+    ["b4", "타이틀 · 인게임 · 결과 화면이 갖춰져 있다"],
+    ["b5", "설명 없이 처음 보는 사람이 조작할 수 있다"],
+    ["b6", "사운드 · 이펙트 등 최소한의 플레이 피드백이 있다"],
+    ["b7", "플레이어 데이터(진행도 · 점수)가 저장되고 불러와진다"],
+    ["b8", "남이 내려받아 실행할 수 있는 빌드 주소가 있다"]
+  ];
+  var QS = [
+    ["한 문장으로 재미가 설명되는가", "플레이어가 무엇을 하고 왜 계속하게 되는지 30초 안에 답할 수 있는가"],
+    ["코어 루프가 이미 돌아가는가", "기획서가 아니라 플레이되는 빌드로 증명되는가"],
+    ["12주 안에 끝나는 분량인가", "남은 작업과 콘텐츠 물량이 주 단위 12칸에 들어오는가"],
+    ["다섯 역할에 이름이 붙는가", "기획 · 프로그래밍 · 아트 · 사운드/UI · QA에 담당자가 있는가"],
+    ["부스에서 5분 안에 한 판이 끝나는가", "처음 보는 관람객이 설명 없이 시작해 결과 화면까지 간다"]
+  ];
+  var ROLES = [
+    ["r1", "기획 / PM", "게임 디자인 · 레벨 설계 · 일정 · 플레이테스트"],
+    ["r2", "프로그래밍", "코어 시스템 · 게임플레이 구현 · 통합"],
+    ["r3", "아트 / 그래픽", "캐릭터 · 배경 · 애니메이션 · 이펙트"],
+    ["r4", "사운드 / UI", "BGM · 효과음 · UI 화면 · 연출"],
+    ["r5", "QA / 빌드 · 릴리즈", "테스트 · 버그 트래킹 · 빌드 배포 · 전시 운영"]
+  ];
+  var RULES = [
+    ["k1", "주 1회 이상 팀 회의를 하고 기록을 남긴다."],
+    ["k2", "모든 작업물(코드 · 에셋)은 지정 저장소에 올린다. 개인 기여는 커밋 · 업로드 이력으로 확인한다."],
+    ["k3", "매주 수업 전까지 실행 가능한 빌드를 올린다. 빌드가 없는 주는 진행 없음으로 기록한다."],
+    ["k4", "막힌 항목은 48시간 안에 팀에 공유한다. 혼자 붙들고 한 주를 보내지 않는다."],
+    ["k5", "담당 업무 미이행이 2주 이상 지속되면 교수 면담을 요청한다."]
+  ];
+  var WEEKS = [
+    [3, "9/15", null], [4, "9/22", null],
+    [5, "9/29", "수직 슬라이스 · 코어 루프 한 사이클이 완전히 돌아가는 빌드 (필수)"],
+    [6, "10/6", null], [7, "10/13", null],
+    [8, "10/20", "플레이어블 베타 · 처음부터 끝까지 한 판이 끝나는 빌드 · 중간발표 (필수)"],
+    [9, "10/27", null], [10, "11/3", null],
+    [11, "11/10", "출시 후보 빌드 · 남이 내려받아 플레이할 수 있는 배포 주소 + 조작 설명 (필수)"],
+    [12, "11/17", null], [13, "11/24", null],
+    [14, "12/1", "졸업작품전 부스 운영 · 최종발표 (필수)"]
+  ];
+
+  /* ---------- 상태 ---------- */
+  var teamId = null, data = {}, pending = {}, timer = null;
+  var CUR = "c3g-current", LKEY = "c3g-teams-v1";
+
+  var el = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var val = function (k) { var v = data[k]; return v == null ? "" : String(v); };
+
+  function setSave(state, txt) {
+    var n = el("save");
+    n.className = "save" + (state ? " " + state : "");
+    el("savetxt").textContent = txt;
+  }
+
+  /* ---------- 로컬 저장 ---------- */
+  function lread() { try { return JSON.parse(localStorage.getItem(LKEY) || "{}") || {}; } catch (e) { return {}; } }
+  function lwrite(o) { try { localStorage.setItem(LKEY, JSON.stringify(o)); return true; } catch (e) { return false; } }
+  function lrows() {
+    var o = lread();
+    return Object.keys(o).map(function (id) { return summarize(o[id] || {}, id); })
+      .sort(function (a, b) { return String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")); });
+  }
+
+  /* ---------- 폼 생성 ---------- */
+  el("buildBox").innerHTML = BUILD.map(function (b) {
+    return '<label class="chk"><input type="checkbox" data-f="' + b[0] + '"><span>' + esc(b[1]) + '</span></label>';
+  }).join("");
+
+  el("gapBox").innerHTML = [1, 2, 3, 4, 5].map(function (i) {
+    return '<tr><td class="n">' + i + '</td>' +
+      '<td><input type="text" data-f="gap' + i + '" placeholder="' + (i === 1 ? "가장 급한 미구현 항목" : "") + '"></td>' +
+      '<td><input type="text" data-f="gape' + i + '" placeholder="' + (i === 1 ? "예: 2주" : "") + '"></td>' +
+      '<td><input type="text" data-f="gapo' + i + '"></td></tr>';
+  }).join("");
+
+  el("qBox").innerHTML = QS.map(function (q, i) {
+    var n = i + 1;
+    return '<div class="qrow"><div class="qn">' + n + '</div>' +
+      '<div class="qt">' + esc(q[0]) + '<em>' + esc(q[1]) + '</em></div>' +
+      '<div class="yn">' +
+        '<label><input type="radio" name="q' + n + '" data-f="q' + n + '" value="예">예</label>' +
+        '<label><input type="radio" name="q' + n + '" data-f="q' + n + '" value="아니오">아니오</label>' +
+      '</div>' +
+      '<div class="memo"><input type="text" data-f="qm' + n + '" placeholder="근거 · 메모"></div></div>';
+  }).join("");
+
+  el("roleBox").innerHTML = ROLES.map(function (r) {
+    return '<tr><td class="fixed" style="font-family:var(--display);font-weight:700;color:var(--gate)">' + esc(r[1]) + '</td>' +
+      '<td><input type="text" data-f="' + r[0] + 'n"></td>' +
+      '<td class="fixed" style="font-size:12.5px;color:var(--muted)">' + esc(r[2]) + '</td>' +
+      '<td><input type="text" data-f="' + r[0] + 'd" placeholder="예: 보스전 · 결과 화면"></td></tr>';
+  }).join("");
+
+  el("ruleBox").innerHTML = RULES.map(function (k) {
+    return '<label class="chk"><input type="checkbox" data-f="' + k[0] + '"><span>' + esc(k[1]) + '</span></label>';
+  }).join("");
+
+  el("weekBox").innerHTML = WEEKS.map(function (w) {
+    if (w[2]) {
+      return '<tr class="gate"><td class="wk">' + w[0] + '주 · ' + w[1] + '</td>' +
+        '<td class="fixed">' + esc(w[2]) + '</td>' +
+        '<td><input type="text" data-f="w' + w[0] + 'o" placeholder="총괄"></td></tr>';
+    }
+    return '<tr><td class="wk">' + w[0] + '주 · ' + w[1] + '</td>' +
+      '<td><input type="text" data-f="w' + w[0] + 'g"></td>' +
+      '<td><input type="text" data-f="w' + w[0] + 'o"></td></tr>';
+  }).join("");
+
+  /* ---------- 진행률 ---------- */
+  var TEXT_A = ["projectName", "kind", "engine", "repo", "members", "oneLine", "gap1", "gap2", "gap3"];
+  var TEXT_C = ["coreLoop", "winCond", "loseCond", "playtime", "target", "control", "refs", "volume", "mustHave", "dropIt", "aiTools", "humanScope"];
+  var TEXT_D = ["teamName", "leader", "channel"];
+  ROLES.forEach(function (r) { TEXT_D.push(r[0] + "n"); TEXT_D.push(r[0] + "d"); });
+
+  function filled(k) { var v = data[k]; return typeof v === "string" && v.trim() !== ""; }
+  function scoreA() {
+    var n = 0, t = TEXT_A.length + 1;
+    TEXT_A.forEach(function (k) { if (filled(k)) n++; });
+    if (filled("verdict")) n++;
+    return [n, t];
+  }
+  function scoreB() {
+    var n = 0, t = 7;
+    for (var i = 1; i <= 5; i++) if (filled("q" + i)) n++;
+    if (filled("track")) n++;
+    if (filled("finalTopic")) n++;
+    return [n, t];
+  }
+  function scoreC() {
+    var n = 0;
+    TEXT_C.forEach(function (k) { if (filled(k)) n++; });
+    return [n, TEXT_C.length];
+  }
+  function scoreD() {
+    var n = 0, t = TEXT_D.length + RULES.length;
+    TEXT_D.forEach(function (k) { if (filled(k)) n++; });
+    RULES.forEach(function (k) { if (data[k[0]] === true) n++; });
+    return [n, t];
+  }
+  function scoreE() {
+    var n = 0, t = 0;
+    WEEKS.forEach(function (w) {
+      if (!w[2]) { t++; if (filled("w" + w[0] + "g")) n++; }
+      t++; if (filled("w" + w[0] + "o")) n++;
+    });
+    return [n, t];
+  }
+  function totalPct(d) {
+    var save = data; if (d) data = d;
+    var s = [scoreA(), scoreB(), scoreC(), scoreD(), scoreE()];
+    data = save;
+    var n = 0, t = 0;
+    s.forEach(function (x) { n += x[0]; t += x[1]; });
+    return t ? Math.round(n / t * 100) : 0;
+  }
+  function paintCounts() {
+    [["cntA", scoreA()], ["cntB", scoreB()], ["cntC", scoreC()], ["cntD", scoreD()], ["cntE", scoreE()]].forEach(function (p) {
+      el(p[0]).textContent = p[1][0] + " / " + p[1][1];
+    });
+    el("stamp").textContent = "작성률 " + totalPct() + "%";
+  }
+
+  /* ---------- 폼 <-> 데이터 ---------- */
+  var inputs = function () { return document.querySelectorAll("#viewSheet [data-f]"); };
+
+  function paintForm() {
+    inputs().forEach(function (n) {
+      var f = n.dataset.f, v = data[f];
+      if (n.type === "checkbox") n.checked = v === true;
+      else if (n.type === "radio") n.checked = (v === n.value);
+      else n.value = v == null ? "" : v;
+    });
+    paintCounts();
+  }
+
+  function queue(field, value) {
+    data[field] = value;
+    pending[field] = value;
+    paintCounts();
+    if (!teamId) { setSave("err", "저장 안 됨"); return; }
+    setSave("busy", "저장 중");
+    clearTimeout(timer);
+    timer = setTimeout(flush, 350);
+  }
+
+  function flush() {
+    if (!teamId) return;
+    if (!Object.keys(pending).length) return;
+    pending = {};
+    data.updatedAt = new Date().toISOString();
+    data.title = data.teamName || data.projectName || data.title || "";
+    data.project = data.projectName || "";
+    data.pct = totalPct();
+    var o = lread();
+    o[teamId] = JSON.parse(JSON.stringify(data));
+    var ok = lwrite(o);
+    setSave(ok ? "ok" : "err", ok ? "이 브라우저에 저장됨" : "저장 실패 — 브라우저 저장이 막혀 있습니다");
+    renderTeams(lrows());
+  }
+
+  document.addEventListener("input", function (e) {
+    var n = e.target;
+    if (!n.dataset || !n.dataset.f || !n.closest("#viewSheet")) return;
+    if (n.type === "checkbox" || n.type === "radio") return;
+    queue(n.dataset.f, n.value);
+  });
+  document.addEventListener("change", function (e) {
+    var n = e.target;
+    if (!n.dataset || !n.dataset.f || !n.closest("#viewSheet")) return;
+    if (n.type === "checkbox") queue(n.dataset.f, n.checked);
+    else if (n.type === "radio") { if (n.checked) queue(n.dataset.f, n.value); }
+  });
+  window.addEventListener("beforeunload", flush);
+
+  /* ---------- 화면 전환 ---------- */
+  function show(which) {
+    el("viewPick").hidden = which !== "pick";
+    el("viewSheet").hidden = which !== "sheet";
+    el("viewDash").hidden = which !== "dash";
+    el("btnBack").hidden = which === "pick";
+    el("btnDash").hidden = which === "dash";
+    el("btnPrint").hidden = which === "pick";
+    el("btnExport").hidden = which !== "sheet";
+    window.scrollTo(0, 0);
+  }
+
+  function openTeam(id, name) {
+    flush();
+    teamId = id;
+    try { localStorage.setItem(CUR, id); } catch (err) {}
+    data = JSON.parse(JSON.stringify(lread()[id] || {}));
+    var nm = data.title || name || "팀 워크시트";
+    el("who").textContent = "· " + nm;
+    el("sheetTitle").textContent = nm;
+    el("sheetKicker").textContent = "1주차 워크시트 · 빌드 점검 · 졸업작품 확정 · 코어 루프 · 팀 편성";
+    hideStatus();
+    paintForm();
+    setSave("ok", "이 브라우저에 저장됨");
+    show("sheet");
+  }
+
+  function newTeam() {
+    var name = el("newName").value.trim();
+    if (!name) { el("newName").focus(); return; }
+    var now = new Date().toISOString();
+    var id = "t" + Date.now().toString(36);
+    var o = lread();
+    o[id] = { title: name, teamName: name, createdAt: now, updatedAt: now, pct: 0 };
+    lwrite(o);
+    el("newName").value = "";
+    renderTeams(lrows());
+    openTeam(id, name);
+  }
+
+  el("btnNew").addEventListener("click", newTeam);
+  el("newName").addEventListener("keydown", function (e) { if (e.key === "Enter") newTeam(); });
+  el("btnBack").addEventListener("click", function () {
+    flush();
+    teamId = null; data = {}; pending = {};
+    try { localStorage.removeItem(CUR); } catch (err) {}
+    el("who").textContent = "";
+    setSave("", "이 브라우저에 저장");
+    renderTeams(lrows());
+    show("pick");
+  });
+  el("btnDash").addEventListener("click", function () { flush(); renderTeams(lrows()); show("dash"); });
+  el("btnPrint").addEventListener("click", function () { flush(); window.print(); });
+
+  /* ---------- 내보내기 / 불러오기 ---------- */
+  function exportFile() {
+    flush();
+    var name = (data.title || data.teamName || "팀").replace(/[\\/:*?"<>|]/g, "_");
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name + "_캡스톤3게임_1주차.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  }
+  el("btnExport").addEventListener("click", exportFile);
+  el("btnExport2").addEventListener("click", exportFile);
+
+  el("btnImport").addEventListener("click", function () { el("fileIn").click(); });
+  el("fileIn").addEventListener("change", function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    var left = files.length, o = lread();
+    files.forEach(function (file) {
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var d = JSON.parse(String(fr.result));
+          if (d && typeof d === "object") {
+            var id = "t" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            o[id] = d;
+          }
+        } catch (err) {}
+        if (--left === 0) { lwrite(o); renderTeams(lrows()); }
+      };
+      fr.onerror = function () { if (--left === 0) { lwrite(o); renderTeams(lrows()); } };
+      fr.readAsText(file);
+    });
+    e.target.value = "";
+  });
+
+  /* ---------- 구글드라이브 제출 ---------- */
+  function setStatus(kind, html) {
+    var n = el("subStatus");
+    n.className = "status show " + kind;
+    n.innerHTML = html;
+  }
+  function hideStatus() { el("subStatus").className = "status"; el("subStatus").innerHTML = ""; }
+
+  function yn(k) { return val(k) || "—"; }
+  function chkList(defs) {
+    return defs.filter(function (d) { return data[d[0]] === true; }).map(function (d) { return d[1]; });
+  }
+
+  function buildBlocks() {
+    var blocks = [];
+    blocks.push({ type: "meta", items: [
+      ["팀명", val("teamName") || val("title")],
+      ["게임 타이틀", val("projectName")],
+      ["팀원", val("members")],
+      ["제출자", val("submitter")],
+      ["작성률", totalPct() + "%"]
+    ]});
+
+    blocks.push({ type: "h", text: "A. 빌드 현황 카드" });
+    blocks.push({ type: "kv", items: [
+      ["게임 타이틀", val("projectName")],
+      ["장르 · 플랫폼", val("kind")],
+      ["엔진 · 버전", val("engine")],
+      ["저장소 · 빌드 배포처", val("repo")],
+      ["기존 팀 구성원", val("members")],
+      ["한 문장 설명", val("oneLine")]
+    ]});
+    var done = chkList(BUILD);
+    blocks.push({ type: "list", title: "지금 빌드에서 되는 것 (" + done.length + "/" + BUILD.length + ")", items: done.length ? done : ["체크된 항목 없음"] });
+    var gaps = [];
+    for (var i = 1; i <= 5; i++) {
+      if (val("gap" + i)) gaps.push([String(i), val("gap" + i), val("gape" + i), val("gapo" + i)]);
+    }
+    blocks.push({ type: "table", title: "미구현 · 미완성 항목",
+      head: ["#", "내용", "예상 소요", "담당"],
+      rows: gaps.length ? gaps : [["—", "미입력", "", ""]] });
+    blocks.push({ type: "kv", items: [["교수 판정", yn("verdict")]] });
+
+    blocks.push({ type: "h", text: "B. 졸업작품 확정 — Go / No-Go" });
+    var qrows = QS.map(function (q, idx) {
+      var n = idx + 1;
+      return [String(n), q[0], yn("q" + n), val("qm" + n)];
+    });
+    blocks.push({ type: "table", head: ["#", "판정 문항", "답", "근거 · 메모"], rows: qrows });
+    blocks.push({ type: "kv", items: [
+      ["선택 트랙", yn("track")],
+      ["확정 게임", val("finalTopic")],
+      ["피벗 · 신규 사유", val("pivotReason")]
+    ]});
+
+    blocks.push({ type: "h", text: "C. 코어 루프 선언" });
+    blocks.push({ type: "kv", items: [
+      ["코어 루프", val("coreLoop")],
+      ["승리 · 클리어 조건", val("winCond")],
+      ["패배 · 종료 조건", val("loseCond")],
+      ["1회 플레이 시간", val("playtime")],
+      ["목표 플레이어", val("target")],
+      ["조작 방식", val("control")],
+      ["레퍼런스 게임", val("refs")],
+      ["콘텐츠 분량 목표", val("volume")],
+      ["반드시 넣을 것", val("mustHave")],
+      ["과감히 버릴 것", val("dropIt")],
+      ["AI 도구 활용 계획", val("aiTools")],
+      ["사람이 직접 할 영역", val("humanScope")]
+    ]});
+
+    blocks.push({ type: "h", text: "D. 팀 확정서" });
+    blocks.push({ type: "kv", items: [
+      ["팀명", val("teamName")],
+      ["팀장", val("leader")],
+      ["연락 채널", val("channel")]
+    ]});
+    blocks.push({ type: "table", title: "역할 배정",
+      head: ["역할", "담당자", "12월까지 완성할 결과물"],
+      rows: ROLES.map(function (r) { return [r[1], val(r[0] + "n"), val(r[0] + "d")]; }) });
+    var agreed = chkList(RULES);
+    blocks.push({ type: "list", title: "팀 규칙 합의 (" + agreed.length + "/" + RULES.length + ")", items: agreed.length ? agreed : ["동의 표시 없음"] });
+
+    blocks.push({ type: "h", text: "E. 출시 로드맵 (3~14주차)" });
+    blocks.push({ type: "table",
+      head: ["주차", "이번 주 목표", "담당"],
+      rows: WEEKS.map(function (w) {
+        return [w[0] + "주 · " + w[1], w[2] ? w[2] : val("w" + w[0] + "g"), val("w" + w[0] + "o")];
+      }) });
+
+    if (val("memo")) {
+      blocks.push({ type: "h", text: "F. 교수에게 한마디" });
+      blocks.push({ type: "p", text: val("memo") });
+    }
+    return blocks;
+  }
+
+  function submitToDrive() {
+    flush();
+    var team = (val("teamName") || val("title")).trim();
+    if (!team) { setStatus("err", "팀명(D 섹션)을 먼저 채우세요."); return; }
+    if (!val("submitter").trim()) { setStatus("err", "제출자 이름을 적어 주세요."); return; }
+    if (!ENDPOINT) {
+      setStatus("err", "제출 주소가 설정되지 않았습니다. 담당 교수에게 알려 주세요. (당분간 「파일로 저장」 후 전달)");
+      return;
+    }
+
+    var payload = {
+      course: "캡스톤디자인Ⅲ 게임반",
+      week: 1,
+      team: team,
+      project: val("projectName"),
+      submitter: val("submitter"),
+      pct: totalPct(),
+      verdict: val("verdict"),
+      track: val("track"),
+      submittedAt: new Date().toISOString(),
+      blocks: buildBlocks(),
+      raw: data
+    };
+
+    el("btnSubmit").disabled = true;
+    setStatus("busy", "제출 중입니다…");
+
+    // Apps Script는 fetch POST가 리다이렉트되며 본문이 유실되므로
+    // 숨은 form POST(브라우저 기본 동작)로 보내고, 도착 여부는 JSONP로 확인한다.
+    postViaIframe(ENDPOINT, JSON.stringify(payload));
+    data.submittedAt = payload.submittedAt;
+    pending.submittedAt = payload.submittedAt;
+    flush();
+    setTimeout(function () { verify(team, payload.week, 0); }, 2500);
+  }
+
+  function postViaIframe(url, body) {
+    var name = "c3gpost" + Date.now();
+    var ifr = document.createElement("iframe");
+    ifr.name = name;
+    ifr.style.display = "none";
+    document.body.appendChild(ifr);
+
+    var form = document.createElement("form");
+    form.action = url;
+    form.method = "POST";
+    form.target = name;
+    form.style.display = "none";
+    var ta = document.createElement("textarea");
+    ta.name = "payload";
+    ta.value = body;
+    form.appendChild(ta);
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(function () {
+      try { document.body.removeChild(form); document.body.removeChild(ifr); } catch (e) {}
+    }, 60000);
+  }
+
+  function jsonp(url, ok, fail) {
+    var name = "c3gcb" + Math.random().toString(36).slice(2);
+    var s = document.createElement("script");
+    var t = setTimeout(function () { done(); fail && fail(); }, 15000);
+    function done() {
+      clearTimeout(t);
+      try { delete window[name]; } catch (e) { window[name] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+    }
+    window[name] = function (d) { done(); ok(d); };
+    s.onerror = function () { done(); fail && fail(); };
+    s.src = url + (url.indexOf("?") < 0 ? "?" : "&") + "callback=" + name;
+    document.body.appendChild(s);
+  }
+
+  function verify(team, week, tries) {
+    var u = ENDPOINT + "?check=1&week=" + encodeURIComponent(week) +
+            "&team=" + encodeURIComponent(team) + "&t=" + Date.now();
+    jsonp(u, function (d) {
+      if (d && d.ok && d.found) {
+        el("btnSubmit").disabled = false;
+        setStatus("ok", "제출 완료 — 교수 구글드라이브에 <b>" + esc(team) + "</b> 문서가 저장되었습니다. (" + esc(d.at || "") + ")" +
+          (d.url ? ' <a href="' + esc(d.url) + '" target="_blank" rel="noopener">문서 열기</a>' : ""));
+      } else if (tries < 3) {
+        setTimeout(function () { verify(team, week, tries + 1); }, 3000);
+      } else {
+        el("btnSubmit").disabled = false;
+        setStatus("err", "전송은 했지만 도착 확인이 안 됩니다. 한 번 더 눌러 보고, 그래도 같으면 「파일로 저장」 후 전달해 주세요.");
+      }
+    }, function () {
+      if (tries < 3) { setTimeout(function () { verify(team, week, tries + 1); }, 3000); return; }
+      el("btnSubmit").disabled = false;
+      setStatus("err", "전송했습니다. 다만 도착 확인은 하지 못했습니다 — 교수님께 확인해 주세요.");
+    });
+  }
+  el("btnSubmit").addEventListener("click", submitToDrive);
+
+  /* ---------- 목록 + 대시보드 ---------- */
+  function when(iso) {
+    if (!iso) return "—";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "—";
+    return (d.getMonth() + 1) + "/" + d.getDate() + " " +
+      String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  function pill(v) {
+    if (!v) return '<span class="pill">—</span>';
+    var c = (v === "존속" || v === "계승") ? "ok" : (v === "폐기" || v === "신규") ? "no" : "mid";
+    return '<span class="pill ' + c + '">' + esc(v) + '</span>';
+  }
+
+  function renderTeams(rows) {
+    var list = el("teamList");
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty">아직 만들어진 시트가 없습니다. 아래에서 팀 이름을 적고 시작하세요.</div>';
+    } else {
+      list.innerHTML = rows.map(function (r) {
+        var p = r.pct || 0;
+        return '<button class="tcard" data-id="' + esc(r.id) + '" data-nm="' + esc(r.title) + '">' +
+          '<span class="ring" style="--p:' + p + '"><i>' + p + '</i></span>' +
+          '<span><span class="nm">' + esc(r.title || "이름 없는 팀") + '</span>' +
+          '<span class="pj">' + esc(r.project || "게임 미입력") + '</span></span>' +
+          '<span class="meta">' + when(r.updatedAt) + '</span></button>';
+      }).join("");
+    }
+    var dash = el("dashBox");
+    dash.innerHTML = rows.length ? rows.map(function (r) {
+      return '<tr><td><a href="#" data-id="' + esc(r.id) + '" data-nm="' + esc(r.title) + '" style="color:inherit;font-weight:700">' +
+          esc(r.title || "이름 없는 팀") + '</a><div style="font-size:12px;color:var(--muted)">' + esc(r.project || "—") + '</div></td>' +
+        '<td><div class="meter"><i style="width:' + (r.pct || 0) + '%"></i></div>' +
+          '<div class="mono" style="margin-top:3px">' + (r.pct || 0) + '%</div></td>' +
+        '<td>' + pill(r.verdict) + '</td><td>' + pill(r.track) + '</td>' +
+        '<td class="mono">' + r.roles + ' / ' + ROLES.length + '</td><td class="mono">' + r.weeks + ' / ' + r.weekTotal + '</td>' +
+        '<td class="mono">' + when(r.updatedAt) + '</td></tr>';
+    }).join("") : '<tr><td colspan="7" style="color:var(--muted);padding:22px">아직 작성된 시트가 없습니다.</td></tr>';
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-id]");
+    if (!t) return;
+    e.preventDefault();
+    openTeam(t.dataset.id, t.dataset.nm);
+  });
+
+  var WEEK_OPEN = WEEKS.filter(function (w) { return !w[2]; }).length;
+
+  function summarize(d, id) {
+    var roles = 0, weeks = 0;
+    ROLES.forEach(function (r) { if (d[r[0] + "n"] && String(d[r[0] + "n"]).trim()) roles++; });
+    WEEKS.forEach(function (w) { if (!w[2] && d["w" + w[0] + "g"] && String(d["w" + w[0] + "g"]).trim()) weeks++; });
+    return {
+      id: id, title: d.title || d.teamName || "", project: d.project || d.projectName || "",
+      pct: typeof d.pct === "number" ? d.pct : totalPct(d),
+      verdict: d.verdict || "", track: d.track || "",
+      roles: roles, weeks: weeks, weekTotal: WEEK_OPEN, updatedAt: d.updatedAt || d.createdAt || ""
+    };
+  }
+
+  /* ---------- 시작 ---------- */
+  show("pick");
+  setSave("", "이 브라우저에 저장");
+  renderTeams(lrows());
+  var cur = null;
+  try { cur = localStorage.getItem(CUR); } catch (err) {}
+  var store = lread();
+  if (cur && store[cur]) openTeam(cur, store[cur].title);
+})();
+</script>
+
+</body>
+</html>
