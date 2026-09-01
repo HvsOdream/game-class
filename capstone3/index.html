@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="서일대학교 AI게임융합학과 캡스톤디자인Ⅲ 1주차 팀 워크시트 — AI 활용 개발 프로젝트 현황 점검·주제 확정·팀 편성·로드맵">
+<style>:root{color-scheme:light dark}img{max-width:100%}</style>
+<title>캡스톤Ⅲ 팀 워크시트</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  :root {
+    --ground:#F7F8FB; --panel:#FFFFFF; --panel-2:#EEF1F7;
+    --ink:#131829; --ink-2:#414A66; --muted:#737C99; --line:#DFE3EE;
+    --accent:#E8384F; --accent-soft:#FDECEE;
+    --gate:#2C3E8F; --gate-soft:#E7EAF7;
+    --warn:#A9741B; --warn-soft:#FBF1DC;
+    --done:#2E7D5B; --done-soft:#E3F3EB;
+    --field:#FFFFFF; --field-line:#C9CEDD;
+    --shadow:0 1px 2px rgba(19,24,41,.06), 0 8px 24px rgba(19,24,41,.05);
+    --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    --display:"Gothic A1","Noto Sans KR",system-ui,sans-serif;
+    --body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#0C1020; --panel:#151B31; --panel-2:#1D2440;
+      --ink:#EEF1FA; --ink-2:#B6BEDA; --muted:#7F89AC; --line:#263054;
+      --accent:#FF5C70; --accent-soft:#331621;
+      --gate:#8AA0FF; --gate-soft:#1B2450;
+      --warn:#E0AC57; --warn-soft:#2A2412;
+      --done:#5FCB9B; --done-soft:#14261F;
+      --field:#0F1426; --field-line:#334070;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0C1020; --panel:#151B31; --panel-2:#1D2440;
+    --ink:#EEF1FA; --ink-2:#B6BEDA; --muted:#7F89AC; --line:#263054;
+    --accent:#FF5C70; --accent-soft:#331621;
+    --gate:#8AA0FF; --gate-soft:#1B2450;
+    --warn:#E0AC57; --warn-soft:#2A2412;
+    --done:#5FCB9B; --done-soft:#14261F;
+    --field:#0F1426; --field-line:#334070;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px 90px}
+  [hidden]{display:none !important}
+
+  /* ---- top bar ---- */
+  .bar{position:sticky;top:0;z-index:20;background:#0E1326;color:#EDF0FA;border-bottom:1px solid #222B4E}
+  .bar .in{max-width:1000px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .bar .brand{font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:-.01em}
+  .bar .who{font-family:var(--mono);font-size:11.5px;color:#8B96C2}
+  .bar .spacer{flex:1}
+  .save{font-family:var(--mono);font-size:11px;color:#8B96C2;display:flex;align-items:center;gap:6px}
+  .save .dot{width:7px;height:7px;border-radius:99px;background:#4C5A8C}
+  .save.ok .dot{background:#4FCF95}
+  .save.busy .dot{background:#E8B04F}
+  .save.err .dot{background:#FF5C70}
+  button{font-family:var(--body);cursor:pointer}
+  .btn{background:transparent;border:1px solid #38436E;color:#D5DCF5;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:500}
+  .btn:hover{border-color:#5A67A0}
+  .btn.solid{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+  .btn:focus-visible{outline:2px solid #7C8FFF;outline-offset:2px}
+
+  /* ---- headings ---- */
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(24px,4vw,34px);line-height:1.2;letter-spacing:-.02em;margin:28px 0 6px;text-wrap:balance}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-top:30px}
+  .lede{color:var(--muted);font-size:14px;margin:0 0 22px}
+  h2{font-family:var(--display);font-weight:800;font-size:19px;margin:0;letter-spacing:-.01em}
+  section{margin-top:34px}
+  .shead{display:flex;align-items:baseline;gap:10px;padding-bottom:8px;border-bottom:2px solid var(--accent);margin-bottom:6px}
+  .shead .k{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent)}
+  .shead .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .hint{font-size:12.5px;color:var(--muted);margin:8px 0 14px}
+
+  /* ---- fields ---- */
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  label.f{display:block}
+  label.f .lb{font-size:11.5px;font-weight:700;font-family:var(--display);color:var(--ink-2);letter-spacing:.02em;margin-bottom:4px}
+  input[type=text], textarea, select{
+    width:100%;background:var(--field);color:var(--ink);border:1px solid var(--field-line);
+    border-radius:7px;padding:9px 11px;font-family:var(--body);font-size:14px;line-height:1.5;
+  }
+  textarea{resize:vertical;min-height:62px}
+  input[type=text]:focus, textarea:focus, select:focus{outline:2px solid var(--gate);outline-offset:1px;border-color:transparent}
+  input::placeholder, textarea::placeholder{color:var(--muted);opacity:.65}
+
+  .chk{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+  .chk input{margin:3px 0 0;accent-color:var(--accent);width:15px;height:15px;flex:none}
+  .chk:has(input:checked){background:var(--done-soft);border-color:var(--done);color:var(--ink)}
+
+  /* ---- tables ---- */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+  .tbl th{background:var(--panel-2);font-family:var(--display);font-weight:700;font-size:12px;text-align:left;padding:8px 10px;border:1px solid var(--line);color:var(--ink-2)}
+  .tbl td{border:1px solid var(--line);padding:0;background:var(--panel)}
+  .tbl td.n{width:44px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:8px}
+  .tbl td.wk{width:88px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:8px;font-variant-numeric:tabular-nums}
+  .tbl td input[type=text]{border:none;border-radius:0;background:transparent;padding:9px 10px}
+  .tbl td input[type=text]:focus{outline:2px solid var(--gate);outline-offset:-2px}
+  .tbl tr.gate td{background:var(--accent-soft)}
+  .tbl tr.gate td.wk{color:var(--accent);font-weight:700}
+  .tbl tr.gate .fixed{padding:9px 10px;font-weight:700;font-size:13px}
+  .scroll{overflow-x:auto}
+
+  /* ---- radios ---- */
+  .radios{display:flex;gap:8px;flex-wrap:wrap}
+  .radios label{flex:1;min-width:150px;display:flex;gap:8px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink-2)}
+  .radios label b{display:block;font-family:var(--display);font-size:14px;color:var(--ink)}
+  .radios input{margin:3px 0 0;accent-color:var(--accent);flex:none}
+  .radios label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+
+  .yn{display:flex;gap:6px}
+  .yn label{display:flex;gap:5px;align-items:center;font-size:12.5px;color:var(--ink-2);white-space:nowrap;padding:4px 8px;border:1px solid var(--line);border-radius:99px;background:var(--panel)}
+  .yn input{accent-color:var(--accent)}
+  .yn label:has(input:checked){border-color:var(--accent);color:var(--accent);font-weight:700}
+
+  .qrow{display:grid;grid-template-columns:34px 1fr 150px 1fr;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+  .qrow .qn{font-family:var(--mono);font-weight:700;font-size:12px;color:var(--muted);text-align:center}
+  .qrow .qt{font-size:13.5px}
+  .qrow .qt em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+
+  /* ---- picker ---- */
+  .teams{display:grid;gap:10px;margin-top:6px}
+  .tcard{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);color:inherit}
+  .tcard:hover{border-color:var(--gate)}
+  .tcard .nm{font-family:var(--display);font-weight:800;font-size:16px}
+  .tcard .pj{font-size:12.5px;color:var(--muted)}
+  .tcard .meta{margin-left:auto;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .ring{--p:0;flex:none;width:40px;height:40px;border-radius:99px;
+    background:conic-gradient(var(--done) calc(var(--p)*1%), var(--line) 0);
+    display:grid;place-items:center;font-family:var(--mono);font-size:10px;font-weight:700}
+  .ring i{width:30px;height:30px;border-radius:99px;background:var(--panel);display:grid;place-items:center;font-style:normal;color:var(--ink-2)}
+  .empty{background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:26px;text-align:center;color:var(--muted);font-size:13.5px}
+
+  /* ---- dashboard ---- */
+  .dash{width:100%;border-collapse:collapse;font-size:13px}
+  .dash th{position:sticky;top:0;background:var(--panel-2);font-family:var(--display);font-size:11.5px;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .dash td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .dash td.mono{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+  .pill.ok{background:var(--done-soft);border-color:var(--done);color:var(--done)}
+  .pill.mid{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+  .pill.no{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .meter{height:7px;border-radius:99px;background:var(--line);overflow:hidden;min-width:80px}
+  .meter i{display:block;height:100%;background:var(--done)}
+
+  .note{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:12px 14px;font-size:13px;margin-top:18px}
+  .rule{background:var(--gate-soft);color:var(--gate);border-radius:8px;padding:12px 14px;font-size:13px;margin-top:14px;font-weight:500}
+  .foot{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .foot .mono{font-family:var(--mono)}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+  .tools .t{background:var(--panel);border:1px solid var(--line);color:var(--ink-2);border-radius:7px;padding:7px 13px;font-size:12.5px;font-weight:500}
+  .tools .t:hover{border-color:var(--gate);color:var(--ink)}
+
+  @media (max-width:760px){
+    .g2,.g3{grid-template-columns:1fr}
+    .qrow{grid-template-columns:26px 1fr;row-gap:8px}
+    .qrow .yn,.qrow .memo{grid-column:2}
+  }
+  @media print{
+    .bar,.noprint{display:none !important}
+    body{background:#fff}
+    section{break-inside:avoid}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+
+</head>
+<body>
+<div class="bar">
+  <div class="in">
+    <span class="brand">캡스톤Ⅲ 팀 워크시트</span>
+    <span class="who" id="who"></span>
+    <span class="spacer"></span>
+    <span class="save" id="save"><span class="dot"></span><span id="savetxt">준비 중</span></span>
+    <button class="btn noprint" id="btnPrint" hidden>인쇄</button>
+    <button class="btn noprint" id="btnExport" hidden>파일로 저장</button>
+    <button class="btn noprint" id="btnDash">전체 현황</button>
+    <button class="btn noprint" id="btnBack" hidden>팀 목록</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ PICKER ============ -->
+  <div id="viewPick">
+    <div class="eyebrow">2026학년도 2학기 · AI게임융합학과 · 캡스톤디자인 Ⅲ</div>
+    <h1>1주차 워크시트 — 팀을 선택하세요</h1>
+    <p class="lede">이번 학기는 <b>AI를 써서 만드는 개발 프로젝트</b>입니다. 팀 하나당 시트 하나이고, 입력은 자동 저장됩니다.</p>
+    <div class="teams" id="teamList"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <input type="text" id="newName" placeholder="새 팀 이름 (예: 4조 · 나이트폴)" style="max-width:320px">
+      <button class="btn solid" id="btnNew">새 시트 만들기</button>
+    </div>
+    <div class="tools noprint" id="localTools" hidden>
+      <button class="t" id="btnImport">시트 파일 불러오기 (.json)</button>
+      <input type="file" id="fileIn" accept="application/json,.json" hidden>
+    </div>
+    <div class="note" id="offline" hidden>이 페이지는 <b>브라우저 저장</b> 방식입니다. 입력은 지금 쓰는 브라우저에만 남고 팀원 화면에 자동으로 공유되지 않습니다. 한 사람이 대표로 작성한 뒤 상단 <b>「파일로 저장」</b>으로 내보내 제출하세요.</div>
+  </div>
+
+  <!-- ============ SHEET ============ -->
+  <div id="viewSheet" hidden>
+    <div class="eyebrow" id="sheetKicker">1주차 워크시트</div>
+    <h1 id="sheetTitle">팀 워크시트</h1>
+    <p class="lede">제출 마감 <b>9월 8일(화) 수업 시작 전</b> · 12월 1일 졸업작품전에서 <b>남이 직접 써보는 상태</b>가 목표입니다.</p>
+
+    <!-- A -->
+    <section>
+      <div class="shead"><span class="k">A</span><h2>프로젝트 현황 카드</h2><span class="cnt" id="cntA"></span></div>
+      <p class="hint">캡스톤Ⅱ 결과물을 5분 시연한 직후 작성합니다. 없으면 지금 가진 것(아이디어·코드·데이터)을 그대로 적습니다.</p>
+      <div class="grid g2">
+        <label class="f"><span class="lb">프로젝트명</span><input type="text" data-f="projectName" placeholder="서비스 이름"></label>
+        <label class="f"><span class="lb">제품 유형 · 플랫폼</span><input type="text" data-f="kind" placeholder="예: 웹 서비스 · 모바일 앱 · 데스크톱 도구"></label>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <label class="f"><span class="lb">기존 팀 구성원</span><input type="text" data-f="members" placeholder="이름을 쉼표로 구분"></label>
+        <label class="f"><span class="lb">한 문장 설명 — 누구의 어떤 문제를 어떻게 푸는가</span><textarea data-f="oneLine" placeholder="예: 학원 강사가 학생 오답을 사진 한 장으로 정리해 주는 웹 서비스"></textarea></label>
+        <label class="f"><span class="lb">기술 스택 · 버전관리</span><input type="text" data-f="stack" placeholder="예: Next.js · Supabase / GitHub"></label>
+      </div>
+
+      <p class="hint" style="margin-top:20px"><b>현재 상태</b> — 지금 되는 것에만 체크</p>
+      <div class="grid g2" id="buildBox"></div>
+
+      <p class="hint" style="margin-top:20px"><b>미구현 · 미완성 항목</b> — 우선순위 순 5개. 이 목록이 이번 학기 백로그의 출발점입니다.</p>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th style="width:44px">#</th><th>내용</th><th style="width:130px">예상 소요</th><th style="width:130px">담당</th></tr></thead>
+          <tbody id="gapBox"></tbody>
+        </table>
+      </div>
+
+      <p class="hint" style="margin-top:20px"><b>교수 판정</b> — 시연 직후 기록</p>
+      <div class="radios">
+        <label><input type="radio" name="verdict" data-f="verdict" value="존속"><span><b>존속</b>핵심 흐름이 돌아간다. 완성 단계로 직행.</span></label>
+        <label><input type="radio" name="verdict" data-f="verdict" value="수정"><span><b>수정</b>동작은 하나 문제 정의·범위 재설정 필요.</span></label>
+        <label><input type="radio" name="verdict" data-f="verdict" value="폐기"><span><b>폐기</b>돌아가는 것이 없다. 신규 합류.</span></label>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section>
+      <div class="shead"><span class="k">B</span><h2>졸업작품 주제 확정 — Go / No-Go</h2><span class="cnt" id="cntB"></span></div>
+      <p class="hint">다섯 문항에 모두 '예'라야 계승 트랙으로 확정됩니다. 하나라도 '아니오'면 피벗 또는 신규로 넘어갑니다.</p>
+      <div id="qBox"></div>
+
+      <p class="hint" style="margin-top:20px"><b>선택 트랙</b></p>
+      <div class="radios">
+        <label><input type="radio" name="track" data-f="track" value="계승"><span><b>계승</b>기존 프로젝트를 그대로 완성</span></label>
+        <label><input type="radio" name="track" data-f="track" value="피벗"><span><b>피벗</b>범위를 줄여 재구성</span></label>
+        <label><input type="radio" name="track" data-f="track" value="신규"><span><b>신규</b>12주 완성 가능 규모만 승인</span></label>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <label class="f"><span class="lb">확정 주제</span><input type="text" data-f="finalTopic" placeholder="12월 1일에 전시할 서비스의 이름과 한 줄 정의"></label>
+        <label class="f"><span class="lb">피벗 · 신규 사유 (해당 시)</span><textarea data-f="pivotReason" placeholder="무엇을 줄였고 왜 줄였는지"></textarea></label>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section>
+      <div class="shead"><span class="k">C</span><h2>AI 활용 선언</h2><span class="cnt" id="cntC"></span></div>
+      <p class="hint">이번 학기는 AI로 개발합니다. 다만 <b>무엇을 AI에 맡기고 무엇을 직접 할지</b>를 팀이 먼저 정해야 합니다.</p>
+      <div class="grid g2">
+        <label class="f"><span class="lb">주 사용 AI 도구</span><input type="text" data-f="aiTools" placeholder="예: Claude Code · Cursor · Copilot"></label>
+        <label class="f"><span class="lb">기여 증빙 방법</span><input type="text" data-f="aiProof" placeholder="예: 커밋 + 저장소 /prompts 폴더에 대화 기록"></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span class="lb">AI에게 맡길 영역</span><textarea data-f="aiScope" placeholder="예: 반복 CRUD 코드, 테스트 작성, 리팩터링, 초기 UI 뼈대"></textarea></label>
+        <label class="f"><span class="lb">사람이 직접 할 영역</span><textarea data-f="humanScope" placeholder="예: 문제 정의, 데이터 구조 설계, 사용자 테스트, 최종 검수"></textarea></label>
+      </div>
+      <div class="rule">AI가 쓴 코드도 커밋한 사람이 설명할 수 있어야 합니다. 설명하지 못하는 코드는 머지하지 않습니다.</div>
+    </section>
+
+    <!-- D -->
+    <section>
+      <div class="shead"><span class="k">D</span><h2>팀 확정서</h2><span class="cnt" id="cntD"></span></div>
+      <p class="hint">팀 규모 3~5인. 다섯 역할을 모두 채웁니다. 겸임은 허용하되 담당자 없는 역할은 남길 수 없습니다.</p>
+      <div class="grid g3">
+        <label class="f"><span class="lb">팀명</span><input type="text" data-f="teamName"></label>
+        <label class="f"><span class="lb">팀장</span><input type="text" data-f="leader"></label>
+        <label class="f"><span class="lb">연락 채널</span><input type="text" data-f="channel" placeholder="예: 디스코드 서버"></label>
+      </div>
+      <div class="scroll" style="margin-top:14px">
+        <table class="tbl">
+          <thead><tr><th style="width:130px">역할</th><th style="width:120px">담당자</th><th>주 담당 업무</th><th style="width:32%">12월까지 본인이 완성할 결과물</th></tr></thead>
+          <tbody id="roleBox"></tbody>
+        </table>
+      </div>
+      <p class="hint" style="margin-top:20px"><b>팀 규칙 합의</b> — 팀원 전원 동의</p>
+      <div class="grid" id="ruleBox"></div>
+    </section>
+
+    <!-- E -->
+    <section>
+      <div class="shead"><span class="k">E</span><h2>최종 완성 로드맵 (3~14주차)</h2><span class="cnt" id="cntE"></span></div>
+      <p class="hint">관문 주차는 목표가 고정되어 있습니다. 나머지 주차는 <b>완료 판정이 가능한 문장</b>으로 채우세요. ("최적화" ✗ / "로그인 후 기록 저장·조회까지 동작" ○)</p>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th style="width:88px">주차</th><th>이번 주 목표</th><th style="width:150px">담당</th></tr></thead>
+          <tbody id="weekBox"></tbody>
+        </table>
+      </div>
+      <div class="note">10/6 AIG 특강 · 10/20 중간고사 · 10/27 ETRI 현장견학이 화요일과 겹칩니다. 해당 주차 계획은 수업 없이 진행되는 것을 전제로 세우세요.</div>
+    </section>
+
+    <div class="foot">
+      <div>완성한 것만이 포트폴리오가 됩니다.</div>
+      <div class="mono" id="stamp"></div>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div id="viewDash" hidden>
+    <div class="eyebrow">교수용</div>
+    <h1>팀별 제출 현황</h1>
+    <p class="lede">자동 갱신됩니다. 팀 이름을 누르면 해당 시트가 열립니다.</p>
+    <div class="scroll">
+      <table class="dash">
+        <thead><tr><th>팀 · 프로젝트</th><th style="width:130px">진행률</th><th style="width:80px">판정</th><th style="width:80px">트랙</th><th style="width:90px">역할 배정</th><th style="width:90px">로드맵</th><th style="width:120px">최종 수정</th></tr></thead>
+        <tbody id="dashBox"></tbody>
+      </table>
+    </div>
+    <div class="note noprint">인쇄(Ctrl/⌘+P)하면 이 표를 그대로 출력할 수 있습니다.</div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- static content ---------- */
+  var BUILD = [
+    ["b1", "로컬에서 오류 없이 실행된다"],
+    ["b2", "입력 → 처리 → 결과까지 한 바퀴가 돌아간다"],
+    ["b3", "데이터가 저장되고 다시 불러와진다"],
+    ["b4", "화면(목록 · 상세 · 결과)이 갖춰져 있다"],
+    ["b5", "AI 호출이 실제로 응답한다 (해당 시)"],
+    ["b6", "남이 접속하거나 설치해 쓸 수 있는 주소·패키지가 있다"]
+  ];
+  var QS = [
+    ["한 문장으로 설명되는가", "누구의 어떤 문제를 어떻게 푸는지 30초 안에 답할 수 있는가"],
+    ["핵심 흐름이 이미 돌아가는가", "말이 아니라 동작하는 화면으로 증명되는가"],
+    ["12주 안에 끝나는 범위인가", "잔여 작업이 주 단위 12칸에 들어오는가"],
+    ["담당자가 정해지는가", "기획 · 개발 · AI/데이터 · UI · QA에 이름이 붙는가"],
+    ["전시 부스에서 남이 직접 써볼 수 있는가", "처음 보는 사람이 5분 안에 결과를 얻는가"]
+  ];
+  var ROLES = [
+    ["r1", "기획 / PM", "문제 정의 · 범위 관리 · 일정 · 사용자 테스트"],
+    ["r2", "코어 개발", "아키텍처 · 주요 기능 구현 · 통합"],
+    ["r3", "AI · 데이터", "AI 도구 세팅 · 프롬프트 자산 · API 연동 · 데이터"],
+    ["r4", "UI · 콘텐츠", "화면 설계 · 디자인 · 문구 · 에셋"],
+    ["r5", "QA · 릴리즈", "테스트 · 버그 트래킹 · 배포 · 전시 운영"]
+  ];
+  var RULES = [
+    ["k1", "주 1회 이상 팀 회의를 하고 기록을 남긴다."],
+    ["k2", "모든 작업물은 Git 저장소에 커밋한다. 개인 기여는 커밋 이력으로 확인한다."],
+    ["k3", "AI가 생성한 코드도 커밋한 사람이 설명할 수 있어야 한다. 설명하지 못하는 코드는 머지하지 않는다."],
+    ["k4", "막힌 항목은 48시간 안에 팀에 공유한다. 혼자 붙들고 한 주를 보내지 않는다."],
+    ["k5", "담당 업무 미이행이 2주 이상 지속되면 교수 면담을 요청한다."]
+  ];
+  var WEEKS = [
+    [3, "9/15", null], [4, "9/22", null], [5, "9/29", null],
+    [6, "10/6", null], [7, "10/13", null],
+    [8, "10/20", "베타 빌드 · 처음부터 끝까지 동작 · 중간발표 (필수)"],
+    [9, "10/27", null], [10, "11/3", null],
+    [11, "11/10", "배포판 · 남이 접속해 쓸 수 있는 주소 + README (필수)"],
+    [12, "11/17", null], [13, "11/24", null],
+    [14, "12/1", "졸업작품전 부스 운영 · 최종발표 (필수)"]
+  ];
+
+  /* ---------- state ---------- */
+  var MODE = "local", db = null, teamId = null, data = {}, unsubDoc = null;
+  var pending = {}, timer = null, seq = 0, booted = false;
+  var CUR = "c3-current", LKEY = "c3-teams-v1";
+
+  var el = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+
+  function setSave(state, txt) {
+    var n = el("save");
+    n.className = "save" + (state ? " " + state : "");
+    el("savetxt").textContent = txt;
+  }
+
+  /* ---------- local store ---------- */
+  function lread() { try { return JSON.parse(localStorage.getItem(LKEY) || "{}") || {}; } catch (e) { return {}; } }
+  function lwrite(o) { try { localStorage.setItem(LKEY, JSON.stringify(o)); return true; } catch (e) { return false; } }
+  function lrows() {
+    var o = lread();
+    return Object.keys(o).map(function (id) { return summarize(o[id] || {}, id); })
+      .sort(function (a, b) { return String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")); });
+  }
+
+  /* ---------- build the form ---------- */
+  el("buildBox").innerHTML = BUILD.map(function (b) {
+    return '<label class="chk"><input type="checkbox" data-f="' + b[0] + '"><span>' + esc(b[1]) + '</span></label>';
+  }).join("");
+
+  el("gapBox").innerHTML = [1, 2, 3, 4, 5].map(function (i) {
+    return '<tr><td class="n">' + i + '</td>' +
+      '<td><input type="text" data-f="gap' + i + '" placeholder="' + (i === 1 ? "가장 급한 미구현 항목" : "") + '"></td>' +
+      '<td><input type="text" data-f="gape' + i + '" placeholder="' + (i === 1 ? "예: 2주" : "") + '"></td>' +
+      '<td><input type="text" data-f="gapo' + i + '"></td></tr>';
+  }).join("");
+
+  el("qBox").innerHTML = QS.map(function (q, i) {
+    var n = i + 1;
+    return '<div class="qrow"><div class="qn">' + n + '</div>' +
+      '<div class="qt">' + esc(q[0]) + '<em>' + esc(q[1]) + '</em></div>' +
+      '<div class="yn">' +
+        '<label><input type="radio" name="q' + n + '" data-f="q' + n + '" value="예">예</label>' +
+        '<label><input type="radio" name="q' + n + '" data-f="q' + n + '" value="아니오">아니오</label>' +
+      '</div>' +
+      '<div class="memo"><input type="text" data-f="qm' + n + '" placeholder="근거 · 메모"></div></div>';
+  }).join("");
+
+  el("roleBox").innerHTML = ROLES.map(function (r) {
+    return '<tr><td class="fixed" style="padding:9px 10px;font-family:var(--display);font-weight:700;color:var(--gate)">' + esc(r[1]) + '</td>' +
+      '<td><input type="text" data-f="' + r[0] + 'n"></td>' +
+      '<td style="padding:9px 10px;font-size:12.5px;color:var(--muted)">' + esc(r[2]) + '</td>' +
+      '<td><input type="text" data-f="' + r[0] + 'd" placeholder="예: 로그인 · 기록 저장 API"></td></tr>';
+  }).join("");
+
+  el("ruleBox").innerHTML = RULES.map(function (k) {
+    return '<label class="chk"><input type="checkbox" data-f="' + k[0] + '"><span>' + esc(k[1]) + '</span></label>';
+  }).join("");
+
+  el("weekBox").innerHTML = WEEKS.map(function (w) {
+    if (w[2]) {
+      return '<tr class="gate"><td class="wk">' + w[0] + '주 · ' + w[1] + '</td>' +
+        '<td class="fixed">' + esc(w[2]) + '</td>' +
+        '<td><input type="text" data-f="w' + w[0] + 'o" placeholder="총괄"></td></tr>';
+    }
+    return '<tr><td class="wk">' + w[0] + '주 · ' + w[1] + '</td>' +
+      '<td><input type="text" data-f="w' + w[0] + 'g"></td>' +
+      '<td><input type="text" data-f="w' + w[0] + 'o"></td></tr>';
+  }).join("");
+
+  /* ---------- progress ---------- */
+  var TEXT_A = ["projectName", "kind", "members", "oneLine", "stack", "gap1", "gap2", "gap3"];
+  var TEXT_C = ["aiTools", "aiProof", "aiScope", "humanScope"];
+  var TEXT_D = ["teamName", "leader", "channel"];
+  ROLES.forEach(function (r) { TEXT_D.push(r[0] + "n"); TEXT_D.push(r[0] + "d"); });
+
+  function filled(k) { var v = data[k]; return typeof v === "string" && v.trim() !== ""; }
+  function scoreA() {
+    var n = 0, t = TEXT_A.length + 1;
+    TEXT_A.forEach(function (k) { if (filled(k)) n++; });
+    if (filled("verdict")) n++;
+    return [n, t];
+  }
+  function scoreB() {
+    var n = 0, t = 7;
+    for (var i = 1; i <= 5; i++) if (filled("q" + i)) n++;
+    if (filled("track")) n++;
+    if (filled("finalTopic")) n++;
+    return [n, t];
+  }
+  function scoreC() {
+    var n = 0;
+    TEXT_C.forEach(function (k) { if (filled(k)) n++; });
+    return [n, TEXT_C.length];
+  }
+  function scoreD() {
+    var n = 0, t = TEXT_D.length + RULES.length;
+    TEXT_D.forEach(function (k) { if (filled(k)) n++; });
+    RULES.forEach(function (k) { if (data[k[0]] === true) n++; });
+    return [n, t];
+  }
+  function scoreE() {
+    var n = 0, t = 0;
+    WEEKS.forEach(function (w) {
+      if (!w[2]) { t++; if (filled("w" + w[0] + "g")) n++; }
+      t++; if (filled("w" + w[0] + "o")) n++;
+    });
+    return [n, t];
+  }
+  function totalPct(d) {
+    var save = data; data = d || data;
+    var s = [scoreA(), scoreB(), scoreC(), scoreD(), scoreE()];
+    data = save;
+    var n = 0, t = 0;
+    s.forEach(function (x) { n += x[0]; t += x[1]; });
+    return t ? Math.round(n / t * 100) : 0;
+  }
+  function paintCounts() {
+    [["cntA", scoreA()], ["cntB", scoreB()], ["cntC", scoreC()], ["cntD", scoreD()], ["cntE", scoreE()]].forEach(function (p) {
+      el(p[0]).textContent = p[1][0] + " / " + p[1][1];
+    });
+    el("stamp").textContent = "작성률 " + totalPct() + "%";
+  }
+
+  /* ---------- form <-> data ---------- */
+  var inputs = function () { return document.querySelectorAll("#viewSheet [data-f]"); };
+
+  function paintForm(skipFocused) {
+    var active = document.activeElement;
+    inputs().forEach(function (n) {
+      if (skipFocused && n === active) return;
+      var f = n.dataset.f, v = data[f];
+      if (n.type === "checkbox") n.checked = v === true;
+      else if (n.type === "radio") n.checked = (v === n.value);
+      else if (n.value !== (v == null ? "" : v)) n.value = v == null ? "" : v;
+    });
+    paintCounts();
+  }
+
+  function queue(field, value) {
+    data[field] = value;
+    pending[field] = value;
+    paintCounts();
+    if (!teamId) { setSave("err", "저장 안 됨"); return; }
+    setSave("busy", "저장 중");
+    clearTimeout(timer);
+    timer = setTimeout(flush, MODE === "local" ? 350 : 700);
+  }
+
+  function stampMeta(body) {
+    body.updatedAt = new Date().toISOString();
+    body.title = data.teamName || data.projectName || data.title || "";
+    body.project = data.projectName || "";
+    body.pct = totalPct();
+    data.updatedAt = body.updatedAt; data.title = body.title;
+    data.project = body.project; data.pct = body.pct;
+  }
+
+  function flush() {
+    if (!teamId) return;
+    var body = pending; pending = {};
+    if (!Object.keys(body).length) return;
+    stampMeta(body);
+
+    if (MODE === "local") {
+      var o = lread();
+      o[teamId] = JSON.parse(JSON.stringify(data));
+      var ok = lwrite(o);
+      setSave(ok ? "ok" : "err", ok ? "이 브라우저에 저장됨" : "저장 실패 — 브라우저 저장이 막혀 있습니다");
+      renderTeams(lrows());
+      return;
+    }
+
+    var my = ++seq;
+    db.doc("teams/" + teamId).update(body).then(function () {
+      if (my === seq) setSave("ok", "저장됨");
+    }).catch(function (e) {
+      if (e && e.code === "invalid_argument") {
+        return db.doc("teams/" + teamId).set(data).then(function () {
+          if (my === seq) setSave("ok", "저장됨");
+        });
+      }
+      throw e;
+    }).catch(function () {
+      if (my === seq) setSave("err", "저장 실패 — 잠시 후 다시 입력해 보세요");
+    });
+  }
+
+  document.addEventListener("input", function (e) {
+    var n = e.target;
+    if (!n.dataset || !n.dataset.f || !n.closest("#viewSheet")) return;
+    if (n.type === "checkbox" || n.type === "radio") return;
+    queue(n.dataset.f, n.value);
+  });
+  document.addEventListener("change", function (e) {
+    var n = e.target;
+    if (!n.dataset || !n.dataset.f || !n.closest("#viewSheet")) return;
+    if (n.type === "checkbox") queue(n.dataset.f, n.checked);
+    else if (n.type === "radio") { if (n.checked) queue(n.dataset.f, n.value); }
+  });
+  window.addEventListener("beforeunload", flush);
+
+  /* ---------- views ---------- */
+  function show(which) {
+    el("viewPick").hidden = which !== "pick";
+    el("viewSheet").hidden = which !== "sheet";
+    el("viewDash").hidden = which !== "dash";
+    el("btnBack").hidden = which === "pick";
+    el("btnDash").hidden = which === "dash";
+    el("btnPrint").hidden = which === "pick";
+    el("btnExport").hidden = !(which === "sheet" && MODE === "local");
+    window.scrollTo(0, 0);
+  }
+
+  function openTeam(id, name) {
+    flush();
+    teamId = id;
+    try { localStorage.setItem(CUR, id); } catch (err) {}
+    el("who").textContent = "· " + (name || "");
+    el("sheetTitle").textContent = name || "팀 워크시트";
+    el("sheetKicker").textContent = "1주차 워크시트 · 현황 점검 · 주제 확정 · AI 활용 · 팀 편성";
+    show("sheet");
+    if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+
+    if (MODE === "local") {
+      data = JSON.parse(JSON.stringify(lread()[id] || {}));
+      if (data.title) { el("who").textContent = "· " + data.title; el("sheetTitle").textContent = data.title; }
+      paintForm();
+      setSave("ok", "이 브라우저에 저장됨");
+      return;
+    }
+
+    setSave("busy", "불러오는 중");
+    unsubDoc = db.doc("teams/" + id).onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      var d = snap.data() || {};
+      Object.keys(d).forEach(function (k) {
+        if (!(k in pending)) data[k] = d[k];
+      });
+      if (data.title) { el("who").textContent = "· " + data.title; el("sheetTitle").textContent = data.title; }
+      paintForm(true);
+      if (!Object.keys(pending).length) setSave("ok", "저장됨");
+    }, function () { setSave("err", "동기화 끊김"); });
+  }
+
+  function newTeam() {
+    var name = el("newName").value.trim();
+    if (!name) { el("newName").focus(); return; }
+    var now = new Date().toISOString();
+    var seed = { title: name, teamName: name, createdAt: now, updatedAt: now, pct: 0 };
+
+    if (MODE === "local") {
+      var id = "t" + Date.now().toString(36);
+      var o = lread(); o[id] = seed; lwrite(o);
+      el("newName").value = "";
+      data = JSON.parse(JSON.stringify(seed));
+      renderTeams(lrows());
+      openTeam(id, name);
+      return;
+    }
+    var ref = db.collection("teams").doc();
+    data = seed;
+    ref.set(data).then(function () {
+      el("newName").value = "";
+      paintForm();
+      openTeam(ref.id, name);
+    }).catch(function () { setSave("err", "생성 실패"); });
+  }
+
+  el("btnNew").addEventListener("click", newTeam);
+  el("newName").addEventListener("keydown", function (e) { if (e.key === "Enter") newTeam(); });
+  el("btnBack").addEventListener("click", function () {
+    flush();
+    if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+    teamId = null; data = {}; pending = {};
+    try { localStorage.removeItem(CUR); } catch (err) {}
+    el("who").textContent = "";
+    setSave("", MODE === "local" ? "이 브라우저에 저장" : "대기");
+    if (MODE === "local") renderTeams(lrows());
+    show("pick");
+  });
+  el("btnDash").addEventListener("click", function () { flush(); if (MODE === "local") renderTeams(lrows()); show("dash"); });
+  el("btnPrint").addEventListener("click", function () { flush(); window.print(); });
+
+  /* ---------- export / import (local mode) ---------- */
+  el("btnExport").addEventListener("click", function () {
+    flush();
+    var name = (data.title || data.teamName || "팀").replace(/[\\/:*?"<>|]/g, "_");
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name + "_캡스톤3_1주차.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  });
+  el("btnImport").addEventListener("click", function () { el("fileIn").click(); });
+  el("fileIn").addEventListener("change", function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    var left = files.length, o = lread();
+    files.forEach(function (file) {
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var d = JSON.parse(String(fr.result));
+          if (d && typeof d === "object") {
+            var id = "t" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            o[id] = d;
+          }
+        } catch (err) {}
+        if (--left === 0) { lwrite(o); renderTeams(lrows()); }
+      };
+      fr.onerror = function () { if (--left === 0) { lwrite(o); renderTeams(lrows()); } };
+      fr.readAsText(file);
+    });
+    e.target.value = "";
+  });
+
+  /* ---------- list + dashboard ---------- */
+  function when(iso) {
+    if (!iso) return "—";
+    var d = new Date(iso);
+    if (isNaN(d)) return "—";
+    return (d.getMonth() + 1) + "/" + d.getDate() + " " +
+      String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  function pill(v) {
+    if (!v) return '<span class="pill">—</span>';
+    var c = (v === "존속" || v === "계승") ? "ok" : (v === "폐기" || v === "신규") ? "no" : "mid";
+    return '<span class="pill ' + c + '">' + esc(v) + '</span>';
+  }
+
+  function renderTeams(rows) {
+    var list = el("teamList");
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty">아직 만들어진 시트가 없습니다. 아래에서 팀 이름을 적고 시작하세요.</div>';
+    } else {
+      list.innerHTML = rows.map(function (r) {
+        var p = r.pct || 0;
+        return '<button class="tcard" data-id="' + esc(r.id) + '" data-nm="' + esc(r.title) + '">' +
+          '<span class="ring" style="--p:' + p + '"><i>' + p + '</i></span>' +
+          '<span><span class="nm">' + esc(r.title || "이름 없는 팀") + '</span>' +
+          '<span class="pj">' + esc(r.project || "프로젝트 미입력") + '</span></span>' +
+          '<span class="meta">' + when(r.updatedAt) + '</span></button>';
+      }).join("");
+    }
+    var dash = el("dashBox");
+    dash.innerHTML = rows.length ? rows.map(function (r) {
+      return '<tr><td><a href="#" data-id="' + esc(r.id) + '" data-nm="' + esc(r.title) + '" style="color:inherit;font-weight:700">' +
+          esc(r.title || "이름 없는 팀") + '</a><div style="font-size:12px;color:var(--muted)">' + esc(r.project || "—") + '</div></td>' +
+        '<td><div class="meter"><i style="width:' + (r.pct || 0) + '%"></i></div>' +
+          '<div class="mono" style="margin-top:3px">' + (r.pct || 0) + '%</div></td>' +
+        '<td>' + pill(r.verdict) + '</td><td>' + pill(r.track) + '</td>' +
+        '<td class="mono">' + r.roles + ' / ' + ROLES.length + '</td><td class="mono">' + r.weeks + ' / 9</td>' +
+        '<td class="mono">' + when(r.updatedAt) + '</td></tr>';
+    }).join("") : '<tr><td colspan="7" style="color:var(--muted);padding:22px">아직 제출된 시트가 없습니다.</td></tr>';
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-id]");
+    if (!t) return;
+    e.preventDefault();
+    openTeam(t.dataset.id, t.dataset.nm);
+  });
+
+  function summarize(d, id) {
+    var roles = 0, weeks = 0;
+    ROLES.forEach(function (r) { if (d[r[0] + "n"] && String(d[r[0] + "n"]).trim()) roles++; });
+    WEEKS.forEach(function (w) { if (!w[2] && d["w" + w[0] + "g"] && String(d["w" + w[0] + "g"]).trim()) weeks++; });
+    return {
+      id: id, title: d.title || d.teamName || "", project: d.project || d.projectName || "",
+      pct: typeof d.pct === "number" ? d.pct : totalPct(d),
+      verdict: d.verdict || "", track: d.track || "",
+      roles: roles, weeks: weeks, updatedAt: d.updatedAt || d.createdAt || ""
+    };
+  }
+
+  /* ---------- boot ---------- */
+  show("pick");
+  setSave("", "연결 중");
+  renderTeams([]);
+
+  function startLocal() {
+    if (booted) return; booted = true;
+    MODE = "local"; db = null;
+    el("offline").hidden = false;
+    el("localTools").hidden = false;
+    setSave("", "이 브라우저에 저장");
+    renderTeams(lrows());
+    var saved = null;
+    try { saved = localStorage.getItem(CUR); } catch (err) {}
+    var store = lread();
+    if (saved && store[saved]) openTeam(saved, store[saved].title);
+  }
+
+  function startCloud(s) {
+    if (booted) return; booted = true;
+    MODE = "cloud"; db = s;
+    setSave("", "대기");
+    db.collection("teams").orderBy("updatedAt", "desc").limit(60)
+      .onSnapshot(function (snap) {
+        renderTeams(snap.docs.map(function (x) { return summarize(x.data() || {}, x.id); }));
+      }, function () { setSave("err", "동기화 끊김"); });
+
+    var saved = null;
+    try { saved = localStorage.getItem(CUR); } catch (err) {}
+    if (saved) {
+      db.doc("teams/" + saved).get().then(function (x) {
+        if (x.exists) { data = Object.assign({}, x.data()); paintForm(); openTeam(saved, data.title); }
+      }).catch(function () {});
+    }
+  }
+
+  if (typeof claude !== "undefined" && claude && typeof claude.use === "function") {
+    claude.use("db").then(function (s) { if (s) startCloud(s); else startLocal(); }).catch(startLocal);
+  } else {
+    startLocal();
+  }
+})();
+</script>
+
+</body>
+</html>
