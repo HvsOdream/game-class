@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="bright" class="present">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>교수자를 위한 생성형 AI 입문 — 수업설계와 평가의 실제 (전문대교협 원격연수 · 입체 교재)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-kopubworld@1.0">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+
+:root{
+  --orange-900:#B8431C;--orange-700:#E8642C;--orange-500:#F08755;--orange-300:#F4A582;
+  --orange-100:#FCE5DC;--orange-50:#FDF4EE;
+  --ink-900:#1A1714;--ink-800:#2A2520;--ink-700:#4A423B;--ink-500:#6B6058;--ink-400:#8A7F76;
+  --ink-200:#D9D2CA;--ink-100:#E8E2DA;--ink-50:#F5F1EB;--paper:#FBF8F3;--white:#fff;
+  --font-display:"Malgun Gothic","맑은 고딕","KoPubWorld Batang",sans-serif;
+  --font-body:"KoPubWorld Dotum","Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono","SF Mono",monospace;
+  --bg:var(--paper);--bg-card:var(--white);--bg-soft:var(--ink-50);--fg:var(--ink-800);
+  --fg-strong:var(--ink-900);--fg-muted:var(--ink-500);--fg-meta:var(--ink-400);
+  --border:var(--ink-100);--border-strong:var(--ink-200);
+  --accent:var(--orange-700);--accent-deep:var(--orange-900);--accent-soft:var(--orange-100);--accent-faint:var(--orange-50);
+  --green:#0a7d56;--green-soft:#e3f3ec;--red:#b23a2c;--red-soft:#f7e7e3;--purple:#7a4fd0;--purple-soft:#f0e9fb;
+}
+html[data-theme="dark"]{--bg:var(--ink-900);--bg-card:var(--ink-800);--bg-soft:#1F1B17;--fg:#EAE4DC;
+  --fg-strong:#FBF8F3;--fg-muted:#B8AFA6;--fg-meta:#8A7F76;--border:#3A332D;--border-strong:#4A423B;
+  --accent:var(--orange-500);--accent-deep:var(--orange-300);--accent-soft:#3A2A20;--accent-faint:#2A1E16;
+  --green-soft:#16302a;--red-soft:#33211e;--purple-soft:#251c33;}
+html[data-theme="sepia"]{--bg:#F4ECDD;--bg-card:#FBF4E4;--bg-soft:#EBE0CB;--fg:#3A2E1F;--fg-strong:#2A1F12;
+  --fg-muted:#6B5A45;--fg-meta:#8B7A65;--border:#D9C9AD;--border-strong:#C4B093;
+  --accent:var(--orange-900);--accent-deep:#8A2F12;--accent-soft:#F2DEC8;--accent-faint:#F8EEDC;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font-body);font-size:16px;line-height:1.7;color:var(--fg);background:var(--bg);letter-spacing:-.01em;-webkit-font-smoothing:antialiased;transition:background .24s,color .24s}
+b,strong{font-weight:700;color:var(--fg-strong)}
+.mono{font-family:var(--font-mono)}
+.progress-rail{position:fixed;top:0;left:0;right:0;height:3px;background:var(--border);z-index:1000}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--orange-700),var(--orange-500));transition:width .18s}
+.topbar{position:sticky;top:3px;z-index:900;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand-mark{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg-strong);text-decoration:none}
+.brand-symbol{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--orange-700),var(--orange-300));position:relative;flex-shrink:0}
+.brand-symbol::before,.brand-symbol::after{content:"";position:absolute;left:5px;right:5px;height:2px;background:#fff;border-radius:1px}
+.brand-symbol::before{top:9px}.brand-symbol::after{bottom:9px}
+.brand-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--fg-meta)}
+.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toggle{display:inline-flex;background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:3px}
+.toggle .lab{font-size:10px;font-family:var(--font-mono);color:var(--fg-meta);align-self:center;padding:0 6px;letter-spacing:.08em}
+.toggle button{background:transparent;border:0;min-width:34px;height:30px;padding:0 11px;border-radius:999px;cursor:pointer;color:var(--fg-muted);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.toggle button:hover{color:var(--fg-strong)}
+.toggle button[aria-pressed="true"]{background:var(--bg-card);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.layout{max-width:1180px;margin:0 auto;padding:32px 28px 120px;display:grid;grid-template-columns:240px 1fr;gap:56px}
+@media(max-width:900px){.layout{grid-template-columns:1fr;padding:22px 18px 90px;gap:22px}}
+.side-nav{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 110px);overflow-y:auto}
+.side-nav-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;color:var(--fg-meta);text-transform:uppercase;margin:0 0 12px;padding-left:4px}
+.side-nav a{display:block;padding:7px 12px;font-size:13.5px;color:var(--fg-muted);text-decoration:none;border-left:2px solid transparent;line-height:1.4}
+.side-nav a:hover{color:var(--fg-strong);background:var(--bg-soft)}
+.side-nav a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.side-nav .nav-time{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--fg-meta);text-transform:uppercase;margin:16px 0 6px;padding-left:12px;display:block}
+@media(max-width:900px){.side-nav{position:static;max-height:none;border-bottom:1px solid var(--border);padding-bottom:12px}}
+.content section{scroll-margin-top:84px;margin-bottom:74px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:inline-block}
+h1.hero-title{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,48px);line-height:1.2;color:var(--fg-strong);margin:0 0 18px;letter-spacing:-.02em}
+h1.hero-title .accent{color:var(--accent)}
+.hero-sub{font-size:18px;color:var(--fg-muted);max-width:680px;margin:0 0 22px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.hero-meta span{font-family:var(--font-mono);font-size:11.5px;background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:5px 12px;color:var(--fg-muted)}
+.section-header{margin-bottom:18px}
+.section-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:var(--accent-faint);border:1px solid var(--accent-soft);border-radius:999px;padding:4px 11px;display:inline-block;margin-bottom:12px}
+h2{font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,32px);line-height:1.3;color:var(--fg-strong);margin:0 0 8px}
+.section-lead{font-size:16.5px;color:var(--fg-muted);margin:0;max-width:700px}
+h3{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--fg-strong);margin:28px 0 8px}
+p{margin:10px 0}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.card.clickable{cursor:pointer;transition:transform .12s,border-color .12s}
+.card.clickable:hover{transform:translateY(-2px);border-color:var(--accent)}
+.card-icon{width:38px;height:38px;border-radius:10px;background:var(--accent-faint);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.card-icon i{width:20px;height:20px}
+.card h4{font-family:var(--font-display);font-size:17px;margin:0 0 6px;color:var(--fg-strong)}
+.card p{font-size:13.8px;margin:0;color:var(--fg-muted)}
+.card-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-meta);margin-bottom:6px}
+.callout{display:flex;gap:12px;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14.5px}
+.callout > i{flex-shrink:0;width:18px;height:18px;color:var(--accent);margin-top:2px}
+.callout strong{color:var(--accent-deep)}
+.callout-info{border-left:3px solid var(--orange-500)}.callout-tip{border-left:3px solid var(--orange-300)}
+.callout-warn{border-left:3px solid var(--orange-900)}.callout-danger{border-left:3px solid var(--red);background:var(--red-soft)}.callout-ok{border-left:3px solid var(--green);background:var(--green-soft)}
+.diagram{width:100%;height:auto;margin:18px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:10px}
+.slot-board{display:grid;gap:12px;margin:16px 0}
+.slot{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;border-top:3px solid var(--orange-700)}
+.slot.ce{border-top-color:var(--orange-300)}.slot.se{border-top-color:var(--ink-700)}
+.slot-num{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-meta)}
+.slot-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--accent-faint);color:var(--accent-deep);border-radius:5px;padding:2px 9px;margin:6px 8px 2px 0}
+.slot h5{font-family:var(--font-display);font-size:16px;margin:6px 0 4px;color:var(--fg-strong)}
+.slot p{margin:6px 0;font-size:14px;color:var(--fg)}
+.acro{font-family:var(--font-mono);font-size:12.3px;background:var(--accent-faint);border-left:3px solid var(--accent);border-radius:5px;padding:9px 13px;margin:10px 0;color:var(--fg-muted);line-height:1.6}
+.acro b{color:var(--accent-deep)}
+.prompt-box{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:12px 0;background:var(--bg-card)}
+.prompt-label{display:flex;align-items:center;gap:8px;background:var(--bg-soft);padding:9px 14px;font-size:12.5px;font-weight:600;color:var(--fg-strong)}
+.prompt-label i{width:14px;height:14px;color:var(--accent)}
+.prompt-persona{margin-left:auto;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-meta);font-weight:500}
+.prompt-text{margin:0;padding:14px 16px;font-family:var(--font-mono);font-size:12.3px;line-height:1.65;white-space:pre-wrap;word-break:break-word;color:var(--fg)}
+.prompt-actions{display:flex;justify-content:flex-end;padding:8px 12px;border-top:1px solid var(--border)}
+.copy-btn,.mini-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:var(--bg-card);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--fg);cursor:pointer;font-family:var(--font-body)}
+.copy-btn:hover,.mini-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{border-color:var(--green);color:var(--green)}
+.copy-btn i{width:13px;height:13px}
+.term{border-bottom:1px dotted var(--accent);cursor:help;font-weight:600;position:relative}
+.term:hover::after,.term.show::after{content:attr(data-term);position:absolute;left:0;bottom:140%;width:260px;background:var(--ink-900);color:#F5F1EB;font-family:var(--font-body);font-weight:400;font-size:12px;line-height:1.55;padding:9px 12px;border-radius:8px;z-index:40;box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.gates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+@media(max-width:640px){.gates{grid-template-columns:1fr}}
+.gate{text-align:left;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;cursor:pointer;font-family:inherit;color:inherit;transition:transform .12s,border-color .12s}
+.gate:hover{transform:translateY(-2px);border-color:var(--accent)}
+.gate .gt{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--fg-strong)}
+.gate .gt i{width:17px;height:17px;color:var(--accent)}
+.gate .gd{color:var(--fg-muted);font-size:13px;margin-top:6px}
+.gate .gb{display:inline-block;margin-top:9px;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;font-weight:600;padding:3px 9px;border-radius:999px;text-transform:uppercase}
+.gb2{background:var(--accent-faint);color:var(--accent-deep)}.gb3{background:var(--purple-soft);color:var(--purple)}
+.quiz{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:18px 0}
+.quiz-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.quiz h4{font-family:var(--font-display);font-size:18px;margin:4px 0 6px;color:var(--fg-strong)}
+.q{margin:14px 0;padding-top:13px;border-top:1px solid var(--border)}.q:first-of-type{border-top:0}
+.quiz>h4{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+.quiz>h4 .qchev{margin-left:auto;transition:transform .2s;font-size:15px;color:var(--fg-muted);font-weight:400}
+.quiz.folded>h4 .qchev{transform:rotate(-90deg)}
+.quiz.folded .q,.quiz.folded .quiz-eyebrow{display:none}
+.quiz.folded{padding-bottom:18px}
+.quiz .qcount{font-family:var(--font-mono);font-size:11px;color:var(--fg-meta);font-weight:500;margin-left:4px}
+.slot[data-depth]{cursor:pointer}
+.slot[data-depth]:hover{transform:translateY(-2px);border-color:var(--accent);transition:transform .12s,border-color .12s}
+.slothint{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:var(--accent);font-weight:600}
+.slothint i{width:12px;height:12px}
+.qq{font-weight:600;font-size:14.5px;margin-bottom:8px;color:var(--fg-strong)}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--bg-card);border-radius:9px;padding:9px 13px;margin:6px 0;font-size:13.8px;cursor:pointer;font-family:inherit;color:inherit}
+.opt:hover{border-color:var(--accent)}
+.opt.correct{border-color:var(--green);background:var(--green-soft);font-weight:600}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.exp{display:none;margin-top:8px;font-size:13px;background:var(--bg-soft);border-radius:9px;padding:10px 13px;color:var(--fg-muted)}
+.exp strong{color:var(--accent-deep)}.q.answered .exp{display:block}
+.instructor-card{display:flex;gap:18px;align-items:flex-start;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.instructor-avatar{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--orange-700),var(--orange-300));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-size:24px;font-weight:700;flex-shrink:0}
+.instructor-card h3{margin:0 0 2px}.instructor-card .role{font-size:13.5px;color:var(--fg-muted)}
+.instructor-card ul{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--fg-muted)}
+.assets{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:14px 0;background:var(--bg-card)}
+.assets .ah{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--bg-soft);flex-wrap:wrap}
+.assets .ah .at{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--fg-strong)}
+.assets .ah .zips{margin-left:auto;display:flex;gap:6px}
+.asset{border-top:1px solid var(--border)}
+.asset .arow{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer}
+.asset .arow:hover{background:var(--bg-soft)}
+.asset .acat{font-family:var(--font-mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--accent-faint);color:var(--accent-deep)}
+.asset .an{font-weight:600;font-size:13.7px;flex:1;color:var(--fg-strong)}
+.asset .asz{font-family:var(--font-mono);font-size:11px;color:var(--fg-meta);width:54px;text-align:right}
+.asset .aview{max-height:0;overflow:hidden;transition:max-height .3s;background:var(--bg-soft)}
+.asset.open .aview{max-height:560px;overflow:auto}
+.asset .aview pre{margin:0;padding:13px 16px;font-family:var(--font-mono);font-size:11.7px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.asset .aacts{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 13px}
+.lens{display:none;border-radius:12px;padding:13px 16px;margin:12px 0;font-size:14.5px;border:1px solid var(--border)}
+html.lv-beginner .lens-b{display:block}html.lv-expert .lens-e{display:block}
+.lens-b{background:var(--green-soft);border-left:3px solid var(--green)}.lens-e{background:var(--accent-faint);border-left:3px solid var(--accent)}
+.lens .lh{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:3px;color:var(--accent-deep)}
+.lens-b .lh{color:var(--green)}
+.bots{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.bots{grid-template-columns:1fr}}
+.bot{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;cursor:pointer;position:relative;transition:transform .12s,border-color .12s}
+.bot:hover{transform:translateY(-2px);border-color:var(--accent)}
+.bot .bn{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--fg-strong)}
+.bot .idx{width:24px;height:24px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.bot .role{color:var(--fg-muted);font-size:13.2px;margin:8px 0 0}
+.bot .detail{max-height:0;overflow:hidden;transition:max-height .28s}.bot.open .detail{max-height:240px}
+.bot .detail-in{padding-top:10px;margin-top:10px;border-top:1px dashed var(--border);font-size:12.6px;color:var(--fg-muted)}
+.bot .pin{position:absolute;top:13px;right:14px;font-family:var(--font-mono);font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:999px;text-transform:uppercase}
+.p-start{background:var(--green-soft);color:var(--green)}.p-spec{background:var(--purple-soft);color:var(--purple)}.p-pro{background:var(--accent-faint);color:var(--accent-deep)}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14.5px;cursor:pointer}.check input{margin-top:5px}
+.overlay{position:fixed;inset:0;background:rgba(26,23,20,.55);z-index:1100;display:none;align-items:flex-start;justify-content:center;padding:42px 16px;overflow-y:auto}
+.overlay.on{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;max-width:780px;width:100%;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+.modal-head{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);border-radius:18px 18px 0 0}
+.crumb{font-family:var(--font-mono);font-size:11.5px;color:var(--fg-meta);flex:1}.crumb b{color:var(--fg-strong)}
+.modal-body{padding:20px 22px}
+.modal-body h4{font-family:var(--font-display);font-size:19px;margin:0 0 8px;color:var(--fg-strong)}
+.modal-body h5{font-size:14px;margin:18px 0 4px;color:var(--accent-deep);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:var(--ink-900);color:#F5F1EB;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:1200;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 수업(프로젝션) 모드 — 글자 확대(가로 폭 유지) ===== */
+html.present .content{font-size:17px}
+html.present .hero-sub{font-size:25px;line-height:1.85}
+html.present .section-lead{font-size:20px;line-height:1.8}
+html.present .card h4{font-size:20px}
+html.present .card p{font-size:16.5px;line-height:1.7}
+html.present .card-eyebrow{font-size:13px}
+html.present .callout{font-size:17.5px;line-height:1.75}
+html.present .callout i{width:22px;height:22px}
+html.present .slot h5{font-size:17px}
+html.present .quiz h4{font-size:21px}
+html.present .qq{font-size:20px;line-height:1.6}
+html.present .opt{font-size:17.5px;padding:14px 18px}
+html.present .prompt-text{font-size:15px;line-height:1.7}
+html.present .lens{font-size:17.5px;line-height:1.75}
+html.present .modal-body{font-size:18px;line-height:1.7}
+html.present .modal-body h4{font-size:23px}
+html.present table.tbl{font-size:17.5px}
+html.present table.tbl th,html.present table.tbl td{padding:12px 14px}
+html.present .nav-link{font-size:14.5px}
+html.present .eyebrow{font-size:15px}
+html.present .bn{font-size:17px}
+@media print{html.present .content{font-size:13px}}
+/* ===== 유한대 추가: 프롬프트 빌더 ===== */
+.builder{border:1.5px solid var(--border-strong);border-radius:14px;background:var(--bg-card);margin:20px 0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.builder-head{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--accent-faint);border-bottom:1px solid var(--border)}
+.builder-num{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent-deep);letter-spacing:.06em;border:1.5px solid var(--accent);border-radius:999px;padding:3px 11px;white-space:nowrap;background:var(--bg-card)}
+.builder-head h4{margin:0;font-size:16.5px;color:var(--fg-strong)}
+.builder-head .b-when{margin-left:auto;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-meta);white-space:nowrap}
+.b-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px 14px;padding:16px 18px 6px}
+.b-field{display:flex;flex-direction:column;gap:5px}
+.b-field.wide{grid-column:1/-1}
+.b-field>label{font-size:12.5px;font-weight:700;color:var(--fg-muted);letter-spacing:-.01em}
+.b-field input[type=text],.b-field select,.b-field textarea{font-family:inherit;font-size:14px;line-height:1.5;color:var(--fg);background:var(--bg);border:1px solid var(--border-strong);border-radius:8px;padding:8px 11px;width:100%}
+.b-field textarea{resize:vertical;min-height:54px}
+.b-field input:focus,.b-field select:focus,.b-field textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.b-checks{display:flex;flex-wrap:wrap;gap:8px;padding-top:2px}
+.b-checks label{display:inline-flex;align-items:center;gap:6px;font-size:13px;border:1px solid var(--border-strong);border-radius:999px;padding:5px 12px;cursor:pointer;background:var(--bg)}
+.b-checks label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--fg-strong);font-weight:600}
+.b-checks input{accent-color:var(--accent);margin:0}
+.b-out{margin:10px 18px 18px}
+.b-out .prompt-box{margin:0}
+.b-hint{margin:0 18px 14px;font-size:12.5px;color:var(--fg-meta);display:flex;gap:6px;align-items:flex-start}
+.b-hint i{width:14px;height:14px;flex:none;margin-top:2px;color:var(--accent)}
+.check-sheet{border:1.5px solid var(--border-strong);border-radius:14px;background:var(--bg-card);padding:20px 24px;margin:18px 0}
+.check-sheet h4{margin:0 0 4px;font-size:16px}
+.check-sheet .cs-sub{font-size:12.5px;color:var(--fg-meta);margin:0 0 12px}
+.check-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--border);font-size:14.5px}
+.check-item:first-of-type{border-top:none}
+.check-item input{accent-color:var(--accent);width:17px;height:17px;flex:none;margin-top:3px}
+.check-item b{color:var(--fg-strong)}
+.timegrid{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+.timegrid th{text-align:left;font-size:12px;letter-spacing:.05em;color:var(--fg-meta);font-family:var(--font-mono);padding:8px 10px;border-bottom:2px solid var(--border-strong)}
+.timegrid td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top}
+.timegrid .tg-time{font-family:var(--font-mono);font-size:12.5px;white-space:nowrap;color:var(--accent-deep);font-weight:600}
+.timegrid .tg-tag{display:inline-block;font-size:10.5px;font-family:var(--font-mono);border-radius:5px;padding:2px 7px;margin-left:6px;vertical-align:1px}
+.tg-theory{background:var(--purple-soft);color:var(--purple)}
+.tg-prac{background:var(--green-soft);color:var(--green)}
+.tg-rest{background:var(--bg-soft);color:var(--fg-meta)}
+/* ===== 유한대 추가: steps · compare ===== */
+.steps{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);padding:13px 16px}
+.step-num{flex:none;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent-deep);font-family:var(--font-mono);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+.step b{font-size:15px;color:var(--fg-strong)}
+.step p{margin:3px 0 0;font-size:13.8px;color:var(--fg-muted)}
+.accent-text{color:var(--accent-deep);font-weight:600}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+@media(max-width:760px){.compare-grid{grid-template-columns:1fr}}
+.compare-col{border:1.5px solid var(--border-strong);border-radius:12px;padding:16px 18px;background:var(--bg-card)}
+.compare-col h4{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px}
+.compare-col h4 i{width:17px;height:17px}
+.compare-col ul{margin:0;padding-left:19px}
+.compare-col li{margin:6px 0;font-size:14.2px}
+.compare-good{border-color:var(--green);background:color-mix(in srgb,var(--green-soft) 40%,var(--bg-card))}
+.compare-good h4{color:var(--green)}
+.compare-bad{border-color:var(--red);background:color-mix(in srgb,var(--red-soft) 34%,var(--bg-card))}
+.compare-bad h4{color:var(--red)}
+.compare-ai{border-color:var(--accent);background:color-mix(in srgb,var(--accent-faint) 55%,var(--bg-card))}
+.compare-ai h4{color:var(--accent-deep)}
+</style>
+</head>
+<body>
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+<div class="topbar"><div class="topbar-inner">
+  <a class="brand-mark" href="#top"><span class="brand-symbol"></span>교수자를 위한 생성형 AI 입문 <span class="brand-meta">수업설계와 평가의 실제 · 전문대교협 원격연수 · 입체 교재</span></a>
+  <div class="tools">
+    <div class="toggle" role="group" aria-label="화면"><span class="lab">화면</span>
+      <button data-view="std" aria-pressed="false">보통</button><button data-view="present" aria-pressed="true">수업</button></div>
+    <div class="toggle" role="group" aria-label="테마">
+      <button data-theme="bright" aria-pressed="true" title="브라이트"><i data-lucide="sun"></i></button>
+      <button data-theme="sepia" aria-pressed="false" title="세피아"><i data-lucide="book-open"></i></button>
+      <button data-theme="dark" aria-pressed="false" title="다크"><i data-lucide="moon"></i></button></div>
+  </div>
+</div></div>
+
+<div class="layout" id="top">
+  <nav class="side-nav">
+    <p class="side-nav-title">목차</p>
+    <a class="nav-link" href="#intro">연수를 시작하며</a>
+    <a class="nav-link" href="#howto">ZOOM, 이렇게 참여하세요</a>
+    <a class="nav-link" href="#syllabus">오늘의 3시간</a>
+    <a class="nav-link" href="#instructor">강사 소개</a>
+    <span class="nav-time">1교시 · 14:00~14:50</span>
+    <a class="nav-link" href="#dx">DX에서 AIX로</a>
+    <a class="nav-link" href="#media">Media Equation</a>
+    <a class="nav-link" href="#tools">도구 비교 · 선택 가이드</a>
+    <a class="nav-link" href="#basics">Claude 기본기 · 계정</a>
+    <a class="nav-link" href="#prompt3">프롬프트 3원칙 · 빌더 ①</a>
+    <span class="nav-time">2교시 · 15:00~15:50</span>
+    <a class="nav-link" href="#grasp">교육설계 먼저 · GRASP</a>
+    <a class="nav-link" href="#design">빌더 ② 학습목표 · 흐름</a>
+    <a class="nav-link" href="#slides">슬라이드 구성안 · 핵심 개념</a>
+    <a class="nav-link" href="#gami">게이미피케이션 4요소</a>
+    <a class="nav-link" href="#interactive">빌더 ③ 대화형 학습자료 ★</a>
+    <span class="nav-time">3교시 · 16:00~16:50</span>
+    <a class="nav-link" href="#evalshift">평가의 무게중심 옮기기</a>
+    <a class="nav-link" href="#items">빌더 ④ 평가문항 · 난이도</a>
+    <a class="nav-link" href="#rubric">빌더 ⑤ 루브릭 · AI-proof</a>
+    <a class="nav-link" href="#feedback">빌더 ⑥ 맞춤 피드백</a>
+    <a class="nav-link" href="#limits">검증 3선 · 배포 전 점검</a>
+    <a class="nav-link" href="#action">내일부터 하나만</a>
+    <span class="nav-time">Q&amp;A · 16:50~17:00</span>
+    <a class="nav-link" href="#qa">자주 나오는 질문 · 닫는 말</a>
+  </nav>
+
+  <div class="content">
+
+    <!-- ===================== intro ===================== -->
+    <section id="intro">
+      <span class="eyebrow">한국전문대학교육협의회 원격연수 · 2026. 9. 3.(목) 14:00~17:00 · ZOOM · 강사 김민철</span>
+      <h1 class="hero-title">학생은 이미 <span class="accent">AI로</span> 씁니다.<br/>그런데 우리는, <span class="accent">알아채지 못합니다.</span></h1>
+      <p class="hero-sub">"학생이 AI로 과제를 했어요" — 한 번쯤 들어보셨을 겁니다. 그런데 진짜 문제는 학생이 아니라, <b>수업과 평가가 그대로라는 것</b>이죠. 오늘 3시간 동안 <b>수업 한 세트</b>와 <b>평가 한 세트</b>를 만드는 과정을 처음부터 끝까지 보시게 됩니다. 그리고 내일 딱 하나만 바꿔 보실 것을 손에 쥐고 나가시게 됩니다.</p>
+      <div class="hero-meta"><span>3시간 · ZOOM 실시간 원격연수</span><span>대상 · 대학 교·직원 50명</span><span>1교시 도구 · 2교시 수업 · 3교시 평가</span><span>Claude 무료 계정으로 재현 가능</span><span>가져가는 것 · 재현 키트 + 액션 3개</span></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="compass"></i></div><h4>목표 1 · 도구를 고른다</h4><p>ChatGPT·Claude·Copilot의 차이를 알고, <b>내 업무의 무게중심</b>에 맞는 도구와 말 거는 법을 손에 넣는다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="layout-template"></i></div><h4>목표 2 · 수업 한 세트</h4><p>학습목표 → 수업 흐름 → 슬라이드 구성안 → 게이미피케이션 결합까지, 한 대화 안에서 이어지는 것을 본다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="scale"></i></div><h4>목표 3 · 평가 한 세트</h4><p>평가문항 → 루브릭 → 맞춤 피드백, 그리고 <b>AI-proof 과제</b>로 평가의 무게중심을 과정으로 옮긴다.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="info"></i><div><strong>이 교재 읽는 법</strong> — 연수 진행 순서가 곧 이 교재의 순서입니다. 왼쪽 목차로 지금 위치를 따라오세요. <strong>빌더 ①~⑥</strong>의 빈칸을 내 과목으로 채우면 프롬프트가 자동 완성되고, <strong>복사</strong> 버튼 한 번으로 Claude에 붙여넣을 수 있습니다. 상단에서 화면(보통·수업)과 테마(종이·세피아·다크)를 바꿀 수 있고요. <strong>그리고 이 교재 자체가 Claude로 만든 것입니다 — 오늘 보시게 될 바로 그 방식으로.</strong></div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="zap"></i><span>오프닝 데모 — 지금 화면에서 돌아가는 프롬프트</span><span class="prompt-persona">교재 목차 사진 1장 → 3분</span></div>
+        <div class="prompt-text">첨부한 사진은 내 교재의 목차다. 나는 전문대 [학과]에서 이 과목을 가르치는 교수다. 이 목차에서 "[개선하고 싶은 단원]"에 해당하는 1개 차시를 골라 ① 학습목표 2개 ② 50분 수업 흐름 ③ 형성평가 문항 5개(정답·해설 포함)를 만들어 줘. [2학년, 기초가 약한] 학생 눈높이로.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <p style="font-size:13.5px;color:var(--fg-muted)">— 목차 사진 한 장이면 시작되는 것이죠. 오늘 3시간은 이 한 줄을 여섯 갈래로 쪼개, 각각을 왜·어떻게 쓰는지 보여 드리는 시간입니다.</p>
+    </section>
+
+    <!-- ===================== howto ===================== -->
+    <section id="howto">
+      <div class="section-header"><span class="section-tag">안내</span><h2>ZOOM, 이렇게 참여하세요</h2>
+        <p class="section-lead">대면 연수라면 옆자리를 흘끔거리며 따라갈 수 있습니다. 화면 너머에서는 그게 안 되죠. 그래서 <b>참여 방식을 미리 정해 두는 것</b>이 오늘의 첫 준비입니다.</p></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><b>창을 두 개로 나누세요</b><p>왼쪽에 ZOOM 화면, 오른쪽에 이 교재. 강사가 넘어가는 단계마다 교재의 같은 위치를 보시면 놓치지 않습니다.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><b>따라 치지 않으셔도 됩니다</b><p>시연을 따라 치기 시작하면 <span class="accent-text">화면은 놓치고 결과는 안 나옵니다.</span> 오늘은 <b>보는 데 집중</b>하고, 재현은 연수 뒤 이 교재로 하시면 되는 것이죠. 대신 <b>"지금 저 화면 캡처해 두세요"</b>라고 말씀드리는 지점이 몇 군데 있습니다.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><b>질문은 줌 채팅에, 즉시</b><p>손 들 필요 없습니다. 생각난 순간 채팅에 남겨 주세요. 교시가 끝날 때마다(3회) 모아서 답변합니다. <b>"이건 나만 모르나" 싶은 질문일수록 다들 궁금해하는 질문</b>입니다.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><b>막히면 채팅에 "막힘" 두 글자</b><p>혹시 따라 해 보시다 막히면 그 두 글자만 남겨 주세요. 화면을 바로 그 지점으로 되돌려 다시 보여 드립니다.</p></div></div>
+        <div class="step"><div class="step-num">5</div><div><b>계정은 미리 열어만 두세요</b><p><span class="mono">claude.ai</span> 로그인까지만. 무료 계정으로 충분합니다. 오늘 쓰지 않더라도, <b>연수 직후 5분이 재현의 골든타임</b>인 것이죠.</p></div></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="lightbulb"></i><div><strong>이미 써 보신 분이라면</strong> — 시연을 보는 동안 <b>"내 과목이면 이 자리에 뭐가 들어갈까"</b>를 메모하세요. 오늘 가장 값진 산출물은 화면 속 결과물이 아니라, 그 메모입니다.</div></div>
+    </section>
+
+    <!-- ===================== syllabus ===================== -->
+    <section id="syllabus">
+      <div class="section-header"><span class="section-tag">목차</span><h2>오늘의 3시간</h2>
+        <p class="section-lead">1교시는 <b>도구</b>, 2교시는 <b>수업</b>, 3교시는 <b>평가</b>. 교시마다 10분씩 쉬고, 마지막 10분은 질문에 씁니다.</p></div>
+      <table class="timegrid">
+        <thead><tr><th>시간</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="tg-time">14:00~14:50</td><td><b>1교시 · AI 시대, 교육현장의 디지털 전환</b><br/>DX와 디지털 네이티브 세대 · 교육·연구·행정의 변화 · Media Equation · 도구 비교(ChatGPT·Claude·Copilot) · Claude 기본기와 계정 · 프롬프트 3원칙 <span class="tg-tag tg-theory">이론</span><span class="tg-tag tg-prac">시연</span></td></tr>
+          <tr><td class="tg-time">14:50~15:00</td><td>휴식 <b>10분</b> — 1교시 채팅 질문 답변 <span class="tg-tag tg-rest">휴식</span></td></tr>
+          <tr><td class="tg-time">15:00~15:50</td><td><b>2교시 · 생성형 AI를 활용한 수업설계</b><br/>GRASP 5단계 · 학습목표와 주차별·차시 흐름 설계 · 슬라이드 구성안과 핵심 개념 정리 · 게이미피케이션 4요소와 결합 3패턴 · <b>대화형 학습자료 ★</b> <span class="tg-tag tg-prac">시연</span></td></tr>
+          <tr><td class="tg-time">15:50~16:00</td><td>휴식 <b>10분</b> — 2교시 채팅 질문 답변 <span class="tg-tag tg-rest">휴식</span></td></tr>
+          <tr><td class="tg-time">16:00~16:50</td><td><b>3교시 · 생성형 AI를 활용한 평가 설계</b><br/>평가의 무게중심 옮기기 · 학습목표 기반 문항 출제와 난이도 조절 · 루브릭과 <b>AI-proof 변형</b> · 학생 맞춤 피드백 · 검증 3선과 배포 전 점검 · <b>"내일부터 하나만"</b> 액션플랜 <span class="tg-tag tg-prac">시연</span></td></tr>
+          <tr><td class="tg-time">16:50~17:00</td><td><b>Q&amp;A 및 자유토론</b> — 자주 나오는 질문 5가지 + 채팅·마이크 질문 <span class="tg-tag tg-rest">닫는 말</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info"><i data-lucide="route"></i><div><strong>왜 이 순서인가</strong> — 도구 사용법을 먼저 가르치면 <b>"기능은 알겠는데 내 수업엔 뭘 쓰지"</b>에서 멈춥니다. 그래서 오늘은 <b>도구 → 수업 → 평가</b> 순서로 갑니다. 그리고 <b>평가를 마지막에 두는 이유</b>가 따로 있습니다 — 수업을 아무리 잘 만들어도, 평가가 그대로면 학생의 행동은 바뀌지 않기 때문이죠.</div></div>
+    </section>
+
+    <!-- ===================== instructor ===================== -->
+    <section id="instructor">
+      <div class="section-header"><span class="section-tag">소개</span><h2>강사 소개</h2></div>
+      <div class="instructor-card">
+        <div class="instructor-avatar">김</div>
+        <div><h3>김민철</h3><p class="role">서일대학교 AI게임융합학과 교수 · 학과장 — "배워서 오늘 쓰는 AI"</p>
+          <ul><li>게임·문화산업 박사 · 게임 개발 스타트업 창업·운영 8년(투자 유치 후 M&amp;A)</li>
+            <li>1,500만 다운로드 게임 개발 참여 — 게이미피케이션을 수업에 옮겨 쓰는 사람</li>
+            <li>전문대학 교원 대상 생성형 AI 연수 다수 · 대학 특강·워크숍 진행</li>
+            <li>직접 만든 Claude 스킬 30여 개로 강의·연구·행정을 돌리는 중</li></ul></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="message-circle"></i><div><strong>오늘 보시는 자료 전부</strong> — 이 교재도, 시연에 쓰는 예시도, 심지어 연수 계획서 초안도 Claude로 만들었습니다. <b>"제가 실제로 그렇게 일합니다"</b>가 오늘 드릴 수 있는 가장 정직한 근거인 것이죠.</div></div>
+    </section>
+
+    <!-- ===================== 1교시 ===================== -->
+    <section id="dx">
+      <div class="section-header"><span class="section-tag">1교시 · 14:00~14:50</span><h2>DX에서 AIX로 — 교육현장에서 실제로 바뀐 것</h2>
+        <p class="section-lead">질문 하나로 시작합니다 — <b>"다음 학기 강의자료 한 차시 만드는 데 보통 몇 시간 쓰시나요?"</b> 채팅창에 숫자만 남겨 주세요.</p></div>
+      <p>DX(디지털 전환)는 <b>살아남기 위한 변화</b>였습니다. 종이를 화면으로, 오프라인을 온라인으로 옮기는 일이었죠. 그런데 생성형 AI가 가져온 변화는 결이 다릅니다. <b>콘텐츠를 만드는 방식 자체가 바뀐 것</b>입니다. 인터넷이 장소를 지우고 스마트폰이 시간을 지웠다면, AI는 <b>"만드는 과정"</b>을 지웠습니다.</p>
+      <h3>지금 강의실에 앉아 있는 학생들</h3>
+      <p>디지털 네이티브 세대의 학습 특성은 세 가지로 요약됩니다. <b>검색보다 질문이 빠르고</b>, <b>긴 설명보다 짧은 피드백에 반응하며</b>, <b>못 하겠으면 즉시 다른 경로를 찾습니다.</b> 이 학생들에게 AI는 새 기술이 아니라 기본값인 것이죠. 그래서 "AI를 쓰지 마라"는 규칙은 작동하지 않습니다. 작동하는 건 <b>"AI를 쓰고도 배우게 만드는 설계"</b>뿐입니다.</p>
+      <h3>교육·연구·행정, 세 곳 모두에서</h3>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="graduation-cap"></i></div><h4>교육</h4><p>강의자료 초안, 평가 문항, 학생 피드백 — 오늘 3시간이 다루는 영역입니다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="microscope"></i></div><h4>연구</h4><p>문헌 정리, 초록 다듬기, 데이터 설명. 논문의 판단은 사람이, 정리는 AI가.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="building-2"></i></div><h4>행정</h4><p>공문 초안, 회의록, 사업계획서 표 정리. 오늘 함께하시는 <b>직원 선생님들</b>에게 특히 즉효인 영역이죠.</p></div>
+      </div>
+      <p>그렇다면 AI는 어디까지 맡기고, 어디부터 사람이 챙겨야 할까요? 수업 콘텐츠 개발을 다섯 단계로 펼쳐 놓으면 답이 보입니다.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><b>교육설계</b><p>학습목표·수업 흐름 — <span class="accent-text">사람이 결정, AI는 정리를 돕는다</span></p></div></div>
+        <div class="step"><div class="step-num">2</div><div><b>자료 제작</b><p>슬라이드·유인물·예시 — <span class="accent-text">AI가 초안, 사람이 다듬는다</span></p></div></div>
+        <div class="step"><div class="step-num">3</div><div><b>평가 문항</b><p>문항·과제·루브릭 — <span class="accent-text">AI가 뽑고, 사람이 고른다</span></p></div></div>
+        <div class="step"><div class="step-num">4</div><div><b>배포</b><p>학생용 자료·안내문 — <span class="accent-text">AI가 형식을 바꿔준다</span></p></div></div>
+        <div class="step"><div class="step-num">5</div><div><b>개선</b><p>피드백 반영·차차시 수정 — <span class="accent-text">사람이 판단, AI가 반영</span></p></div></div>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col compare-good"><h4><i data-lucide="user-check"></i> 끝까지 교수의 몫</h4>
+          <ul><li>학습목표 — 이 차시에서 학생이 뭘 할 수 있게 되는가</li><li>내용 검증 — 학생에게 나가기 전 사실 확인</li><li>학생 이해 — 우리 반 수준·분위기에 맞추는 감각</li><li>최종 책임 — 자료에 이름이 붙는 사람</li></ul></div>
+        <div class="compare-col compare-ai"><h4><i data-lucide="bot"></i> AI에게 맡길 것</h4>
+          <ul><li>초안 — 슬라이드 개요, 문항 후보, 안내문 틀</li><li>반복 — "더 쉽게", "5문항 더", "표로 바꿔줘"</li><li>형식 변환 — 강의록→문항, PPT→요약, 글→HTML</li><li>빠뜨림 점검 — "이 설계에서 빠진 것 없나?"</li></ul></div>
+      </div>
+      <div class="callout callout-warn"><i data-lucide="alert-triangle"></i><div><strong>한 줄로 줄이면</strong> — <b>"AI를 쓸 것인가"의 시기는 지났고, "어디까지 맡기고 어디부터 내가 챙길 것인가"를 정하는 시기</b>입니다. 오늘 3시간은 그 선을 긋는 시간인 것이죠.</div></div>
+    </section>
+
+    <section id="media">
+      <div class="section-header"><span class="section-tag">1교시 · 이론</span><h2>Media Equation — AI를 대하는 태도가 결과를 바꾼다</h2>
+        <p class="section-lead">기술 이야기 하나만 짚고 가겠습니다. 이게 오늘 프롬프트 이야기의 <b>바닥</b>이 됩니다.</p></div>
+      <p>스탠퍼드의 리브스와 나스는 <span class="term" data-term="Byron Reeves & Clifford Nass, 『The Media Equation』(1996). 사람은 컴퓨터·미디어를 실제 사람이나 실제 장소처럼 무의식적으로 대한다는 연구.">『The Media Equation』</span>에서 이렇게 말했습니다 — <b>사람은 컴퓨터를 사람처럼 대한다.</b> 예의를 갖추고, 칭찬에 반응하고, 성격을 부여한다는 것이죠. 1990년대 연구인데, 묻고 답하는 AI 앞에서는 훨씬 더 강하게 작동합니다.</p>
+      <p>그래서 실무적으로 이런 결론이 나옵니다. <b>AI에게 역할을 주고, 상황을 설명하고, 일관되게 대하면 결과가 실제로 좋아집니다.</b> 신비한 일이 아니라, 그렇게 말할수록 정보가 많아지기 때문이죠. 잠시 뒤 볼 <b>프롬프트 3원칙</b>이 정확히 이 이야기입니다.</p>
+      <div class="acro"><b>Attention Is All You Need</b>라는 논문이 AI를 바꿨다면 — 교수가 AI를 잘 쓰는 데 필요한 건 <b>Attitude</b>입니다. 도구로 부리는 대신 <b>비서로 키우는 태도</b>인 것이죠.</div>
+      <div class="quiz folded" data-quiz>
+        <h4><i data-lucide="help-circle"></i> 잠깐 점검 <span class="qcount">2문항</span><span class="qchev">▾</span></h4>
+        <span class="quiz-eyebrow">클릭하면 정답과 해설이 열립니다</span>
+        <div class="q" data-a="2" data-explain="학습목표는 '이 차시에서 학생이 무엇을 할 수 있게 되는가'를 정하는 일입니다. AI는 문장을 다듬어 줄 뿐, 우리 반에 무엇이 필요한지는 교수만 압니다.">
+          <div class="qq">다섯 단계 중, AI에게 <b>가장 맡기기 어려운</b> 것은?</div>
+          <button class="opt">슬라이드 초안 작성</button>
+          <button class="opt">평가문항 후보 뽑기</button>
+          <button class="opt">학습목표 결정</button>
+          <button class="opt">유인물 형식 변환</button>
+        </div>
+        <div class="q" data-a="1" data-explain="AI의 진짜 이득은 '한 번에 잘 뽑는 것'이 아니라 '고쳐 달라고 몇 번이든 말할 수 있는 것'입니다. 사람에게는 세 번째부터 미안해지지만, AI에게는 열 번도 괜찮은 것이죠.">
+          <div class="qq">생성형 AI를 수업 준비에 쓸 때 가장 큰 이득은?</div>
+          <button class="opt">한 번에 완성본이 나온다</button>
+          <button class="opt">몇 번이든 고쳐 달라고 할 수 있다</button>
+          <button class="opt">사실 검증을 대신해 준다</button>
+          <button class="opt">저작권 문제를 해결해 준다</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools">
+      <div class="section-header"><span class="section-tag">1교시 · 도구</span><h2>ChatGPT · Claude · Copilot — 무엇을 언제 쓰나</h2>
+        <p class="section-lead">셋 다 좋은 도구입니다. 문제는 <b>"어느 게 최고냐"가 아니라 "내 업무의 무게중심이 어디냐"</b>인 것이죠.</p></div>
+      <div class="bots">
+        <div class="bot"><span class="pin p-start">넓게</span><div class="bn"><span class="idx">1</span>ChatGPT</div>
+          <p class="role">빠르고 다재다능. <b>아이디어를 흩뿌릴 때</b> 강합니다. 이미지 생성·음성 등 곁가지 기능이 넓죠.</p>
+          <div class="detail"><div class="detail-in">"이 주제로 수업 아이디어 20개" 같은 <b>발산형</b> 작업에 좋습니다. 대신 긴 문서를 끝까지 붙들고 가는 일은 상대적으로 약합니다.</div></div></div>
+        <div class="bot"><span class="pin p-pro">깊게</span><div class="bn"><span class="idx">2</span>Claude</div>
+          <p class="role">긴 문서를 통째로 읽고 <b>맥락을 오래 붙듭니다.</b> 파일을 만들어 주는 작업(문서·HTML)에 강하죠.</p>
+          <div class="detail"><div class="detail-in"><b>교수의 일은 깊은 일</b>입니다 — 설계에서 정한 학습목표를 평가 문항에서도 기억해야 하니까요. 오늘 시연을 Claude로 하는 이유입니다.</div></div></div>
+        <div class="bot"><span class="pin p-spec">붙여서</span><div class="bn"><span class="idx">3</span>Copilot</div>
+          <p class="role">MS 365(워드·엑셀·아웃룩·팀즈) <b>안에서</b> 작동합니다. 학교가 MS 환경이면 가장 마찰이 적죠.</p>
+          <div class="detail"><div class="detail-in">엑셀 성적 처리, 아웃룩 메일 초안, 팀즈 회의 요약 같은 <b>행정 업무</b>에 즉효입니다. 다만 창의적 설계보다는 '이미 있는 문서를 다루는' 쪽에 가깝습니다.</div></div></div>
+        <div class="bot"><span class="pin p-start">참고</span><div class="bn"><span class="idx">4</span>Perplexity</div>
+          <p class="role">검색·문헌 확인용. <b>출처를 붙여</b> 답하기 때문에 사실 확인의 첫 단계로 쓸 만합니다.</p>
+          <div class="detail"><div class="detail-in">오늘은 깊이 다루지 않습니다. 다만 3교시 '검증' 대목에서 <b>숫자를 다시 확인할 때</b> 한 번 언급하겠습니다.</div></div></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="git-branch"></i><div><strong>강사의 실제 사용법</strong> — 아이디어는 ChatGPT, 문서화는 Claude, 문헌 확인은 Perplexity, 학교 행정 파일은 Copilot. 다만 <b>교수 업무의 무게중심은 Claude</b>입니다. 하나만 골라 시작하신다면 그쪽을 권합니다.</div></div>
+      <h3>하네스 — 같은 말도, 마구에 따라 다르게 달린다</h3>
+      <p><span class="term" data-term="말에 씌우는 마구(馬具). 고삐·안장·재갈처럼, 같은 말이라도 무엇을 씌우느냐에 따라 전혀 다르게 달립니다. AI에서는 모델을 감싸는 지침·자료·도구·작업 환경을 뜻합니다.">하네스</span>라는 말을 하나만 기억하고 가시면 좋겠습니다. 같은 말(모델)이라도 <b>어떤 마구를 씌우느냐</b>에 따라 결과가 달라진다는 뜻이죠. 그래서 오늘 배우는 것은 "무슨 도구를 쓰느냐"가 아니라 <b>"내 수업에 맞는 마구를 씌우는 법"</b>입니다.</p>
+      <div class="acro"><b>같은 모델 + 다른 마구 = 다른 결과.</b> 마구에 해당하는 것이 ① 내가 누구인지 알려 주는 <b>지침</b> ② 참고할 <b>파일</b> ③ 원하는 <b>형식</b> ④ 반복 작업을 저장한 <b>스킬</b>입니다. 오늘 다루는 건 결국 이 넷인 것이죠.</div>
+    </section>
+
+    <section id="basics">
+      <div class="section-header"><span class="section-tag">1교시 · 기본기</span><h2>Claude 기본기 4가지 · 계정</h2>
+        <p class="section-lead">화면을 함께 보면서 딱 <b>네 가지</b>만 짚겠습니다. 이 넷이면 오늘 시연을 전부 따라 읽으실 수 있습니다.</p></div>
+      <div class="bots">
+        <div class="bot"><span class="pin p-start">기본</span><div class="bn"><span class="idx">1</span>대화창</div>
+          <p class="role">주고받는 곳. 핵심은 <b>한 주제는 한 대화에서 끝까지</b> — 새 창을 열면 앞의 맥락이 사라집니다.</p>
+          <div class="detail"><div class="detail-in">2교시 설계 → 슬라이드 → 3교시 문항까지 <b>한 대화</b>로 이어 붙이는 이유입니다. 주제가 바뀌면 그때 새 대화를 여세요.</div></div></div>
+        <div class="bot"><span class="pin p-start">기본</span><div class="bn"><span class="idx">2</span>파일 업로드</div>
+          <p class="role">내 PPT·PDF·한글 문서, 심지어 <b>교재 목차 사진</b>까지 그대로 올릴 수 있습니다.</p>
+          <div class="detail"><div class="detail-in">"이 파일을 참고해서"라고 한 줄 붙이면 결과의 정확도가 크게 올라갑니다. 기존 강의자료가 <b>가장 훌륭한 재료</b>인 것이죠.</div></div></div>
+        <div class="bot"><span class="pin p-spec">유료</span><div class="bn"><span class="idx">3</span>프로젝트</div>
+          <p class="role">과목별 <b>서랍</b>. 지침과 자료를 넣어 두면 그 안의 모든 대화에 자동 적용됩니다.</p>
+          <div class="detail"><div class="detail-in">무료 계정이라면 대신 <b>빌더 ①</b>의 프로필 문장을 매번 첫 줄에 붙여넣으면 거의 같은 효과가 납니다.</div></div></div>
+        <div class="bot"><span class="pin p-pro">심화</span><div class="bn"><span class="idx">4</span>스킬</div>
+          <p class="role">한 번 만든 <b>작업 패턴을 영구 저장</b>. "강의계획서 써 줘" 한마디에 내 양식대로 나옵니다.</p>
+          <div class="detail"><div class="detail-in">강사는 강의계획서·회의록·교재 설계 등 30여 개를 만들어 씁니다. <b>한 번 만들면 평생 쓰는 것</b>이죠. 오늘은 개념만 — 관심 있으시면 Q&amp;A에서 다루겠습니다.</div></div></div>
+      </div>
+      <h3>계정과 플랜 — 무료로 재현이 되나?</h3>
+      <p>결론부터 — <b>됩니다.</b> 오늘 시연 중 대화형 학습자료 만들기 하나만 조금 무거울 뿐, 나머지는 무료 계정으로 충분합니다. 다만 무료 계정에는 <b>일정 시간마다 채워지는 사용량 그릇</b>이 있습니다. 그릇을 아껴 쓰는 요령 넷을 기억해 두세요.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-eyebrow">아껴 쓰기 1</div><h4>텍스트부터</h4><p>PPT 파일·이미지 생성은 무겁습니다. "PPT 말고 텍스트로 달라"고 하면 그릇이 훨씬 덜 닳는 것이죠.</p></div>
+        <div class="card"><div class="card-eyebrow">아껴 쓰기 2</div><h4>한 번에 하나</h4><p>"문항이랑 루브릭이랑 피드백 다 만들어 줘"보다, 하나씩 확인하며 가는 편이 결국 빠릅니다.</p></div>
+        <div class="card"><div class="card-eyebrow">아껴 쓰기 3</div><h4>긴 파일은 잘라서</h4><p>100장짜리 PPT 통째보다, 오늘 쓸 10장만 올리는 편이 정확도도 높습니다.</p></div>
+        <div class="card"><div class="card-eyebrow">아껴 쓰기 4</div><h4>재생성 대신 수정</h4><p>"다시 만들어 줘"는 처음부터입니다. "3번만 고쳐 줘"가 싸고 정확한 것이죠.</p></div>
+      </div>
+      <div class="callout callout-warn"><i data-lucide="battery-low"></i><div><strong>연수 직후가 골든타임</strong> — 오늘 끝나고 바로 재현하실 계획이라면, 지금은 계정을 <b>열어만</b> 두세요. 연수 중에 그릇을 다 쓰면 정작 만들 때 기다리게 됩니다.</div></div>
+    </section>
+
+    <section id="prompt3">
+      <div class="section-header"><span class="section-tag">1교시 · 프롬프트</span><h2>프롬프트 3원칙 — 역할 · 맥락 · 형식</h2>
+        <p class="section-lead">"프롬프트를 잘 써야 한다"는 말, 많이 들으셨을 겁니다. 그런데 잘 쓴다는 게 뭘까요? <b>딱 세 가지만 넣으면 됩니다.</b></p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="user-cog"></i></div><h4>① 역할 부여</h4><p>"당신은 <b>전문대 교육설계 전문가</b>다" — 누구로서 답할지 정해 주면 어휘와 깊이가 달라집니다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="layers"></i></div><h4>② 맥락 제공</h4><p>"<b>2학년, 기초가 약한</b> 학생 40명, <b>50분</b> 수업" — 상황을 알아야 현실적인 답이 나옵니다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="table"></i></div><h4>③ 출력 형식 지정</h4><p>"<b>표로</b>, 학습목표는 '~할 수 있다' 문장으로" — 원하는 모양을 지정하면 그대로 나옵니다.</p></div>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col compare-bad"><h4><i data-lucide="x-circle"></i> 이렇게 말고</h4>
+          <ul><li>"부가가치세 수업자료 만들어 줘"</li><li>→ 누구를 위한 건지, 몇 분짜리인지, 어떤 모양인지 없음</li><li>→ 교과서 요약 같은 밋밋한 결과</li></ul></div>
+        <div class="compare-col compare-good"><h4><i data-lucide="check-circle"></i> 이렇게</h4>
+          <ul><li>"<b>당신은 전문대 교육설계 전문가다</b>[역할]. <b>2학년 기초가 약한</b> 학생 대상 <b>50분</b>[맥락] '부가가치세 신고 절차' 차시의 학습목표 2개와 수업 흐름을 <b>표로</b>[형식] 만들어 줘"</li></ul></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="plus-circle"></i><div><strong>여기에 하나 더 붙이면</strong> — <b>목적</b>입니다. "이건 학생 배포용이야" / "이건 내가 볼 초안이야" 한마디로 문장의 톤이 완전히 달라지죠. 역할·맥락·형식이 뼈대라면, 목적은 그 위의 <b>온도 조절기</b>입니다.</div></div>
+      <p>그런데 이걸 매번 쓰기는 번거롭죠. 그래서 <b>한 번만 써 두고 계속 재사용하는 방법</b>이 있습니다. 나를 소개하는 프로필 문장을 만들어 두는 것이죠.</p>
+      <div class="builder" data-builder="b1">
+        <div class="builder-head"><span class="builder-num">빌더 ①</span><h4>교수자 프로필(지침) 만들기</h4><span class="b-when">가장 먼저 할 일 · 3분</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>학교·학과</label><input type="text" data-k="school" placeholder="○○대학교 ○○학과"></div>
+          <div class="b-field"><label>담당 과목 (대표 1~2개)</label><input type="text" data-k="subject" placeholder="예: 회계원리, 세무실무"></div>
+          <div class="b-field"><label>학생 특성</label><select data-k="students">
+            <option>기초가 약한 편이라 쉬운 설명이 필요하다</option>
+            <option>수준 차가 커서 눈높이를 나눠야 한다</option>
+            <option>실습 위주 수업이라 손으로 해보는 활동이 중요하다</option>
+            <option>취업·자격증 목표가 뚜렷한 편이다</option></select></div>
+          <div class="b-field"><label>선호하는 자료 스타일</label><select data-k="style">
+            <option>핵심만 간결한 개조식</option>
+            <option>친절하게 풀어 쓰는 설명체</option>
+            <option>표·비교 중심의 정리형</option>
+            <option>사례·이야기로 여는 스토리형</option></select></div>
+          <div class="b-field wide"><label>추가로 기억시킬 것 (선택)</label><input type="text" data-k="extra" placeholder="예: 매주 형성평가 5문항을 만든다 / 자료는 항상 50분 기준"></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">빈칸을 채우면 자동 완성</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="info"></i><div>연수가 끝난 뒤 <b>가장 먼저</b> 하실 일입니다. 무료 계정이라면 새 대화를 열 때마다 이 문장을 첫 줄에 붙여넣으세요. 유료 플랜이라면 프로젝트의 '지침'에 저장하면 자동 적용됩니다.</div></div>
+      </div>
+      <div class="callout callout-ok"><i data-lucide="coffee"></i><div><strong>1교시 끝 — 10분 쉽니다</strong> 도구는 알았습니다. 다음 50분은 <b>여러분 본인 과목 한 차시</b>를 만드는 시간입니다. 15시 정각에 시작합니다. 채팅에 남겨 주신 질문은 쉬는 시간에 답변드립니다.</div></div>
+    </section>
+
+    <!-- ===================== 2교시 ===================== -->
+    <section id="grasp">
+      <div class="section-header"><span class="section-tag">2교시 · 15:00~15:50</span><h2>교육설계 먼저 — GRASP 5단계</h2>
+        <p class="section-lead">여기서 오늘 연수의 방향이 갈립니다. <b>"슬라이드 만들어 줘"로 시작하면 슬라이드가 나옵니다. 그런데 수업은 안 나옵니다.</b></p></div>
+      <p>AI에게 자료부터 시키면 <b>예쁘지만 흐름이 없는 장표 묶음</b>이 나옵니다. 왜일까요? 목적지를 안 알려 줬기 때문이죠. 그래서 순서를 뒤집습니다 — <b>설계를 먼저 정하고, 그 설계를 재료로 자료를 만드는 것</b>입니다. 설계를 다섯 단계로 눌러 담은 것이 GRASP입니다.</p>
+      <div class="acro"><b>G</b>rasp 이해 · <b>R</b>eorganize 정리 · <b>A</b>rrange 구조 · <b>S</b>tore 기억 · <b>P</b>ractice 적용 — <b>이해→정리→구조→기억→적용</b>. 학생의 머릿속에서 지식이 자리 잡는 순서를 그대로 수업 흐름으로 옮긴 것입니다.</div>
+      <div class="slot-board">
+        <div class="slot"><span class="slot-num">STEP 1</span><span class="slot-tag">G · 이해</span><h5>왜 이걸 배우나</h5><p>도입에서 <b>학생의 경험과 연결</b>합니다. "여러분이 편의점에서 받은 영수증, 그 안에 오늘 배울 게 다 있습니다"처럼.</p></div>
+        <div class="slot"><span class="slot-num">STEP 2</span><span class="slot-tag">R · 정리</span><h5>핵심 개념 추리기</h5><p>다 가르치려다 아무것도 안 남습니다. <b>이 차시의 개념은 3개까지</b>로 줄이는 것이죠.</p></div>
+        <div class="slot ce"><span class="slot-num">STEP 3</span><span class="slot-tag">A · 구조</span><h5>순서와 시간 배분</h5><p>도입-전개-정리에 <b>분 단위 시간</b>을 붙입니다. 이게 있어야 AI가 현실적인 흐름표를 만듭니다.</p></div>
+        <div class="slot ce"><span class="slot-num">STEP 4</span><span class="slot-tag">S · 기억</span><h5>남기는 장치</h5><p>요약 한 줄, 표, 형성평가. <b>수업 마지막 5분</b>에 무엇을 할지 미리 정합니다.</p></div>
+        <div class="slot se"><span class="slot-num">STEP 5</span><span class="slot-tag">P · 적용</span><h5>해 보게 하기</h5><p>활동지·과제·실습. <b>학생이 손을 쓰는 지점</b>이 한 번은 있어야 합니다.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="key"></i><div><strong>오늘의 핵심 한 줄</strong> — <b>"학생은 ______를 할 수 있다."</b> 이 빈칸 하나만 채우면 나머지는 AI가 채웁니다. 채우지 않으면 AI도 못 채우는 것이죠. 지금 채팅창에 여러분 과목의 이 문장을 한 줄 써 보세요.</div></div>
+    </section>
+
+    <section id="design">
+      <div class="section-header"><span class="section-tag">2교시 · 시연 ★</span><h2>학습목표와 수업 흐름 — 설계 한 판</h2>
+        <p class="section-lead">이제 화면을 보시면 됩니다. <b>빈 대화창 하나</b>에서 시작해, 오늘 3교시가 끝날 때까지 <b>이 대화창 하나</b>만 씁니다.</p></div>
+      <p>왜 설계부터일까요? <b>이 설계안이 이후 모든 재료가 되기 때문</b>입니다. 슬라이드도, 게임화 요소도, 3교시의 평가문항과 루브릭도 전부 이 설계안 위에 올라갑니다.</p>
+      <div class="callout callout-tip"><i data-lucide="camera"></i><div><strong>이 시연에서 캡처하실 지점 2곳</strong> — ① 설계안이 <b>표</b>로 나온 화면 ② <b>"목표 2번은 우리 수업에 안 맞아, ○○로 바꿔서 흐름 다시"</b>라고 되받아치는 화면. 나머지는 아래 빌더로 그대로 재현됩니다.</div></div>
+      <div class="builder" data-builder="b2">
+        <div class="builder-head"><span class="builder-num">빌더 ②</span><h4>차시 교육설계 — 학습목표 + 수업 흐름</h4><span class="b-when">2교시 · 1단계</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>과목명</label><input type="text" data-k="subject" placeholder="예: 회계원리"></div>
+          <div class="b-field"><label>이번 차시 주제</label><input type="text" data-k="topic" placeholder="예: 부가가치세 신고 절차"></div>
+          <div class="b-field"><label>학년·수준</label><select data-k="level">
+            <option>1학년 · 입문(전공 첫 학기)</option>
+            <option>2학년 · 기초가 약한 편</option>
+            <option>2학년 · 보통 수준</option>
+            <option>3학년 · 심화·취업 준비</option></select></div>
+          <div class="b-field"><label>수업 시간</label><select data-k="minutes">
+            <option>50분</option><option>75분</option><option>100분(2교시 연강)</option><option>150분(3교시 연강)</option></select></div>
+          <div class="b-field"><label>수업 형태</label><select data-k="type">
+            <option>이론 중심</option><option>실습 중심</option><option>이론+실습 혼합</option></select></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">GRASP 순서 내장</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="repeat"></i><div>결과가 오면 그대로 받지 말고 <b>한 번은 고치세요</b> — 되받아치기가 실력인 것이죠. 오늘 시연에서 이 장면을 꼭 보여 드립니다.</div></div>
+      </div>
+      <h3>한 차시가 아니라 한 학기가 필요하시면</h3>
+      <p>주차별 흐름은 같은 논리를 위로 한 칸 올린 것뿐입니다. <b>차시 설계가 먼저 손에 익어야</b> 주차 설계가 현실적으로 나오는 것이죠.</p>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="calendar-range"></i><span>주차별 수업 흐름 설계</span><span class="prompt-persona">학기 단위 · 15주</span></div>
+        <div class="prompt-text">[과목명] 한 학기(15주) 수업 흐름을 설계해 줘. 대상은 [2학년, 기초가 약한 반]이다.
+
+- 먼저 이 과목의 최종 학습목표(학기가 끝났을 때 학생이 할 수 있어야 하는 것) 3개를 제안해 줘.
+- 그 목표에 도달하는 순서로 15주를 배치하고, 주차별로 (주제 / 핵심 개념 / 학생 활동 / 평가 연계)를 표로 만들어 줘.
+- 중간고사·기말고사 주차와, 과제 제출 주차를 표시해 줘.
+- 난이도가 갑자기 튀는 주차가 있으면 표시하고 이유를 알려 줘.
+
+내가 주차를 바꾸면 뒷 주차를 자동으로 조정해 줘.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+    </section>
+
+    <section id="slides">
+      <div class="section-header"><span class="section-tag">2교시 · 자료 제작</span><h2>슬라이드 구성안 · 핵심 개념 정리</h2>
+        <p class="section-lead">설계안이 있으니 슬라이드는 순식간입니다. <b>새 창을 열지 않는 것</b>이 요령의 전부인 것이죠.</p></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="presentation"></i><span>PPT 구성안 — 개요 먼저, 승인 후 본문</span><span class="prompt-persona">같은 대화에서 이어서</span></div>
+        <div class="prompt-text">위에서 설계한 수업 흐름을 바탕으로 강의 슬라이드 구성안을 만들어 줘.
+
+- 분량: 10~15장 내외
+- 톤: 친근한 강의 톤
+- 슬라이드마다 2~3문장의 발표 멘트를 함께 써 줘.
+
+순서: 먼저 슬라이드 제목만 나열한 전체 개요를 보여줘. 내가 "좋다"고 하면 장별로 (제목 / 핵심 한 줄 / 본문 개조식 3~4줄 / 발표 멘트) 형식으로 채워 줘. 텍스트 중심으로 — 디자인은 나중에 입힌다.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-tip"><i data-lucide="split"></i><div><strong>왜 개요를 먼저 받나</strong> — 15장을 한 번에 받으면 마음에 안 들 때 통째로 다시 받아야 합니다. <b>제목만 먼저 보고 방향을 잡는 것</b>이 시간도 사용량도 아끼는 길인 것이죠.</div></div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="stethoscope"></i><span>기존 강의자료 진단 + 개선안</span><span class="prompt-persona">내 PPT 파일 첨부 후</span></div>
+        <div class="prompt-text">첨부한 파일은 내 실제 강의자료다. 대상은 [2학년, 기초가 약한 반].
+
+이 자료를 "[구조 / 눈높이 / 참여 / 최신성 중 택1]" 관점을 중심으로 진단해 줘.
+
+① 진단표: 잘된 점 3가지 / 아쉬운 점 3가지 / 지금 바로 고칠 수 있는 것 3가지.
+② 아쉬운 점 중 가장 효과가 클 1가지를 골라, 해당 부분의 개선 전→후 예시를 보여줘.
+③ 이 자료에 추가하면 좋을 학생 활동(참여 장치) 1가지를 제안해 줘.
+
+비판은 솔직하게 — 듣기 좋은 말보다 다음 학기에 써먹을 수 있는 지적이 필요하다.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+      <div class="callout callout-warn"><i data-lucide="message-square-warning"></i><div><strong>"비판은 솔직하게"가 왜 들어가나</strong> — 이 한 줄이 없으면 AI는 칭찬부터 합니다. <b>덕담을 받으려고 파일을 올리는 게 아니죠.</b> 10년 묵은 내 PPT는 버릴 물건이 아니라 <b>가장 훌륭한 재료</b>입니다.</div></div>
+    </section>
+
+    <section id="gami">
+      <div class="section-header"><span class="section-tag">2교시 · 학습동기</span><h2>게이미피케이션 4요소 — 학생이 움직이는 원리</h2>
+        <p class="section-lead">"게임처럼 수업하라"는 말이 아닙니다. 게임이 사람을 붙드는 <b>구조 네 가지</b>를 수업에 옮기자는 이야기죠.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon"><i data-lucide="mountain"></i></div><h4>도전 · Challenge</h4><p>너무 쉬우면 지루하고 너무 어려우면 포기합니다. <b>조금 어려운 과제</b>가 사람을 붙듭니다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="book-marked"></i></div><h4>서사 · Narrative</h4><p>"3장 부가가치세"보다 <b>"당신은 이제 막 개업한 사장입니다"</b>가 기억에 남습니다.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="zap"></i></div><h4>피드백 · Feedback</h4><p>맞았는지 틀렸는지 <b>지금</b> 알려 주는 것. 일주일 뒤 채점된 종이와는 다른 경험이죠.</p></div>
+        <div class="card"><div class="card-icon"><i data-lucide="users"></i></div><h4>관계 · Social</h4><p>협력이든 경쟁이든, <b>다른 사람이 보고 있다는 감각</b>이 참여를 만듭니다.</p></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="target"></i><div><strong>네 개를 다 넣지 마세요</strong> — 한 차시에 <b>하나만</b> 결합해도 분위기가 달라집니다. 욕심내면 수업이 이벤트가 되고, 내용이 사라지는 것이죠.</div></div>
+      <h3>강의에 넣는 세 가지 패턴</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><b>사례 시나리오</b> <span style="font-family:var(--font-mono);font-size:11px;color:var(--fg-meta)">도전 + 서사</span><p>"개업 3개월 차 사장이 첫 부가세 신고를 앞두고 있습니다. 무엇부터 하시겠습니까?" — 개념을 <b>상황 속에</b> 넣습니다.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><b>토론 주제</b> <span style="font-family:var(--font-mono);font-size:11px;color:var(--fg-meta)">관계 + 피드백</span><p>정답이 갈리는 질문을 던지고 <b>양쪽을 다 말하게</b> 합니다. 조용한 반일수록 효과가 큽니다.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><b>단계별 미션</b> <span style="font-family:var(--font-mono);font-size:11px;color:var(--fg-meta)">피드백 + 도전</span><p>한 번에 다 시키지 않고 <b>3단계로 쪼개</b> 각 단계마다 확인 지점을 둡니다. 실습 수업에 특히 잘 맞죠.</p></div></div>
+      </div>
+      <div class="prompt-box"><div class="prompt-label"><i data-lucide="gamepad-2"></i><span>게임화 결합 — 사례 시나리오 · 토론 주제 생성</span><span class="prompt-persona">같은 대화에서 이어서</span></div>
+        <div class="prompt-text">위에서 설계한 차시에 학습동기 장치를 하나 결합해 줘.
+
+- 결합할 요소: [도전 / 서사 / 피드백 / 관계 중 1개]
+- 형태: [사례 시나리오 / 토론 주제 / 단계별 미션 중 1개]
+- 소요 시간: 수업 중 [10분] 이내
+
+만들 때 지킬 것:
+① 이 장치가 어떤 학습목표를 겨냥하는지 한 줄로 밝혀 줘 — 재미만 있고 목표와 무관하면 버린다.
+② 학생에게 그대로 읽어 줄 수 있는 문장으로 써 줘.
+③ 학생이 막힐 지점 1곳을 예상하고, 교수가 던질 힌트 질문 1개를 붙여 줘.
+
+우리 학생들은 [기초가 약한 편]이니, 진입 장벽은 낮게 잡아 줘.</div>
+        <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div>
+    </section>
+
+    <section id="interactive">
+      <div class="section-header"><span class="section-tag">2교시 · 시연 ★</span><h2>대화형 학습자료 — '즉각 피드백'을 실제로 만들면</h2>
+        <p class="section-lead">방금 본 네 요소 중 <b>피드백</b>은 말로만 하면 공허합니다. 그래서 실물로 만들어 보겠습니다 — <b>코딩 한 줄 없이.</b> 지금 이 교재도 같은 방식으로 만들어진 것이고요.</p></div>
+      <p>종이 유인물은 학생이 <b>읽고 끝</b>입니다. 하지만 클릭해서 반응이 오면 <b>손이 움직이고, 손이 움직이면 기억이 남습니다.</b> 아래를 직접 눌러 보세요.</p>
+      <div class="quiz folded" data-quiz>
+        <h4><i data-lucide="mouse-pointer-click"></i> 직접 눌러 보세요 — 즉각 피드백이란 이런 것 <span class="qcount">1문항</span><span class="qchev">▾</span></h4>
+        <span class="quiz-eyebrow">지금 이 반응이, 학생 화면에서 일어나는 일입니다</span>
+        <div class="q" data-a="1" data-explain="틀린 순간 왜 틀렸는지 알게 되는 것 — 이 한 박자가 종이 유인물과의 결정적 차이입니다.">
+          <div class="qq">대화형 학습자료가 종이 유인물보다 나은 <b>가장 큰</b> 이유는?</div>
+          <button class="opt">화면이 예쁘다</button>
+          <button class="opt">틀린 즉시 이유를 알 수 있다</button>
+          <button class="opt">인쇄비가 안 든다</button>
+          <button class="opt">학생이 신기해한다</button>
+        </div>
+      </div>
+      <div class="builder" data-builder="b6">
+        <div class="builder-head"><span class="builder-num">빌더 ③</span><h4>대화형 학습자료(단일 HTML) 생성</h4><span class="b-when">2교시 · 시연 · 재현용</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>문항 수</label><select data-k="qcount">
+            <option>5문항 (무료 계정 권장)</option><option>8문항</option><option>10문항</option></select></div>
+          <div class="b-field wide"><label>넣을 장치 (체크한 것이 프롬프트에 반영됩니다)</label>
+            <div class="b-checks">
+              <label><input type="checkbox" data-k="c_fb" checked>즉시 피드백(정답·해설)</label>
+              <label><input type="checkbox" data-k="c_prog" checked>진행률 표시</label>
+              <label><input type="checkbox" data-k="c_point">포인트 점수판</label>
+              <label><input type="checkbox" data-k="c_badge">배지(등급) 시스템</label>
+              <label><input type="checkbox" data-k="c_retry">오답 다시 풀기</label>
+            </div></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">문항을 만든 대화에서 이어서</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="smartphone"></i><div><b>무료 계정</b>이라면 문항 5개, 장치는 2개(즉시 피드백+진행률)로 시작하세요. 첫판은 가볍게 — 욕심내면 생성 도중에 그릇이 비는 것이죠.</div></div>
+      </div>
+      <h3>연수 뒤, 이 순서대로 하시면 됩니다 (약 30분)</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><b>문항부터 (10분)</b><p>빌더 ②로 설계 → 3교시의 빌더 ④로 문항. HTML은 <b>문항이 있어야</b> 만들 수 있습니다. 같은 대화창에서 이어가세요.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><b>빌더 ③ 붙여넣기 (1분)</b><p>문항 5, 장치 2개 체크 → 복사 → 같은 대화에 붙여넣기 → 전송.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><b>기다리기 (5분)</b><p>중간에 멈추면 <b>"이어서 만들어 줘"</b> 한마디면 됩니다. 당황하지 않으셔도 됩니다.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><b>저장하고 열어 보기 (5분)</b><p>다운로드 → 더블클릭하면 브라우저에서 열립니다. 확인 3가지: <b>문항 수가 맞나 / 정답·해설이 정확한가(전 문항 직접 풀기) / 진행률이 움직이나.</b></p></div></div>
+        <div class="step"><div class="step-num">5</div><div><b>다듬기 2회 (10분)</b><p>고칠 점은 <b>한 번에 하나씩</b>: "3번 문항 해설이 틀렸어, ○○로 고쳐 줘" → 확인 → "글자를 키우고 제목을 '○○ 1차시'로 바꿔 줘".</p></div></div>
+      </div>
+      <div class="callout callout-info"><i data-lucide="share-2"></i><div><strong>학생에게 어떻게 주나</strong> — 파일 하나로 완결되므로 <b>LMS에 첨부</b>하거나 메일로 보내면 됩니다. 학생은 다운로드해서 더블클릭. 서버도, 로그인도 필요 없는 것이죠.</div></div>
+      <div class="callout callout-ok"><i data-lucide="coffee"></i><div><strong>2교시 끝 — 10분 쉽니다</strong> 수업은 만들었습니다. 그런데 여기까지만 하면 절반입니다. <b>남은 50분은 평가</b>입니다 — 수업을 아무리 잘 만들어도 평가가 그대로면 학생의 행동은 바뀌지 않으니까요. 16시 정각에 시작합니다.</div></div>
+    </section>
+
+    <!-- ===================== 3교시 ===================== -->
+    <section id="evalshift">
+      <div class="section-header"><span class="section-tag">3교시 · 16:00~16:50</span><h2>평가의 무게중심을 옮깁니다</h2>
+        <p class="section-lead">불편한 이야기부터 하겠습니다. <b>지금 우리가 내는 과제의 상당수는, AI가 몇 초 만에 씁니다.</b> 그리고 우리는 대체로 알아채지 못합니다.</p></div>
+      <p>여기서 두 갈래 길이 있습니다. 하나는 <b>탐지</b>입니다 — AI가 썼는지 잡아내는 쪽. 그런데 이 길은 이기기 어렵습니다. 탐지 도구는 오판이 잦고, 학생과 교수가 서로를 의심하는 관계가 되죠. 다른 하나는 <b>재설계</b>입니다 — <b>AI를 써도 배움이 남게 과제를 다시 짜는 쪽.</b> 오늘은 두 번째 길을 갑니다.</p>
+      <div class="compare-grid">
+        <div class="compare-col compare-bad"><h4><i data-lucide="package"></i> 기존 · 결과 중심</h4>
+          <ul><li>최종 결과물의 완성도로 판단</li><li>보고서 한 편, 과제물 한 개</li><li>→ <b>AI가 대신할 수 있는 지점</b>이 평가의 전부</li></ul></div>
+        <div class="compare-col compare-good"><h4><i data-lucide="footprints"></i> 재설계 · 과정 중심</h4>
+          <ul><li>사고 흐름의 단계를 함께 본다</li><li>중간 산출물·선택의 이유·수정 이력</li><li>→ <b>AI를 썼더라도 과정은 학생의 것</b></li></ul></div>
+      </div>
+      <h3>AI-proof 과제 4가지 패턴</h3>
+      <p>거창한 개편이 아닙니다. <b>기존 과제에 한 겹만 덧대는 것</b>이죠.</p>
+      <div class="gates">
+        <div class="gate"><div class="gt"><i data-lucide="mic"></i> 01 · 발표</div>
+          <div class="gd">제출물에 <b>3분 발표</b>를 붙입니다. 자기가 쓰지 않은 글은 발표가 안 되죠.</div>
+          <span class="gb gb2">Live Presentation</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="messages-square"></i> 02 · 구술</div>
+          <div class="gd">제출 후 <b>30초 질문 2개.</b> "왜 이 방법을 골랐나요?" 한마디면 충분합니다.</div>
+          <span class="gb gb2">Oral Examination</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="hand"></i> 03 · 실연</div>
+          <div class="gd">수업 시간에 <b>직접 해 보게</b> 합니다. 실습·실기 과목에서 가장 강력하죠.</div>
+          <span class="gb gb3">Performance</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="rotate-ccw"></i> 04 · 반추</div>
+          <div class="gd"><b>"어디서 막혔고 어떻게 풀었는가"</b>를 함께 제출하게 합니다. AI는 학생의 막힘을 모릅니다.</div>
+          <span class="gb gb3">Reflection</span></div>
+      </div>
+      <div class="callout callout-ok"><i data-lucide="percent"></i><div><strong>30%만 바꿔도 충분합니다</strong> — 한 학기 평가 전부를 뜯어고칠 필요는 없습니다. <b>비중이 큰 과제 하나</b>에만 위 네 가지 중 하나를 덧대 보세요. 학생의 준비 방식이 그 하나 때문에 바뀝니다.</div></div>
+    </section>
+
+    <section id="items">
+      <div class="section-header"><span class="section-tag">3교시 · 시연</span><h2>학습목표 기반 문항 출제 · 난이도 조절</h2>
+        <p class="section-lead">평가의 출발점은 문항이 아니라 <b>학습목표</b>입니다. 2교시에 정한 그 문장이 여기서 다시 일합니다.</p></div>
+      <div class="builder" data-builder="e1">
+        <div class="builder-head"><span class="builder-num">빌더 ④</span><h4>평가 문항 생성 + 난이도 조절</h4><span class="b-when">3교시 · 1단계</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>평가 유형</label><select data-k="etype">
+            <option>객관식(4지선다)</option><option>OX + 객관식 혼합</option><option>단답형 포함 혼합</option><option>서술형 중심</option></select></div>
+          <div class="b-field"><label>문항 수</label><select data-k="ecount">
+            <option>5문항</option><option>8문항</option><option>10문항</option><option>15문항</option></select></div>
+          <div class="b-field"><label>난이도 분포</label><select data-k="elevel">
+            <option>하 중심(기초 확인)</option><option>중 중심(표준)</option><option>하·중·상 골고루</option><option>상 중심(변별용)</option></select></div>
+          <div class="b-field"><label>쓰임</label><select data-k="euse">
+            <option>수업 마지막 형성평가</option><option>중간·기말 시험 초안</option><option>퀴즈·과제 문항</option></select></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">목표 연계 · 오답 이유 포함</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="shield-check"></i><div>문항이 나오면 <b>내가 직접 풀어보는 것</b>이 검증의 시작입니다. 정답이 틀린 문항, 보기 두 개가 다 맞는 문항이 종종 숨어 있는 것이죠. 오늘 시연에서 실제로 <b>틀린 문항 하나를 찾아내는 장면</b>을 보시게 됩니다.</div></div>
+      </div>
+      <div class="callout callout-tip"><i data-lucide="sliders-horizontal"></i><div><strong>난이도 조절이 왜 따로 있나</strong> — 같은 문항을 <b>쉬운 버전·어려운 버전</b>으로 함께 받아 두면, 분반이나 재수강생 대응이 한결 수월해집니다. 한 번 만들 때 같이 받아 두세요.</div></div>
+    </section>
+
+    <section id="rubric">
+      <div class="section-header"><span class="section-tag">3교시 · 시연 ★</span><h2>루브릭 설계 · AI-proof 변형</h2>
+        <p class="section-lead">루브릭은 채점을 위한 표가 아닙니다. <b>학생에게 미리 보여 주는 지도</b>죠. 그리고 여기에 AI-proof 한 겹을 얹습니다.</p></div>
+      <div class="builder" data-builder="e2">
+        <div class="builder-head"><span class="builder-num">빌더 ⑤</span><h4>루브릭 + AI-proof 변형안</h4><span class="b-when">3교시 · 2단계</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>평가 대상</label><input type="text" data-k="task" placeholder="예: 기말 조별 발표 / 실습 결과물 보고서"></div>
+          <div class="b-field"><label>만점</label><select data-k="score">
+            <option>100점</option><option>50점</option><option>30점</option><option>20점</option></select></div>
+          <div class="b-field"><label>수준 구분</label><select data-k="grades">
+            <option>상·중·하 3단계</option><option>4단계(우수·양호·보통·미흡)</option><option>5단계(A~E)</option></select></div>
+          <div class="b-field"><label>결과물 : 과정 비중</label><select data-k="ratio">
+            <option>70 : 30 (결과 중심에서 한 걸음)</option>
+            <option>50 : 50 (균형)</option>
+            <option>30 : 70 (과정 중심)</option></select></div>
+          <div class="b-field"><label>덧댈 AI-proof 형식</label><select data-k="proof">
+            <option>발표(3분 라이브)</option><option>구술(질문 2개)</option><option>실연(수업 중 직접)</option><option>반추(막힌 지점 기록)</option></select></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">루브릭 → 변형안 → 공지문</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="megaphone"></i><div>루브릭은 <b>과제를 내주는 날 함께 공지</b>하세요. 채점 직전에 꺼내면 기준표가 아니라 통보가 됩니다. 빌더가 만들어 주는 <b>공지문 3~4문장</b>을 그대로 쓰시면 됩니다.</div></div>
+      </div>
+      <h3>학생에게 줄 AI 사용 가이드 5</h3>
+      <p>금지 대신 <b>기준</b>을 주는 편이 실제로 작동합니다. 과제 안내문에 이 다섯 줄을 붙여 보세요.</p>
+      <div class="check-sheet">
+        <h4>과제 제출 전, 학생이 스스로 확인할 것</h4>
+        <p class="cs-sub">그대로 복사해 과제 안내문 하단에 넣으셔도 됩니다.</p>
+        <label class="check-item"><input type="checkbox"><span><b>목적 명확성</b> — 나는 AI를 <b>왜</b> 썼는가? (자료 조사 / 문장 다듬기 / 아이디어 확장 등)</span></label>
+        <label class="check-item"><input type="checkbox"><span><b>직접 기여도</b> — 주제·방향·핵심 메시지를 <b>내가</b> 정했는가?</span></label>
+        <label class="check-item"><input type="checkbox"><span><b>정확성 검증</b> — AI가 준 정보·수치를 <b>출처로 재확인</b>했는가?</span></label>
+        <label class="check-item"><input type="checkbox"><span><b>저작권·윤리</b> — 타인의 저작물이 무단으로 포함되지 않았는가?</span></label>
+        <label class="check-item"><input type="checkbox"><span><b>결과물 주체성</b> — 이 글이 <b>내가 하고 싶은 말</b>인가?</span></label>
+      </div>
+    </section>
+
+    <section id="feedback">
+      <div class="section-header"><span class="section-tag">3교시 · 시연</span><h2>학생 맞춤 피드백 — 코멘트를 쓰는 시간 줄이기</h2>
+        <p class="section-lead">40명분 과제에 한 줄씩만 써도 두 시간입니다. 그래서 대부분 <b>점수만</b> 나가죠. 여기가 AI가 가장 크게 돕는 지점입니다.</p></div>
+      <div class="builder" data-builder="e3">
+        <div class="builder-head"><span class="builder-num">빌더 ⑥</span><h4>학생 맞춤 피드백 코멘트</h4><span class="b-when">3교시 · 3단계</span></div>
+        <div class="b-form">
+          <div class="b-field"><label>과목·과제명</label><input type="text" data-k="task2" placeholder="예: 회계원리 3주차 실습 보고서"></div>
+          <div class="b-field"><label>톤</label><select data-k="tone">
+            <option>따뜻하지만 분명하게</option><option>간결하고 담백하게</option><option>격려 위주로(초반 과제)</option><option>엄격하게(고학년·최종 과제)</option></select></div>
+          <div class="b-field"><label>길이</label><select data-k="len">
+            <option>3~4문장</option><option>5~6문장</option><option>한 문단(8문장 내외)</option></select></div>
+        </div>
+        <div class="b-out"><div class="prompt-box"><div class="prompt-label"><i data-lucide="wand-2"></i><span>완성된 프롬프트</span><span class="prompt-persona">답안 붙여넣고 사용</span></div>
+          <div class="prompt-text" data-out></div>
+          <div class="prompt-actions"><button class="copy-btn"><i data-lucide="copy"></i><span>복사</span></button></div></div></div>
+        <div class="b-hint"><i data-lucide="user-x"></i><div><b>학생 이름·학번은 지우고</b> 올리세요. 프롬프트에 그 지시가 들어 있지만, 올리기 전에 한 번 더 확인하는 습관이 안전합니다.</div></div>
+      </div>
+      <div class="callout callout-danger"><i data-lucide="octagon-alert"></i><div><strong>채점은 위임하지 마세요</strong> — 루브릭을 <b>만드는</b> 일, 코멘트 <b>초안을 뽑는</b> 일은 AI와 함께해도 좋습니다. 그러나 <b>점수를 매기는 최종 판단</b>은 교수의 몫입니다. 성적은 학생의 삶에 남는 기록인 것이죠. AI는 근거를 정리해 주는 조수까지입니다.</div></div>
+    </section>
+
+    <section id="limits">
+      <div class="section-header"><span class="section-tag">3교시 · 안전</span><h2>넘지 말아야 할 세 가지 선</h2>
+        <p class="section-lead">여기까지 좋은 이야기를 많이 했습니다. 이제 <b>반드시 짚고 넘어가야 할 세 가지</b>를 말씀드립니다.</p></div>
+      <div class="gates">
+        <div class="gate"><div class="gt"><i data-lucide="search-check"></i> 사실 검증</div>
+          <div class="gd">AI는 <b>그럴듯하게 틀립니다.</b> 법령 조문 번호, 통계 수치, 연도, 인명 — 특히 <b>숫자와 고유명사</b>가 위험합니다. 자신 있게 틀리기 때문에 더 위험한 것이죠.</div>
+          <span class="gb gb2">학생에게 나가기 전 반드시</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="copyright"></i> 저작권</div>
+          <div class="gd">교재 원문을 통째로 올려 요약본을 만들어 배포하는 것은 <b>위험합니다.</b> 수업 목적 이용에도 한계가 있고, 출처 표기는 여전히 필요합니다.</div>
+          <span class="gb gb3">배포 범위를 좁게</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="user-x"></i> 학생 개인정보</div>
+          <div class="gd">학번·이름·연락처가 든 명단, 상담 기록, 성적표를 <b>그대로 올리지 마세요.</b> 꼭 필요하면 이름을 A·B·C로 바꿔서 올리는 것이죠.</div>
+          <span class="gb gb2">올리기 전 지우기</span></div>
+        <div class="gate"><div class="gt"><i data-lucide="scale"></i> 그리고 — 이름의 무게</div>
+          <div class="gd">AI가 만들었어도 <b>자료에 붙는 이름은 교수의 이름</b>입니다. 오류가 있으면 책임도 그 이름을 따라옵니다. 이게 검증을 건너뛸 수 없는 진짜 이유인 것이죠.</div>
+          <span class="gb gb3">최종 책임은 사람</span></div>
+      </div>
+      <div class="check-sheet">
+        <h4>배포 전 5분 체크리스트</h4>
+        <p class="cs-sub">학생에게 나가기 직전, 이 다섯 개만 확인하세요. 체크는 저장되지 않습니다 — 매번 새로.</p>
+        <label class="check-item"><input type="checkbox"><span><b>숫자·연도·법령 조문</b>을 원출처에서 한 번 확인했다 (검색 1분이면 됩니다)</span></label>
+        <label class="check-item"><input type="checkbox"><span><b>문항을 내가 직접 풀어</b> 정답과 해설이 맞는지 확인했다</span></label>
+        <label class="check-item"><input type="checkbox"><span>인용한 자료의 <b>출처를 표기</b>했고, 교재 원문을 통째로 옮긴 부분은 없다</span></label>
+        <label class="check-item"><input type="checkbox"><span>업로드한 파일에 <b>학생 개인정보</b>가 들어 있지 않았다</span></label>
+        <label class="check-item"><input type="checkbox"><span>이 자료를 <b>내 이름으로 내보내도</b> 괜찮다고 스스로 판단했다</span></label>
+      </div>
+      <div class="callout callout-danger"><i data-lucide="alert-triangle"></i><div><strong>가장 흔한 사고</strong> — 문항의 정답이 틀린 채로 나가는 것입니다. 학생이 먼저 발견하면 그 수업의 신뢰가 흔들리죠. <b>전 문항 직접 풀기</b>, 이 하나만은 절대 건너뛰지 마세요.</div></div>
+    </section>
+
+    <section id="action">
+      <div class="section-header"><span class="section-tag">3교시 · 마무리</span><h2>내일부터 하나만 바꿔보기</h2>
+        <p class="section-lead">100가지를 다 바꾸려 하면 하나도 안 바뀝니다. <b>딱 세 칸만 채워 가세요.</b> 채팅창에 한 줄로 남겨 주시면 더 좋고요.</p></div>
+      <div class="check-sheet">
+        <h4>나의 액션플랜 3</h4>
+        <p class="cs-sub">지금 종이나 메모장에 옮겨 적으세요. 오늘 가장 중요한 3분입니다.</p>
+        <label class="check-item"><input type="checkbox"><span><b>액션 #1 · 일상 사용</b> — 내일 <span style="border-bottom:1px solid var(--border-strong);padding:0 34px"></span> 작업에 AI를 한 번 써 본다<br/><span style="font-size:12.5px;color:var(--fg-meta)">(예: 공문 초안 / 회의록 정리 / 다음 주 강의자료 개요)</span></span></label>
+        <label class="check-item"><input type="checkbox"><span><b>액션 #2 · 평가 1개</b> — 이번 학기 <span style="border-bottom:1px solid var(--border-strong);padding:0 34px"></span> 과목의 평가를 AI-proof로 한 겹 덧댄다<br/><span style="font-size:12.5px;color:var(--fg-meta)">(예: 보고서 제출 + 30초 구술 질문 2개)</span></span></label>
+        <label class="check-item"><input type="checkbox"><span><b>액션 #3 · 수업 장치 1개</b> — <span style="border-bottom:1px solid var(--border-strong);padding:0 34px"></span> 차시에 게임화 요소를 하나 결합한다<br/><span style="font-size:12.5px;color:var(--fg-meta)">(예: 사례 시나리오 10분 / 토론 주제 1개 / 대화형 학습자료 1개)</span></span></label>
+      </div>
+      <div class="callout callout-info"><i data-lucide="clipboard-copy"></i><div><strong>그리고 오늘 안에 3분</strong> — <b>빌더 ①</b>로 교수자 프로필 문장을 만들어 메모장에 저장해 두세요. 앞으로 모든 대화의 첫 줄이 됩니다. 이거 하나만 해 두셔도 오늘 연수값은 합니다.</div></div>
+    </section>
+
+    <!-- ===================== Q&A ===================== -->
+    <section id="qa">
+      <div class="section-header"><span class="section-tag">Q&amp;A · 16:50~17:00</span><h2>자주 나오는 질문 · 그리고 닫는 말</h2>
+        <p class="section-lead">매번 나오는 질문 다섯 개를 먼저 정리했습니다. 그 밖의 질문은 채팅이나 마이크로 주세요.</p></div>
+      <div class="quiz" data-faq>
+        <div class="q" style="border-top:0"><div class="qq">Q1. Claude, 무료로 어디서 시작하나요?</div>
+          <p style="font-size:14px;color:var(--fg-muted);margin:4px 0 0"><span class="mono">claude.ai</span>에서 구글 계정으로 30초면 가입됩니다. 학교 메일이 막혀 있으면 개인 지메일로 하세요. 무료 계정에는 일정 시간마다 채워지는 사용량 한도가 있고, 오늘 다룬 내용은 대부분 무료로 재현됩니다.</p></div>
+        <div class="q"><div class="qq">Q2. 스킬은 직접 만들 수 있나요?</div>
+          <p style="font-size:14px;color:var(--fg-muted);margin:4px 0 0">가능합니다. 다만 순서가 있습니다 — <b>먼저 같은 프롬프트를 서너 번 반복해 쓰신 다음</b>, 그 패턴이 안정되면 스킬로 굳히세요. 처음부터 스킬을 만들려 하면 무엇을 담을지 모르는 채로 틀만 만들게 됩니다.</p></div>
+        <div class="q"><div class="qq">Q3. ChatGPT를 쓰던 사람도 오늘 내용이 통하나요?</div>
+          <p style="font-size:14px;color:var(--fg-muted);margin:4px 0 0">거의 그대로 통합니다. <b>프롬프트 3원칙, GRASP 설계 순서, 평가 재설계</b>는 도구와 무관한 이야기니까요. 오늘 빌더의 프롬프트도 ChatGPT·Copilot에 그대로 붙여넣으시면 됩니다.</p></div>
+        <div class="q"><div class="qq">Q4. AI-proof 과제, 학생들이 부담스러워하지 않나요?</div>
+          <p style="font-size:14px;color:var(--fg-muted);margin:4px 0 0">방식에 따라 다릅니다. <b>분량을 늘리는</b> 변형(보고서를 더 길게)은 반발이 큽니다. 반면 <b>과정을 드러내는</b> 변형(30초 구술, 막힌 지점 한 줄)은 오히려 반응이 좋습니다 — 성실한 학생이 보상받기 때문이죠. 그래서 30%만 바꾸라고 말씀드리는 겁니다.</p></div>
+        <div class="q"><div class="qq">Q5. 학생이 AI로 쓴 걸 알았을 때, 어떻게 하나요?</div>
+          <p style="font-size:14px;color:var(--fg-muted);margin:4px 0 0">적발보다 <b>기준을 먼저 공지하는 쪽</b>이 훨씬 낫습니다. 3교시의 'AI 사용 가이드 5'를 과제 안내문에 미리 붙이고, 위반 시 어떻게 되는지도 함께 적어 두세요. 기준이 없는 상태의 적발은 대체로 분쟁으로 끝납니다.</p></div>
+      </div>
+      <div class="callout callout-ok"><i data-lucide="sparkles"></i><div><strong>마지막으로 한 줄</strong> — DX가 <b>살아남기 위한 변화</b>였다면, AI가 가져온 변화는 <b>교육의 본질을 다시 묻는 변화</b>입니다. 오늘 내내 말씀드린 건 결국 하나예요. <b>알맹이는 사람이 정하고, 속도는 AI가 낸다.</b> 학습목표를 정하는 것도, 우리 반 학생을 아는 것도, 마지막에 이름을 거는 것도 전부 교수의 일입니다. AI는 그 사이의 반복을 대신할 뿐인 것이죠. 그 반복이 사라진 자리에 무엇을 채우실지가, 오늘 이후의 이야기입니다.</div></div>
+      <div class="callout callout-info"><i data-lucide="mail"></i><div><strong>질문이 남으셨다면</strong> — 채팅창에 남겨 주세요. 남은 시간 동안 최대한 답변드리고, 미처 못 다룬 질문은 연수 후 협의회를 통해 정리해 전달하겠습니다. <b>감사합니다. — 김민철 · 서일대학교 AI게임융합학과</b></div></div>
+    </section>
+
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){'use strict';
+var root=document.documentElement,toast=document.getElementById('toast'),tT;
+function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('show');},1700);}
+function icons(){if(window.lucide&&lucide.createIcons){try{lucide.createIcons();}catch(e){}}}
+
+/* 테마 */
+document.querySelectorAll('[data-theme]').forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.getAttribute('data-theme'));
+  document.querySelectorAll('[data-theme]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});});
+
+/* 화면(보통/수업) */
+(function(){try{var v=localStorage.getItem('kctu3h');if(v==='0')root.classList.remove('present');if(v==='1')root.classList.add('present');}catch(e){}
+function sync(){var on=root.classList.contains('present');document.querySelectorAll('[data-view]').forEach(function(x){x.setAttribute('aria-pressed',(x.dataset.view==='present')===on?'true':'false');});}
+document.querySelectorAll('[data-view]').forEach(function(b){b.addEventListener('click',function(){var on=b.dataset.view==='present';root.classList.toggle('present',on);sync();try{localStorage.setItem('kctu3h',on?'1':'0');}catch(e){}});});
+sync();})();
+
+/* 진행바 */
+var pf=document.getElementById('progressFill');function upd(){var s=window.scrollY||0,t=document.documentElement.scrollHeight-window.innerHeight;pf.style.width=(t>0?Math.min(100,s/t*100):0)+'%';}
+window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);upd();
+
+/* 목차 하이라이트 */
+var navLinks=document.querySelectorAll('.nav-link');
+var ob=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;navLinks.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+id);});}});},{rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('section[id]').forEach(function(s){ob.observe(s);});
+navLinks.forEach(function(l){l.addEventListener('click',function(e){var t=document.querySelector(l.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+
+/* 복사 (file:// 폴백 포함) */
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(t).catch(function(){return fb(t);});}return fb(t);
+  function fb(t){return new Promise(function(res){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);res();});}}
+function bindCopy(r){r.querySelectorAll('.copy-btn').forEach(function(btn){btn.onclick=function(){var box=btn.closest('.prompt-box');if(!box)return;var t=box.querySelector('.prompt-text').innerText;
+  copyText(t).then(function(){btn.classList.add('copied');var sp=btn.querySelector('span'),o=sp?sp.textContent:'';if(sp)sp.textContent='복사됨';showToast('프롬프트가 복사되었습니다');setTimeout(function(){btn.classList.remove('copied');if(sp)sp.textContent=o;},1500);});};});}
+bindCopy(document);
+
+/* 퀴즈: 클릭 시 정답·해설 */
+document.querySelectorAll('.quiz[data-quiz] .q').forEach(function(q){
+  var a=+q.getAttribute('data-a'),opts=q.querySelectorAll('.opt');
+  var ans=document.createElement('div');
+  ans.style.cssText='display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:var(--green-soft,#e3f3ec);color:var(--green,#0a7d56);font-weight:600;font-size:15px;line-height:1.55';
+  q.appendChild(ans);
+  opts.forEach(function(o,i){o.addEventListener('click',function(){
+    if(q.classList.contains('answered'))return;q.classList.add('answered');
+    opts[a].classList.add('correct');if(i!==a)o.classList.add('wrong');
+    var c=opts[a]?opts[a].textContent:'',ex=q.getAttribute('data-explain')||'';
+    ans.innerHTML='✓ 정답: <b>'+c+'</b>'+(ex?' &nbsp;—&nbsp; '+ex:'');
+    ans.style.display='block';});});
+});
+
+/* ===== 프롬프트 빌더 8종 ===== */
+function v(f,k,ph){var el=f[k];if(!el)return ph?'['+ph+']':'';
+  if(el.type==='checkbox')return el.checked;
+  var s=(el.value||'').trim();return s?s:(el.placeholder?'['+el.placeholder.replace(/^예:\s*/,'').split(',')[0].split('/')[0].trim()+']':'['+(ph||'')+']');}
+
+var TPL={
+ b1:function(f){var extra=f.extra&&f.extra.value.trim()?'\n- 그리고 이것도 기억해 줘: '+f.extra.value.trim():'';
+  return '지금부터 아래 내용을 내 프로필로 기억해 줘.\n\n- 나는 '+v(f,'school','학교·학과')+'에서 '+v(f,'subject','과목')+'을(를) 가르치는 교수다.\n- 우리 학생들은 '+f.students.value+'.\n- 수업자료를 만들 때는 "'+f.style.value+'" 스타일을 기본으로 하고, 항상 한국어로 답해 줘.\n- 자료는 학생 눈높이를 최우선으로 하고, 확실하지 않은 정보에는 반드시 [확인 필요] 표시를 붙여 줘.'+extra+'\n\n이 내용을 요약해서 앞으로의 대화에 적용해 줘.';},
+ b2:function(f){return '당신은 전문대 교수의 수업 설계를 돕는 교육설계 전문가다.\n\n- 과목: '+v(f,'subject','과목명')+'\n- 이번 차시 주제: '+v(f,'topic','차시 주제')+'\n- 대상: '+f.level.value+'\n- 수업: '+f.minutes.value+' · '+f.type.value+'\n\n다음 순서로 만들어 줘.\n① 이 차시의 학습목표 1~3개 — 반드시 "학생은 ~할 수 있다" 문장으로.\n② '+f.minutes.value+' 수업 흐름표 — 단계(도입/전개/정리)별 시간·활동·교수자 행동·학생 행동을 표로. 흐름은 [이해→정리→구조→기억→적용] 순서(GRASP)를 따를 것.\n③ 이 차시에 필요한 준비물과, 마지막 5분에 쓸 형성평가 아이디어 1개.\n\n내가 목표를 고르면 그에 맞춰 흐름을 수정해 줘.';},
+ b6:function(f){var feats=[];
+  if(f.c_fb&&f.c_fb.checked)feats.push('문항마다 클릭 즉시 정답 여부와 한 줄 해설 표시');
+  if(f.c_prog&&f.c_prog.checked)feats.push('상단에 진행률 바(몇 번째 문항인지)');
+  if(f.c_point&&f.c_point.checked)feats.push('맞힐 때마다 오르는 포인트 점수판');
+  if(f.c_badge&&f.c_badge.checked)feats.push('최종 점수에 따른 배지·등급(예: 브론즈/실버/골드)과 격려 문구');
+  if(f.c_retry&&f.c_retry.checked)feats.push('끝나면 틀린 문항만 다시 풀기 버튼');
+  if(!feats.length)feats.push('문항마다 클릭 즉시 정답 여부 표시');
+  return '위에서 만든 평가 문항(또는 이 차시 내용)으로 학생용 대화형 학습자료를 만들어 줘.\n\n조건:\n- 파일 하나로 완결되는 단일 HTML — 외부 서버·로그인 없이 더블클릭으로 열린다\n- 휴대폰 화면에서도 잘 보이게 (반응형)\n- 문항 '+f.qcount.value.replace(/\s*\(.*\)/,'')+'\n- '+feats.join('\n- ')+'\n- 디자인은 깔끔하고 밝게, 우리 과목 이름을 상단 제목으로\n\n완성되면 HTML 파일로 저장할 수 있게 해 줘.';},
+ e1:function(f){return '위에서 정한 학습목표를 기준으로 평가 문항을 만들어 줘.\n\n- 쓰임: '+f.euse.value+'\n- 평가 유형: '+f.etype.value+'\n- 문항 수: '+f.ecount.value+'\n- 난이도 분포: '+f.elevel.value+'\n\n반드시 지킬 것:\n① 각 문항이 어느 학습목표를 재는지 문항 옆에 표시해 줘 — 목표와 연결되지 않는 문항은 빼고.\n② 문항마다 정답 / 한 줄 해설 / 학생이 자주 고를 오답과 그 이유를 붙여 줘.\n③ 학생 배포용(문항만)과 교수 채점용(정답·해설 포함) 두 버전으로 나눠 줘.\n\n그리고 난이도가 높은 문항 2개를 골라, 같은 개념을 재는 "쉬운 버전"과 "어려운 버전"으로 각각 변형해 줘 — 분반이나 재수강생에게 골라 쓸 수 있게.\n\n※ 나는 배포 전에 전 문항을 직접 풀어 검증한다. 확실하지 않은 문항에는 [확인 필요]를 표시해 줘.';},
+ e2:function(f){return v(f,'task','평가 대상')+'의 평가 루브릭(채점 기준표)을 만들어 줘.\n\n- 만점: '+f.score.value+'\n- 수준: '+f.grades.value+' — 각 칸에 "어떤 답안이 이 수준인지" 구체적으로 서술\n- 결과물 : 과정 비중 = '+f.ratio.value.replace(/\s*\(.*\)/,'')+'\n- 평가 요소는 네가 먼저 제안하고, 요소별 배점을 넣어 줘.\n\n표로 만든 뒤, 이어서 다음 세 가지를 해 줘.\n① 이 과제에 "'+f.proof.value+'"를 한 겹 덧댄 AI-proof 변형안 1개 — 분량을 늘리지 말고, 학생의 과정이 드러나게.\n② 변형안에 맞춰 루브릭에서 고쳐야 할 칸을 표시해 줘.\n③ 과제를 내주는 날 함께 공지할 안내문 3~4문장 — 학생이 읽고 무엇을 준비해야 할지 알 수 있게.\n\n※ 이 루브릭으로 채점을 도와달라고 할 때는, 반드시 답안 문장을 인용한 근거와 함께 판정하고, 애매한 경우 [교수 확인] 표시를 하도록 기억해 줘.';},
+ e3:function(f){return '아래(또는 첨부한) 학생 답안에 피드백 코멘트를 써 줘.\n\n- 과목·과제: '+v(f,'task2','과목·과제명')+'\n- 톤: '+f.tone.value+'\n- 길이: '+f.len.value+'\n\n이 형식으로:\n① 잘한 점 1가지 — 답안에서 실제 문장을 인용해서\n② 아쉬운 점 1가지 — 무엇을 어떻게 바꾸면 좋을지 구체적으로\n③ 다음 과제에서 시도해 볼 것 1가지\n\n점수는 매기지 마. 판정은 내가 한다.\n학생이 읽고 기분이 상하지 않되, 무엇을 고쳐야 할지는 분명히 알 수 있게 써 줘.\n\n※ 학생 이름·학번은 [학생A]로 바꿔서 다룰 것.\n\n--- 학생 답안 ---\n(여기에 붙여넣기)';}
+};
+
+document.querySelectorAll('.builder[data-builder]').forEach(function(b){
+  var id=b.getAttribute('data-builder'),out=b.querySelector('[data-out]'),fields={};
+  b.querySelectorAll('[data-k]').forEach(function(el){fields[el.getAttribute('data-k')]=el;});
+  function render(){try{out.textContent=TPL[id](fields);}catch(e){}}
+  b.querySelectorAll('input,select,textarea').forEach(function(el){
+    el.addEventListener('input',render);el.addEventListener('change',render);});
+  render();
+});
+
+icons();
+})();
+</script>
+</body>
+</html>
